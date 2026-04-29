@@ -1,0 +1,35 @@
+{
+  "PME": [
+    "ALICAN_2026-03-30.json",
+    "MACUSI_2026-03-30.json"
+  ],
+  "PSE": [
+    "PS_BEG-NAEN_2026-03-25.json",
+    "PS_BUTARDO_2026-03-22.json",
+    "PS_GUILAO_2026-03-25.json",
+    "PS_VARONA_2026-03-21.json"
+  ],
+  "QAQC": [
+    "GUILAO_2026-03-31.json",
+    "PS_JEMMER GUILAO_2026-03-25.json"
+  ],
+  "QSE": [
+    "PM_Eval_JEFFERD ALICAN_2026-03-03.json"
+  ],
+  "PEE": [
+    "PE_Eval_MYENGINEER_2026-03-30.json"
+  ],
+  "ARCH": [
+    "PM_Eval_NoName_2026-03-29.json"
+  ],
+  "ACAD": [
+    
+  ],
+  "CONTRACTS": [
+    "DesignBuildCostProposal_virtrt_Bauang_SSO_2026-04-08.json",
+    "KB_SSO_2026-04-06.json",
+    "Ongkoleyt.json",
+    "PMFTC_Bauang_SSO_2026-04-04.json",
+    "xxx.json"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "exportedAt": "2026-04-20T08:42:04.329Z",
+  "project": {
+    "id": "eqijo1mr",
+    "name": "sdsdsd",
+    "code": "PRJ-004",
+    "location": "sdsd",
+    "status": "Planning",
+    "description": "Integrated construction controls dashboard with BOQ, schedule, inventory, and resource tracking.",
+    "owner": "sdsd",
+    "startDate": "",
+    "scheduleDelayMode": "Delay in Completion",
+    "boq": [
+      {
+        "id": "nz5bdcz0",
+        "name": "Item 1",
+        "expanded": true,
+        "scheduleExpanded": true,
+        "subItems": [
+          {
+            "id": "1763gets",
+            "name": "Sub-Item 1",
+            "qty": 0,
+            "unit": "",
+            "laborUnitCost": 0,
+            "materialUnitCost": 0,
+            "expanded": true,
+            "subSubItems": []
+          }
+        ]
+      }
+    ],
+    "schedule": [
+      {
+        "key": "item:nz5bdcz0",
+        "itemId": "nz5bdcz0",
+        "parentItemId": null,
+        "wbs": "1.0.0",
+        "level": "item",
+        "name": "Item 1",
+        "boqCost": 0,
+        "startDate": "2026-04-19",
+        "finishDate": "2026-04-19",
+        "actualStart": "",
+        "actualFinish": "",
+        "durationDays": 1,
+        "percentAccomplished": 0,
+        "lastUpdated": "2026-04-20"
+      },
+      {
+        "key": "sub:1763gets",
+        "itemId": "1763gets",
+        "parentItemId": "nz5bdcz0",
+        "wbs": "1.1.0",
+        "level": "sub",
+        "name": "Sub-Item 1",
+        "boqCost": 0,
+        "startDate": "2026-04-19",
+        "finishDate": "2026-04-19",
+        "actualStart": "",
+        "actualFinish": "",
+        "durationDays": 2,
+        "percentAccomplished": 0,
+        "lastUpdated": "2026-04-20"
+      }
+    ],
+    "inventory": [
+      {
+        "id": "kvgpzdlo",
+        "key": "item:nz5bdcz0",
+        "type": "item",
+        "itemId": "nz5bdcz0",
+        "parentItemId": null,
+        "parentSubId": null,
+        "name": "Item 1",
+        "unit": "",
+        "boqQty": "",
+        "onHand": 0,
+        "issued": 0,
+        "lastUpdated": "2026-04-20"
+      },
+      {
+        "id": "c26cwq9r",
+        "key": "sub:1763gets",
+        "type": "sub",
+        "itemId": "1763gets",
+        "parentItemId": "nz5bdcz0",
+        "parentSubId": null,
+        "name": "Sub-Item 1",
+        "unit": "pcs",
+        "boqQty": 0,
+        "onHand": 0,
+        "issued": 0,
+        "inventoryExpanded": true,
+        "children": [],
+        "lastUpdated": "2026-04-20"
+      }
+    ],
+    "tracking": [
+      {
+        "id": "z53zhp86",
+        "key": "item:nz5bdcz0",
+        "type": "item",
+        "itemId": "nz5bdcz0",
+        "parentItemId": null,
+        "parentSubId": null,
+        "name": "Item 1",
+        "boqLabor": 0,
+        "boqMaterial": 0,
+        "actualLabor": 0,
+        "actualMaterial": 0,
+        "trackingExpanded": true,
+        "lastUpdated": "2026-04-20"
+      },
+      {
+        "id": "lziy034a",
+        "key": "sub:1763gets",
+        "type": "sub",
+        "itemId": "1763gets",
+        "parentItemId": "nz5bdcz0",
+        "parentSubId": null,
+        "name": "Sub-Item 1",
+        "boqLabor": 0,
+        "boqMaterial": 0,
+        "actualLabor": 0,
+        "actualMaterial": 0,
+        "trackingExpanded": true,
+        "ongoing": false,
+        "lastUpdated": "2026-04-20"
+      }
+    ]
+  }
+}

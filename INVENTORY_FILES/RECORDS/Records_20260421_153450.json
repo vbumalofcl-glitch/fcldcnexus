@@ -1,0 +1,17 @@
+{
+  "settings": {
+    "sites": [
+      "Project Site 1",
+      "Project Site 2",
+      "Project Site 3",
+      "Project Site 4",
+      "Project Site 5"
+    ],
+    "siteAlertPercent": 20
+  },
+  "warehouseItems": [],
+  "siteItems": [],
+  "clientItems": [],
+  "movements": [],
+  "siteStockCounts": []
+}

@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECT MANAGER EVALUATION</title>
+    <link rel="stylesheet" href="../template.css">
+    <script src="../script.js" defer></script>
+
+</head> 
+
+<body >
+    
+    <div id="topNav" class="topnav",style="margin-bottom: 5px;">
+        <div id="jsonButtons"></div>
+    </div>
+    
+    <!-- Sidebar Menu -->
+    
+        <button id="toggleSidebar">☰ MENU</button>
+        <button type="button" onclick="prepareSinglePagePrint()" class="pdf-btn"> 
+            <img src="pdf-icon.png" alt="PDF">print to PDF
+        </button>
+        <button class="panel-btn save-btn" onclick="saveFormData()">💾Save Form Data</button>
+        <input type="file" id="loadFile" style="display:none;" onchange="loadFormData(event)">
+        <button class="panel-btn load-btn" onclick="document.getElementById('loadFile').click()">📄Load Saved Data</button>
+      
+        
+    
+    <div class="sidebar">
+      <a href="../index.html">🏠 HOME</a>
+        <a href="./PME.html">PROJECT MANAGER EVALUATION</a>
+        <a href="./PSE.html">PROJECT SUPERINTENDENT EVALUATION</a>
+        <a href="./QSE.html">QUANTITY SURVEYOR EVALUATION</a>
+        <a href="./QAQC.html">QAQC EVALUATION</a>
+        <a href="./PEE.html">PROJECT ENGINEER EVALUATION</a>
+        <a href="./ARCH.html">ARCHITECT EVALUATION</a>
+        <a href="./ACAD.html">AUTOCAD EVALUATION</a>
+        <div class="sidebar-settings">
+            <button type="button" class="sidebar-settings-toggle">SETTINGS</button>
+            <div class="sidebar-submenu" id="desktopSettingsPanel">
+                <button type="button" data-edit-target="current-form">Edit This Form</button>
+                <button type="button" data-edit-target="script">Edit Script</button>
+                <button type="button" data-edit-target="styles">Edit Styles</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">          
+        <!-- PROFESSIONAL HEADER -->
+        <div class="header-frame">
+        <table class="header-table" style="height:22mm; ">
+            <tr style="height:22mm; ">
+
+                <!-- LEFT: LOGO -->
+                <td style="width:30%; text-align:left; vertical-align:middle; padding:4px; max-block-size:0cqmax;">
+                    <img src="LOGO.jpg" 
+                        alt="FCL LARANANG DEVELOPMENT CORPORATION Logo" 
+                        style="height: 18mm; width: 80mm;">
+                </td>
+
+                <!-- CENTER: TITLE -->
+                <td style="width:40%; text-align:center; vertical-align:middle;">
+                    <div style="font-size:20pt; font-weight:bold; letter-spacing:2px; line-height:1.1;">
+                        PROJECT SUPERINTENDENT<br>EVALUATION FORM
+                    </div>
+                </td>
+
+                <!-- RIGHT: DOCUMENT INFO -->
+                <td style="width:30%; padding:0;">
+                    <div style="display:flex; flex-direction:column; height:100%;">
+
+                        <div style="flex:1; display:flex;">
+                            <div style="flex:0 0 40%; border-right:0.8px solid #444; border-bottom:0.8px solid #444; text-align:right; font-style:italic; padding:2px;">Doc. Code</div>
+                            <div style="flex:1; border-left:0.8px solid #444; border-bottom:0.8px solid #444; padding:2px;">
+                                <input type="text" name="header_doc_code" class="input-nobox">
+                            </div>
+                        </div>
+
+                        <div style="flex:1; display:flex;">
+                            <div style="flex:0 0 40%; border-right:0.8px solid #444; border-bottom:0.8px solid #444; text-align:right; font-style:italic; padding:2px;">Rev. No.</div>
+                            <div style="flex:1; border-left:0.8px solid #444; border-bottom:0.8px solid #444; padding:2px;">
+                                <input type="text" name="header_rev_no" class="input-nobox">
+                            </div>
+                        </div>
+
+                        <div style="flex:1; display:flex;">
+                            <div style="flex:0 0 40%; border-right:0.8px solid #444; border-bottom:0.8px solid #444; text-align:right; font-style:italic; padding:2px;">Eff. Date</div>
+                            <div style="flex:1; border-left:0.8px solid #444; border-bottom:0.8px solid #444; padding:2px;">
+                                <input type="date" name="header_eff_date" class="input-nobox">
+                            </div>
+                        </div>
+
+                        <div style="flex:1; display:flex;">
+                            <div style="flex:0 0 40%; border-right:0.8px solid #444; text-align:right; font-style:italic; padding:2px;">Page</div>
+                            <div style="flex:1; border-left:0.8px solid #444; padding:2px;">
+                                <input type="text" name="header_page" class="input-nobox">
+                            </div>
+                        </div>
+
+                    </div>
+                </td>
+
+            </tr>
+        </table>
+        </div>
+
+        <!-- HEADER INFORMATION -->
+        <table>
+            <tr>
+                <td style="padding:2px 4px; line-height:1;">NAME (EVALUATEE):<br>
+                    <input type="text" name="emp_name" value="Evaluatee Name"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+                <td>FAMILY NAME:<br>
+                    <input type="text" name="emp_family_name" value="Family Name"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+                <td>ID NO.:<br>
+                    <input type="text" name="emp_id" VALUE="Company I.D no."
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+            </tr>
+
+            <tr>
+                <td>JOB TITLE:<br>
+                    <input type="text" name="emp_job_title" value="Position"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+                <td>PROFFESION:<br>
+                    <input type="text" name="emp_profession" value="Profession"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+                <td>DATE:<br>
+                    <input type="date" name="emp_date" value="Date evaluated"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">DEPARTMENT:<br>
+                    <input type="text" name="emp_department" value="Department ex: Construction QAQC"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+                <td>DATE HIRED:<br>
+                    <input type="date" name="emp_date_hired" value="Date Hired / Years of Employment"
+                    style="color:rgb(244, 247, 245); font-weight:900;font-size: 12pt!IMPORTANT;
+                        border:none; outline:none; 
+                        margin: 0; padding-top: 1px; padding-bottom: 1px;
+                        background: hsl(120, 100%, 1%); 
+                        width:100%;  font-family: Arial, Helvetica, sans-serif; ">
+                </td>
+            </tr>
+        </table>
+
+        <table style="width:100%; border-collapse:collapse; table-layout:fixed; font-size:10pt; line-height:10pt;margin-bottom: 4pt;">
+
+            <tr>
+                <th colspan="4" style="border:1px solid #000; text-align:center; padding:4px;font-size:12pt; line-height:12pt;">
+                    COMPETENCY RATING SCALE WITH COLOR‑DEFINED QUALIFICATION THRESHOLDS
+                </th>
+            </tr>
+                <tr>
+                <td style="border:1px solid #000; padding:4px;">PROJECT ENGINEER >></td>
+                <td style="border:1px solid #000; padding:4px;">
+                    <span style="background-color:#14e214; padding:0.5px 4px;">
+                        PE = 0% - 25% OR (0 TO 1.3)
+                    </span>
+                </td>
+                <td style="border:1px solid #000; padding:4px;">PROJECT MANAGER</td>
+                <td style="border:1px solid #000; padding:4px;">
+                    <span style="background-color:#0b73db; padding:0.5px 4px;">
+                        PM = 51% - 75% OR (2.6 TO 3.8)
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="border:1px solid #000; padding:4px;">PROJECT SUPERINTENDENT</td>
+                <td style="border:1px solid #000; padding:4px;">
+                    <span style="background-color:#e2cd0c; padding:0.5px 4px;">
+                        PS = 26% - 50% OR (1.4 TO 2.5)
+                    </span>
+                </td>
+                <td style="border:1px solid #000; padding:4px;">OPERATION MANAGER</td>
+                <td style="border:1px solid #000; padding:4px;">
+                    <span style="background-color:#8f623e; padding:0.5px 4px;">
+                        OM = 75% - 100% OR (3.9 TO 5.0)
+                    </span>
+                </td>
+            </tr>
+
+        </table >
+
+        <TH style="font-size:8pt; margin-bottom:8pt;">Based on the color‑coded rating thresholds shown above, the evaluatee’s qualifying position level will be determined by their overall evaluation score, as illustrated in the graph below. </TH>
+        
+        <!-- SECTION A: QAQC -->
+        <h2 style="margin:0; padding:0;">
+            <div style="
+            background: rgba(30, 211, 181, 0.541);
+            padding: 6pt;
+            margin: 0;
+            color: rgb(0, 12, 3);
+            font-weight: bold;
+            font-size: 12pt;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            "> A. QAQC EVALUATION
+                <span style="font-weight:lighter;font-size:10pt; color:#000804"> 
+                </span>
+            </div>
+        </h2>
+
+        <table>
+            <thead>
+            <tr>
+                <th>No.</th>
+                <th>Functional Area</th>
+                <th>Assessment Criteria</th>
+                <th>NOV</th><th>DEC</th><th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th>
+                <th>MAY</th><th>JUN</th><th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th>
+                <th style="WIDTH: 40PX;">Average</th>
+                <th style="WIDTH: 100PX;">Objectives</th>
+            </tr>
+            </thead>
+            
+
+            <!-- r1: Quality Governance -->
+            <tr>
+            <td>1</td>
+            <td>Quality Governance</td>
+            <td class="small">
+            <p class="hang">1. Champions project-wide QAQC governance, ensuring protocols are tailored, enforced, and continuously improved.</p>
+            <p class="hang">2. Drives compliance with ITPs, method statements, and specifications across all trades and phases.</p>
+            <p class="hang">3. Instills a zero-defect mindset, promoting accountability and craftsmanship at every level.</p>
+            <p class="hang">4. Coordinates with QA/QC for timely inspections.</p>
+            <p class="hang">5. Prevents rework by proactively identifying deviations and enforcing corrective actions before escalation.</p>
+            <p class="hang">6. Oversees subcontractor execution, ensuring adherence to approved installation procedures and sequencing logic.</p>
+            <p class="hang">7. Safeguards completed works, maintaining curing, protection, and access control to preserve quality.</p>
+            <p class="hang">8. Verifies material integrity, ensuring all installed components match approved submittals and are free of defects.</p>
+            </td>
+            <script>
+            for (let m = 1; m <= 12; m++) {
+                document.write(`
+                    <td>
+                        <input 
+                            type="number"
+                            name="qaqc_r1_m${m}"
+                            class="r1 qaqc qaqc-m${m}"
+                            style="text-align:center; 
+                            padding: 12px 4px; 
+                            color:#0056D2; 
+                            border: .1px solid #007BFF; 
+                            font-weight:bold; 
+                            box-sizing:border-box;"
+                            font-size:10pt;           
+
+                        
+                        >
+                    </td>
+                `);
+            }
+            </script>
+
+            <td id="avg-r1" style="
+                text-align:center;
+                padding: 12px 4px;
+                color:#6e0211; 
+                border: .5px solid #007BFF;
+                font-weight:bold;
+                box-sizing:border-box;
+            ">
+                <input type="number" 
+                    style="
+                        width:100%;
+                        border:none;
+                        outline:none;
+                        background:transparent;
+                        text-align:center;
+                        font-weight:bold;
+                        color:#026e07;
+                    ">
+            </td>
+
+
+            <td>Sets the tone for site discipline and long-term compliance.</td>
+            </tr>
+
+            <!-- r2: QAQC Planning and Control -->
+            <tr>
+            <td>2</td>
+            <td>QAQC Planning and Control</td>
+            <td class="small">
+            <p class="hang">1. Ensures coordination is not only tactical but embedded into project governance frameworks.</p>
+            <p class="hang">2. Integrates QA/QC milestones into master schedules to ensure quality checkpoints are embedded in project sequencing and progress tracking.</p>
+            </td>
+            <script>
+            for (let m = 1; m <= 12; m++) {
+                document.write(`
+                    <td>
+                        <input 
+                            type="number"
+                            name="qaqc_r2_m${m}"
+                            class="r2 qaqc qaqc-m${m}"
+                            style="text-align:center; 
+                            padding: 12px 4px; 
+                            color:#0056D2; 
+                            border: .5px solid #007BFF; 
+                            font-weight:bold; 
+                            box-sizing:border-box;"                                               
+                        >
+                    </td>
+                `);
+            }
+            </script>
+
+            <td id="avg-r2" style="text-align:center;
+                padding: 12px 4px;
+                color:#6e0211; 
+                border: .5px solid #007BFF;
+                font-weight:bold;
+                box-sizing:border-box;">
+            </td>
+                            
+            <td>Prevents delays and ensures proactive issue resolution.</td>
+            </tr>
+
+            <!-- r3: Technical Documentation Oversight -->
+            <tr>
+            <td>3</td>
+            <td>Technical Documentation Oversight</td>
+            <td class="small">
+            <p class="hang">1. Validates QAQC reports, test logs, and material approvals.</p>
+            <p class="hang">2. Ensures traceability of NCRs, CAPAs, and RFI responses.</p>
+            <p class="hang">3. Supports digital archiving and ISO 9001 compliance.</p>
+            </td>
+            <script>
+            for (let m = 1; m <= 12; m++) {
+                document.write(`
+                    <td>
+                        <input 
+                            type="number"
+                            name="qaqc_r3_m${m}"
+                            class="r3 qaqc qaqc-m${m}"
+                            style="text-align:center; 
+                            padding: 12px 4px; 
+                            color:#0056D2; 
+                            border: .5px solid #007BFF; 
+                            font-weight:bold; 
+                            box-sizing:border-box;" 
+                        >
+                    </td>
+                `);
+            }
+            </script>
+
+            <td id="avg-r3"style="text-align:center;
+                padding: 12px 4px;
+                color:#6e0211; 
+                border: .5px solid #007BFF;
+                font-weight:bold;
+                box-sizing:border-box;">
+                </td>
+            <td>Ensures accountability and readiness for audits or handover.</td>
+            </tr>
+
+            <!-- r4: Field Decision-Making & Issue Resolution -->
+            <tr>
+            <td>4</td>
+            <td>Field Decision-Making & Issue Resolution</td>
+            <td class="small">
+            <p class="hang">1. Responds to site non-conformances with authoritative engineering judgment, ensuring decisions align with contractual, regulatory, and organizational standards.</p>
+            <p class="hang">2. Provides confidence to clients, regulators, and executives that non-conformances are managed with rigor, transparency, and accountability.</p>
+            <p class="hang">3. Elevates corrective action from case-by-case fixes to systemic improvements that strengthen future project delivery.</p>
+            </td>
+            <script>
+            for (let m = 1; m <= 12; m++) {
+                document.write(`
+                    <td>
+                        <input 
+                            type="number"
+                            name="qaqc_r4_m${m}"
+                            class="r4 qaqc qaqc-m${m}"
+                            style="text-align:center; 
+                            padding: 12px 4px; 
+                            color:#0056D2; 
+                            border: .5px solid #007BFF; 
+                            font-weight:bold; 
+                            box-sizing:border-box;" 
+                        >
+                    </td>
+                `);
+            }
+            </script>
+
+            <td id="avg-r4"style="text-align:center;
+                padding: 12px 4px;
+                color:#6e0211; 
+                border: .5px solid #007BFF;
+                font-weight:bold;
+                box-sizing:border-box;">
+                </td>
+            <td>Reflects leadership maturity and project control.</td>
+            </tr>
+
+            <!-- QAQC AVERAGE PER MONTH -->
+            <tr class="avg-label">
+            <td colspan="3">AVERAGE PER MONTH</td>
+            <script>
+            for (let m = 1; m <= 12; m++) {
+                document.write(`<td id="avg-qaqc-m${m}"></td>`);
+            }
+            </script>
+            <td colspan="2"></td>
+            </tr>
+
+            
+            </table>
+
+        <!-- SECTION B: QS -->
+        <h2 style="margin:0; padding:0;">
+        <div style="
+            background: rgba(30, 211, 181, 0.541);
+            padding: 6pt;
+            margin: 0;
+            color: rgb(0, 12, 3);
+            font-weight: bold;
+            font-size: 12pt;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            B. QS EVALUATION
+            <span style="font-weight:lighter;font-size:10pt; color:#000804"></span>
+        </div>
+        </h2>
+
+        <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Functional Area</th>
+            <th>Assessment Criteria</th>
+            <th>NOV</th><th>DEC</th><th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th>
+            <th>MAY</th><th>JUN</th><th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th>
+            <th>Average</th>
+            <th style="width: 100px;">Objectives</th>
+
+        </tr>
+        </thead>
+
+
+        <!-- r5: Measurement & Cost Estimation -->
+        <tr>
+        <td>1</td>
+        <td>Measurement & Cost Estimation</td>
+        <td class="small">
+        <p class="hang">1. Establishes and enforces standards for measurement accuracy across disciplines.</p>
+        <p class="hang">2. Validates field data and ensures traceability in quantity take-offs and progress tracking.</p>
+        <p class="hang">3. Aligns estimation practices with historical benchmarks, risk profiles, and stakeholder expectations.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="qs_r5_m${m}"
+                        class="r5 qs qs-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;" 
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r5" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;">
+            </td>
+        <td>Deliver accurate quantity take-offs and cost estimates that align with project scope and market conditions.</td>
+        </tr>
+
+        <!-- r6: Cost Control & Value Management -->
+        <tr>
+        <td>2</td>
+        <td>Cost Control & Value Management</td>
+        <td class="small">
+        <p class="hang">1. Tracks expenditures against approved budgets.</p>
+        <p class="hang">2. Prepares justified VO requests with supporting documentation.</p>
+        <p class="hang">3. Suggests alternatives that optimize cost without compromising quality.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="qs_r6_m${m}"
+                        class="r6 qs qs-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;" 
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r6" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;">
+            </td>
+        <td>Maintain financial discipline and propose cost-effective solutions.</td>
+        </tr>
+
+        <!-- QS AVERAGE PER MONTH -->
+        <tr class="avg-label">
+        <td colspan="3">AVERAGE PER MONTH</td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`<td id="avg-qs-m${m}"></td>`);
+        }
+        </script>
+        <td colspan="2"></td>
+        </tr>
+
+
+        </table>
+
+        <!-- SECTION C: TECHNICAL & MANAGERIAL -->
+        <h2 style="margin:0; padding:0;">
+            <div style="
+                background: rgba(30, 211, 181, 0.541);
+                padding: 6pt;
+                margin: 0;
+                color: rgb(0, 12, 3);
+                font-weight: bold;
+                font-size: 12pt;
+                width: 100%;
+                box-sizing: border-box;
+                font-family: Arial, Helvetica, sans-serif;
+
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            ">
+                <span>C. TECHNICAL & MANAGERIAL EVALUATION</span>
+
+                <span style="font-weight: lighter; font-size: 10pt; color: #000804;"></span>
+            </div>
+        </h2>
+
+
+        <table>
+        <thead>
+        <tr>
+            <th>No.</th>
+            <th>Functional Area</th>
+            <th>Assessment Criteria</th>
+            <th>NOV</th><th>DEC</th><th>JAN</th><th>FEB</th><th>MAR</th><th>APR</th>
+            <th>MAY</th><th>JUN</th><th>JUL</th><th>AUG</th><th>SEP</th><th>OCT</th>
+            <th>Average</th>
+            <th style="width: 100px;">Objectives</th>
+        </tr>
+        </thead>
+
+
+        <!-- r7: Operational Planning & Work Preparations -->
+        <tr>
+        <td>1</td>
+        <td>Operational Planning & Work Preparations</td>
+        <td class="small">
+        <p class="hang">1. Converts project quality plans into structured daily/weekly operational frameworks, ensuring quality checkpoints are seamlessly integrated into work sequencing and progress tracking.</p>
+        <p class="hang">2. Ensures crews and subcontractors fully understand work packages, drawings, and method statements, fostering clarity, accountability, and consistent execution across all trades.</p>
+        <p class="hang">3. Identifies operational risks that may compromise quality and implements mitigation strategies before they impact progress, cost, or compliance.</p>
+        <p class="hang">4. Aligns operational quality activities with project milestones, ensuring inspection readiness, resource allocation, and stakeholder confidence.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r7_m${m}"
+                        class="r7 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;" 
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r7" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>
+        <p class="hang">1. Demonstrates strong foresight in sequencing and resource planning.</p>
+        <p class="hang">2. Ensures crews are briefed with clear, accurate, and complete instructions.</p>
+        <p class="hang">3. Anticipates quality risks and integrates preventive measures into daily operations.</p>
+        </td>
+        </tr>
+
+        <!-- r8: Operational Risk Management & Preventive Control -->
+        <tr>
+        <td>2</td>
+        <td>Operational Risk Management & Preventive Control</td>
+        <td class="small">
+        <p class="hang">1. Establishes preventive systems and protocols to safeguard completed works, ensuring durability and readiness for subsequent phases.</p>
+        <p class="hang">2. Identifies potential threats to completed works and temporary structures, implementing proactive measures to prevent damage, delays, or rework.</p>
+        <p class="hang">3. Aligns protection strategies with project schedules, ensuring that safeguards evolve with progress and do not obstruct workflow continuity.</p>
+        <p class="hang">4. Promotes a culture of foresight and accountability, ensuring quality governance is embraced across subcontractors, trades, and stakeholders.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r8_m${m}"
+                        class="r8 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r8" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>
+        <p class="hang">1. Proactively mitigates risks before they impact quality.</p>
+        <p class="hang">2. Ensures completed works remain protected throughout operations.</p>
+        <p class="hang">3. Demonstrates strong judgment in sequencing and operational controls.</p>
+        </td>
+        </tr>
+
+        <!-- r9: Project Execution & Delivery -->
+        <tr>
+        <td>3</td>
+        <td>Project Execution & Delivery</td>
+        <td class="small">
+        <p class="hang">1. Prepares accurate 1‑week, 2‑week, and 4‑week look‑ahead schedules.</p>
+        <p class="hang">2. Aligns manpower, equipment, and materials with scheduled activities.</p>
+        <p class="hang">3. Ensures daily tasks are completed within planned durations.</p>
+        <p class="hang">4. Identifies schedule risks early and proposes mitigation or resequencing.</p>
+        <p class="hang">5. Ensures subcontractors mobilize on time and follow the agreed schedule.</p>
+        <p class="hang">6. Tracks progress daily and updates management with accurate progress percentages.</p>
+        7. Implements recovery plans when delays occur.<br>
+        8. Timely completion of milestones.<br>
+        9. Adherence to construction schedule (CPM).
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r9_m${m}"
+                        class="r9 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r9" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Ensure timely and coordinated delivery of project milestones.</td>
+        </tr>
+
+        <!-- r10: Cost Control & Resource Management -->
+        <tr>
+        <td>4</td>
+        <td>Cost Control & Resource Management</td>
+        <td class="small">
+        <p class="hang">1. Budget adherence and cost forecasting.</p>
+        <p class="hang">2. Optimization of manpower and equipment.</p>
+        <p class="hang">3. Control of material wastage and procurement.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r10_m${m}"
+                        class="r10 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r10" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Optimize resource utilization and maintain budget control.</td>
+        </tr>
+
+        <!-- r11: Stakeholder Coordination -->
+        <tr>
+        <td>5</td>
+        <td>Stakeholder Coordination</td>
+        <td class="small">
+        <p class="hang">1. Communication with consultants, clients, and suppliers.</p>
+        <p class="hang">2. Timely submission of RFIs, VO requests, and progress reports.</p>
+        <p class="hang">3. Conflict resolution and negotiation skills.</p>
+        <p class="hang">4. Submits daily reports, progress updates, and inspection records on time.</p>
+        <p class="hang">5. Maintains organized, complete, and audit‑ready documentation.</p>
+        <p class="hang">6. Provides accurate progress percentages and variance explanations.</p>
+        7. Documents issues, delays, and resolutions professionally.<br>
+        8. Ensures traceability of all field activities.
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r11_m${m}"
+                        class="r11 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r11" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Maintain effective communication and alignment with consultants, clients, and suppliers.</td>
+        </tr>
+
+        <!-- r12: Team Leadership & Delegation -->
+        <tr>
+        <td>6</td>
+        <td>Team Leadership & Delegation</td>
+        <td class="small">
+        <p class="hang">1. Demonstrates the ability to act as the strategic leader and central coordinator of the project.</p>
+        <p class="hang">2. Balances technical execution (scope, quality, risk management) with human leadership (team motivation, stakeholder communication, conflict resolution).</p>
+        <p class="hang">3. Exhibits the ability to picture and track the entire project’s progress in relation to sequential work, ensuring dependencies are managed, workflows remain uninterrupted, and milestones build logically toward completion.</p>
+        <p class="hang">4. Support for staff development and mentoring.</p>
+        <p class="hang">5. Provides clear direction and coaching to foremen and crews.</p>
+        <p class="hang">6. Handles pressure, conflict, and unexpected issues calmly.</p>
+        <p class="hang">7. Encourages continuous improvement and learning.</p>
+        <p class="hang">8. Maintains strong site presence and leads by example.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r12_m${m}"
+                        class="r12 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r12" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Lead site teams and delegate responsibilities to ensure accountability and performance.</td>
+        </tr>
+
+        <!-- r13: Operational Risk Management & Preventive Control -->
+        <tr>
+        <td>7</td>
+        <td>Tools & Software Proficiency</td>
+        <td class="small">
+        <p class="hang">1. Ability to create and maintain schedule.</p>
+        <p class="hang">2. Use of dependencies, critical path and baselines.</p>
+        <p class="hang">3. Task assignment and progress tracking.</p>
+        <p class="hang">4. Integration with reporting.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r13_m${m}"
+                        class="r13 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r13" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Build accurate, logic based schedules effectively.</td>
+        </tr>
+
+        <!-- r14: Subcontractor Management & Coordination -->
+        <tr>
+        <td>8</td>
+        <td>Subcontractor Management & Coordination</td>
+        <td class="small">
+        <p class="hang">1. Communicates expectations clearly regarding schedule, quality, and safety.</p>
+        <p class="hang">2. Ensures subcontractors mobilize manpower, tools, and materials on time.</p>
+        <p class="hang">3. Conducts coordination meetings and issues clear action items.</p>
+        <p class="hang">4. Resolves conflicts between trades and ensures smooth work fronts.</p>
+        <p class="hang">5. Holds subcontractors accountable for performance and compliance.</p>
+        <p class="hang">6. Ensures subcontractors follow approved methods and standards.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r14_m${m}"
+                        class="r14 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+
+        <td id="avg-r14" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>
+        <p class="hang">1. Builds strong alignment with subcontractors through clear expectations.</p>
+        <p class="hang">2. Ensures crews understand the “why” behind quality requirements.</p>
+        <p class="hang">3. Demonstrates firm but fair enforcement of quality responsibilities.</p>
+        </td>
+        </tr>
+
+        <!-- r15: Process Improvement & Innovation -->
+        <tr>
+        <td>9</td>
+        <td>Process Improvement & Innovation</td>
+        <td class="small">
+        <p class="hang">1. Initiatives for workflow optimization.</p>
+        <p class="hang">2. Selects, deploys, and governs digital tools (e.g., inspection apps, dashboards) to streamline QA/QC, progress tracking, and decision-making.</p>
+        <p class="hang">3. Curates lessons learned into accessible knowledge systems, reinforcing continuous learning and adaptive planning.</p>
+        <p class="hang">4. Mentors teams in leveraging automation for efficiency and compliance.</p>
+        <p class="hang">5. Develops and institutionalizes predictive cost modeling frameworks that anticipate market fluctuations.</p>
+        <p class="hang">6. Architects a systematic process for capturing, classifying, and resolving minor variations.</p>
+        </td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`
+                <td>
+                    <input 
+                        type="number"
+                        name="tm_r15_m${m}"
+                        class="r15 tm tm-m${m}"
+                        style="text-align:center; 
+                        padding: 12px 4px; 
+                        color:#0056D2; 
+                        border: .5px solid #007BFF; 
+                        font-weight:bold; 
+                        box-sizing:border-box;"
+                    >
+                </td>
+            `);
+        }
+        </script>
+            <style>.hang {
+            text-align: left;
+            margin: 0 0 4px 0;
+            padding-left: 18px;
+            text-indent: -16px;
+            font-size: 10pt;
+            }
+            </style>  
+
+        <td id="avg-r15" style="text-align:center;
+            padding: 12px 4px;
+            color:#6e0211; 
+            border: .5px solid #007BFF;
+            font-weight:bold;
+            box-sizing:border-box;"></td>
+        <td>Drive continuous improvement and adopt innovative practices in project delivery.</td>
+        </tr>
+
+        <!-- TM AVERAGE PER MONTH -->
+        <tr class="avg-label">
+        <td colspan="3">AVERAGE PER MONTH</td>
+        <script>
+        for (let m = 1; m <= 12; m++) {
+            document.write(`<td id="avg-tm-m${m}"></td>`);
+        }
+        </script>
+        <td colspan="2"></td>
+        </tr>
+
+
+        </table>
+
+        <!-- OVERALL PERFORMANCE SCORE -->
+            <h2 style="margin-bottom: 0cap;">OVERALL PERFORMANCE SCORE</h2>
+
+            <table> 
+            <tr><th>Category</th><th>Section Average (%)</th></tr>
+            <tr><td>QAQC Evaluation</td><td id="overall-qaqc"></td></tr>
+            <tr><td>QS Evaluation</td><td id="overall-qs"></td></tr>
+            <tr><td>Technical & Managerial Evaluation</td><td id="overall-tm"></td></tr>
+            <tr style="font-weight:bold; background:#f5f5f5;">
+                <td>FINAL OVERALL SCORE</td>
+                <td id="overall-final"></td>
+            </tr>
+            </table>
+
+            <div id="evaluation-wrapper">
+
+            <!-- Vertical dashed lines -->
+            <div class="vertical-separator" style="left: calc(225px + 8.33% * 3)!important;"></div>
+            <div class="vertical-separator" style="left: calc(150px + 8.33% * 6)!important;"></div>
+            <div class="vertical-separator" style="left: calc(75px + 8.33% * 9)!important;"></div>
+            
+            
+            <table id="merged-table" class="merged-table" aria-label="Evaluation matrix">
+            <div id="evaluation-wrapper">
+                
+            <table id="merged-table" class="merged-table" aria-label="Evaluation matrix">
+                <colgroup>
+                <!-- Category column -->
+                <col style="width:300px !important;">
+
+                <!-- PROJECT ENGINEER (3 columns) -->
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important; border-right:1px dashed #3de48d;">
+
+                <!-- PROJECT SUPERINTENDENT (3 columns) -->
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important; border-right:1px dashed #999;">
+
+                <!-- PROJECT MANAGER (3 columns) -->
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important; border-right:1px dashed #999;">
+
+                <!-- OPERATION MANAGER (3 columns) -->
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important;">
+                <col style="width:8.33% !important; border-right:1px dashed #999;">
+                </colgroup>
+
+                <thead>
+                    <tr>
+                        <th rowspan="2">CATEGORY</th>
+                        <th colspan="3">PROJECT ENGINEER</th>
+                        <th colspan="3">PROJECT SUPERINTENDENT</th>
+                        <th colspan="3">PROJECT MANAGER</th>
+                        <th colspan="3">OPERATION MANAGER</th>
+                    </tr>
+                    <tr style="font-size: 8pt;">
+                        <th style="background-color: rgb(182, 232, 176);">LEVEL 1</th>
+                        <th style="background-color: rgb(127, 220, 110);">LEVEL 2</th>
+                        <th style="background-color: rgb(63, 174, 58);">LEVEL 3</th>
+                        <th style="background-color: #fff7a8;">LEVEL 1</th>
+                        <th style="background-color: #ffe766;">LEVEL 2</th>
+                        <th style="background-color: #ffcf33;">LEVEL 3</th>
+                        <th style="background-color: #b3d9ff;">LEVEL 1</th>
+                        <th style="background-color: #66b3ff;">LEVEL 2</th>
+                        <th style="background-color: #1a75ff;">LEVEL 3</th>
+                        <th style="background-color: #d2b48c;">LEVEL 1</th>
+                        <th style="background-color: #a67c52;">LEVEL 2</th>
+                        <th style="background-color: #7b4f2c;">LEVEL 3</th>
+                    </tr>
+                </thead>
+
+                
+                    
+                    <tr>
+                        <td>QAQC Evaluation</td>
+                        <td colspan="12" class="continuous-cell">
+                            <div class="continuous-bar" id="qaqc-bar"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>QS Evaluation</td>
+                        <td colspan="12" class="continuous-cell">
+                            <div class="continuous-bar" id="qs-bar"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Technical & Managerial Evaluation</td>
+                        <td colspan="12" class="continuous-cell">
+                            <div class="continuous-bar" id="tm-bar"></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="font-weight: bold;">FINAL OVERALL SCORE</td>
+                        <td colspan="12" class="continuous-cell">
+                            <div class="continuous-bar" id="final-bar"></div>
+                        </td>
+                    </tr>
+            
+            </table>
+        </div>
+    
+        <!-- DEMERITS LOG -->
+        <h2 style="margin-bottom: 0%;">DEMERITS LOG</h2>
+
+        <table id="demeritsTable" border="1"
+            style="width:100%; min-height:6pt; border-collapse:collapse; margin-bottom:2px;">
+            <tr>
+                <th style="width:10%;">Issue ID</th>
+                <th style="width:35%;">Description of Deviation</th>
+                <th style="width:15%;">Date Logged</th>
+            <th style="width:15%; text-align:center;">
+                    RACMI Role<br>Impact Level
+                </th>
+
+                <th style="width:20%;">CA / Status</th>
+                <th class="action-col" style="width:5%;">Action</th>
+            </tr>
+
+            <tr>
+                <td><textarea name="demerit_id_1" class="no-box"></textarea></td>
+                <td><textarea name="demerit_desc_1" class="no-box"></textarea></td>
+                <td><input type="date" name="demerit_date_1" class="no-box"></td>
+                <td><textarea name="demerit_impact_1" class="no-box"></textarea></td>
+                <td><textarea name="demerit_action_1" class="no-box"></textarea></td>
+                <td class="action-col">
+                    <button STYLE="font-size: 8PT;" class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        </table>
+        
+
+        <!-- SUMMARY AND COMMENTS TABLE -->
+        <div class="action-tools">
+            <button class="add-btn" onclick="addDemeritRow()">Add Row</button>
+            <button onclick="alignLeft()">L</button>
+            <button onclick="alignCenter()">C</button>
+            <button onclick="alignRight()">R</button>
+
+            <input type="color" id="colorPicker" value="#000000">
+            <button onclick="applyColor()">Apply Color</button>
+
+            <!-- NEW FONT CONTROLS -->
+            <select id="fontSizePicker" onchange="applyFontSize()">
+            <option value="">Size</option>
+            <option value="10pt">10</option>
+            <option value="11pt">11</option>
+            <option value="12pt">12</option>
+            <option value="14pt">14</option>
+            <option value="16pt">16</option>
+            <option value="18pt">18</option>
+            </select>
+
+            <button onclick="toggleBold()">B</button>
+        </div>
+
+        <table class="summary-comments-table">
+            <thead>
+                <tr>
+                <th colspan="3" class="summary-header">SUMMARY AND COMMENTS</th>
+                </tr>
+                <tr>
+                <th>OPERATION MANAGER</th>
+                <th>QAQC</th>
+                <th>QS</th>
+                </tr>
+            </thead>
+            
+                <tr>
+                <td><div name="summary_opm" class="summary-input" contenteditable="true"></div></td>
+                <td><div name="summary_qaqc" class="summary-input" contenteditable="true"></div></td>
+                <td><div name="summary_qs" class="summary-input" contenteditable="true"></div></td>
+                </tr>
+            
+        </table>
+            
+
+
+
+        <P class="note" STYLE="margin-bottom: 16pt; margin-top: 0%;">
+        Note: The accomplished record shall be forwarded to HRD and one copy filed by the originating department.</P>
+
+        This certifies that I have been satisfactorily oriented on the nature of works and that I have understood the importance of the position and the departmental functions to the organization.
+
+        <!-- SIGNATURE BLOCK -->
+        <div class="signature-block">
+
+            <div class="signature">
+                <strong>Conformed by:</strong><br><br>
+
+                <canvas class="sig-pad" name="sig_employee" width="300" height="120"></canvas>
+                <button class="clear-btn" onclick="clearPad(this)">Clear</button>
+
+                <br>Name & Signature of Employee
+            </div>
+
+            <div class="signature">
+                <strong>Evaluated by:</strong><br><br>
+
+                <canvas class="sig-pad" name="sig_qcm" width="300" height="120"></canvas>
+                <button class="clear-btn" onclick="clearPad(this)">Clear</button>
+
+                <br>Engr. Virtron Bumal-o<br>QCM Manager
+            </div>
+
+            <div class="signature">
+                <strong>Evaluated by:</strong><br><br>
+
+                <canvas class="sig-pad" name="sig_om" width="300" height="120"></canvas>
+                <button class="clear-btn" onclick="clearPad(this)">Clear</button>
+
+                <br>Engr. Michael Corpuz<br>OM Manager
+            </div>
+
+        </div>
+        
+    </div>
+    <!-- #endregion -->
+    </div>
+    
+</body>
+</html>

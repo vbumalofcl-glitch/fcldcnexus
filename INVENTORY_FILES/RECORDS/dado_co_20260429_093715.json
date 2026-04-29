@@ -1,0 +1,82 @@
+{
+  "settings": {
+    "sites": [
+      "dado co",
+      "Project Site 2",
+      "Project Site 3",
+      "Project Site 4",
+      "Project Site 5"
+    ],
+    "siteAlertPercent": 20
+  },
+  "warehouseItems": [
+    {
+      "code": "H-01",
+      "name": "H-frame 1.2m",
+      "category": "Construction Support Equipment",
+      "unit": "ea",
+      "unitCost": 1700,
+      "purchaseDate": "2026-04-29",
+      "warrantyMonths": 24,
+      "quantity": 800,
+      "minStock": 0,
+      "date": "2026-04-29",
+      "type": "site_return",
+      "site": "dado co",
+      "reference": ""
+    }
+  ],
+  "siteItems": [
+    {
+      "date": "2026-04-29",
+      "type": "warehouse_to_site",
+      "site": "dado co",
+      "code": "H-01",
+      "name": "H-frame 1.2m",
+      "category": "Construction Support Equipment",
+      "unit": "ea",
+      "unitCost": 1700,
+      "purchaseDate": "2026-04-29",
+      "warrantyMonths": 24,
+      "quantity": 200,
+      "siteAction": "active_use",
+      "reference": "Site Receipt - active use",
+      "minStock": 0
+    }
+  ],
+  "clientItems": [],
+  "movements": [
+    {
+      "date": "2026-04-29",
+      "type": "site_return",
+      "site": "dado co",
+      "code": "H-01",
+      "name": "H-frame 1.2m",
+      "category": "Construction Support Equipment",
+      "unit": "ea",
+      "unitCost": 1700,
+      "purchaseDate": "2026-04-29",
+      "warrantyMonths": 24,
+      "quantity": 300,
+      "reference": "",
+      "minStock": 0
+    },
+    {
+      "date": "2026-04-29",
+      "type": "warehouse_to_site",
+      "site": "dado co",
+      "code": "H-01",
+      "name": "H-frame 1.2m",
+      "category": "Construction Support Equipment",
+      "unit": "ea",
+      "unitCost": 1700,
+      "purchaseDate": "2026-04-29",
+      "warrantyMonths": 24,
+      "quantity": 500,
+      "siteAction": "active_use",
+      "reference": "Site Receipt - active use",
+      "minStock": 0
+    }
+  ],
+  "siteStockCounts": []
+}

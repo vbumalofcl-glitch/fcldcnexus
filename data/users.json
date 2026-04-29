@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "permissions": [
+        "personnel-eval",
+        "contracts",
+        "qs",
+        "qaqc",
+        "inventory",
+        "management"
+      ]
+    }
+  ]
+}

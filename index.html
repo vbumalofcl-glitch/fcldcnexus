@@ -1,0 +1,1955 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCLDC Integrated System</title>
+    <link rel="stylesheet" href="template.css">
+
+    <style>
+
+        .main {
+            position: relative;
+            isolation: isolate;
+            text-align: center;
+            color: #070000;
+            font-size: 16px;
+            width: var(--screen-paper-width);
+            max-width: var(--screen-paper-width);
+            margin-top: 24px;
+            margin-left: calc(var(--content-offset) + (var(--screen-edge-space) / 2));
+            margin-right: calc(var(--screen-edge-space) / 2);
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        .qaqc-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2050;
+            min-width: 150px;
+            max-width: 200px;
+            padding: 8px 8px 10px 10px;
+            display: block;
+            visibility: hidden;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(243,247,255,0.98) 100%);
+            border: 1px solid rgba(33, 88, 160, 0.08);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(6,24,60,0.18), 0 2px 6px rgba(6,24,60,0.06);
+            backdrop-filter: blur(6px) saturate(120%);
+            transform: translateX(-100vw);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 260ms cubic-bezier(.2,.9,.2,1), transform 360ms cubic-bezier(.2,.9,.2,1), visibility 0s linear 260ms;
+            overflow: hidden;
+        }
+
+        .qaqc-panel::before{
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 6px;
+            background: linear-gradient(180deg, var(--accent, #6ea8fe), var(--accent-2, #7bf1c8));
+            border-top-left-radius: 12px; border-bottom-left-radius: 12px;
+            transform: translateX(-2px);
+            opacity: 0.98;
+        }
+
+        .qaqc-panel.is-open {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            transition: opacity 260ms cubic-bezier(.2,.9,.2,1), transform 360ms cubic-bezier(.2,.9,.2,1);
+        }
+
+        /* Removed 3D rotation keyframes to disable rotating watermark */
+
+        body {
+            background: url("background.png") center center / cover no-repeat fixed;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5mm;
+            margin-bottom: 20px;
+            animation-delay: 0.1s;
+        }
+
+        .logo img {
+            height: 120px;
+            margin-bottom: 10px;
+        }
+
+        /* Full-screen centered watermark behind content */
+        .system-watermark {
+            position: fixed;
+            top: 50%;
+            left: calc(50% + 30mm);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 3D stacked slices to simulate thickness */
+        /* simplified: no rotation 3D — use a static watermark */
+        .sys3d {
+            width: min(50vw, 720px);
+            height: min(50vh, 720px);
+            position: relative;
+            transform: none;
+            will-change: auto;
+        }
+
+        .sys3d .face,
+        .sys3d img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            opacity: 0.6;
+            filter: drop-shadow(0 10px 24px rgba(0,0,0,0.08));
+        }
+
+        /* Username overlay positioned over laptop screen lower-left (not inside 3D group) */
+        .system-watermark .watermark-username {
+            position: absolute;
+            /* tuned to appear on lower-right of the laptop screen image */
+            left: 72%;
+            top: 74%;
+            /* horizontal offset already set; move 50mm down from base position and tilt 20deg */
+            transform: translate(calc(-50% + 50mm), calc(-50% + 40mm)) rotate(7deg);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: clamp(12px, 1.8vw, 24px);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.85);
+            pointer-events: none;
+            z-index: 3;
+            opacity: 0.98;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+            .system-watermark .watermark-username { left: 74%; top: 78%; font-size: 13px; transform: translate(calc(-50% + 45mm), calc(-50% + 30mm)) rotate(10deg); }
+        }
+
+        .corner-logo {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 2100;
+        }
+
+        .corner-logo img {
+            width: 120px;
+            height: auto;
+            display: block;
+            border-radius: 999px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+            opacity: 0.96;
+        }
+
+        .sidebar {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 12%, rgba(0, 0, 0, 0.12) 100%),
+                linear-gradient(135deg, #eef3fa 0%, #99a8bc 18%, #d9e0ea 36%, #6c7a8f 58%, #c7d0dc 78%, #515f74 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow:
+                inset 1px 1px 0 rgba(255, 255, 255, 0.65),
+                inset -2px -3px 8px rgba(22, 34, 51, 0.35),
+                8px 0 18px rgba(10, 18, 32, 0.28);
+        }
+
+        .sidebar a,
+        .sidebar-settings-toggle,
+        .sidebar-link-button {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(121, 170, 238, 0.96) 14%, rgba(19, 63, 136, 0.99) 52%, rgba(7, 26, 77, 1) 100%);
+            color: #f7fbff;
+            border: 1px solid rgba(201, 230, 255, 0.72);
+            border-radius: 10px;
+            box-shadow:
+                inset 0 2px 1px rgba(255, 255, 255, 0.78),
+                inset 0 -5px 10px rgba(2, 14, 42, 0.55),
+                0 8px 14px rgba(7, 18, 46, 0.34);
+            text-shadow: 0 1px 2px rgba(2, 11, 29, 0.72);
+        }
+
+        .sidebar a:hover,
+        .sidebar-settings-toggle:hover,
+        .sidebar-link-button:hover {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(154, 197, 255, 0.98) 16%, rgba(28, 88, 184, 1) 52%, rgba(9, 36, 101, 1) 100%);
+            color: #ffffff;
+        }
+
+        .sidebar-link-button {
+            width: calc(100% - 16px);
+            display: block;
+            padding: 12px 20px;
+            margin: 8px;
+            font: inherit;
+            font-weight: bold;
+            color: #f7fbff;
+            text-align: left;
+            cursor: pointer;
+            box-sizing: border-box;
+            border: 1px solid rgba(201, 230, 255, 0.72);
+            border-radius: 10px;
+            line-height: 1.2;
+        }
+
+        .qaqc-menu {
+            position: relative;
+        }
+
+        .qaqc-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 2050;
+            min-width: 135px;
+            max-width: 165px;
+            padding: 0;
+            display: block;
+            visibility: hidden;
+            background: linear-gradient(180deg, rgba(244, 249, 255, 0.96) 0%, rgba(212, 225, 241, 0.96) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            border-radius: 12px;
+            box-shadow: 0 16px 28px rgba(8, 22, 53, 0.24);
+            backdrop-filter: blur(4px);
+            /* start off-screen at left edge; will translate to 0 when opened */
+            transform: translateX(-100vw);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 2s ease, transform 2s ease, visibility 0s linear 2s;
+        }
+
+        .qaqc-panel.is-open {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            transition: opacity 2s ease, transform 2s ease;
+        }
+
+        .qaqc-panel-title {
+            margin: 0;
+            padding: 6px 8px 2px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #0d2f63;
+            letter-spacing: 0.04em;
+        }
+
+        .qaqc-panel-links {
+            display: grid;
+            gap: 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .qaqc-panel-links a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 8px;
+            margin: 2px 0;
+            color: var(--text, #123a8f);
+            text-decoration: none;
+            border-radius: 6px;
+            background: linear-gradient(180deg, rgba(250,251,255,1) 0%, rgba(245,249,255,1) 100%);
+            border: 1px solid rgba(14, 46, 99, 0.04);
+            box-shadow: 0 2px 6px rgba(9, 25, 61, 0.06);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+            padding-left: 8px; /* compact submenu spacing */
+        }
+
+        .qaqc-panel-links a:hover {
+            transform: translateX(3px);
+            box-shadow: 0 6px 18px rgba(9,25,61,0.12);
+            background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+        }
+
+        .qaqc-panel-links a .link-icon{ display:inline-flex; width:20px; height:20px; align-items:center; justify-content:center; border-radius:6px; background:linear-gradient(180deg,#e6f0ff,#fff); color:var(--primary); font-weight:800; flex:0 0 20px; }
+
+        .qaqc-panel-links a.is-disabled {
+            opacity: 0.6;
+        }
+
+        @media (max-width: 900px) {
+            .qaqc-panel {
+                min-width: 0;
+                width: min(165px, calc(100vw - 80px));
+            }
+        }
+
+        #toggleSidebar {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 231, 120, 0.96) 18%, rgba(232, 177, 18, 0.98) 58%, rgba(158, 104, 3, 1) 100%);
+            border: 1px solid rgba(96, 58, 0, 0.9);
+            box-shadow:
+                inset 0 2px 1px rgba(255, 255, 255, 0.75),
+                inset 0 -4px 8px rgba(104, 62, 0, 0.35),
+                0 8px 14px rgba(72, 44, 0, 0.28);
+            color: #1a1200;
+            text-shadow: 0 1px 1px rgba(255, 247, 202, 0.45);
+        }
+
+        #toggleSidebar:hover {
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 239, 151, 0.98) 16%, rgba(244, 190, 25, 1) 56%, rgba(176, 116, 4, 1) 100%);
+        }
+
+        .intro,
+        .section,
+        .closing {
+            margin-top: 32px;
+        }
+
+        .intro {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .intro-logo {
+            width: min(36vw, 320px);
+            max-width: 100%;
+            height: auto;
+            opacity: 1;
+        }
+
+        .intro.is-blinking .intro-logo {
+            animation: intro-logo-blink 2.4s ease-in-out forwards;
+        }
+
+        .section p {
+            font-size: 18pt;
+            margin-top: 15px;
+        }
+
+        .title {
+            font-weight: bold;
+            display: block;
+            font-size: 18pt;
+            margin-bottom: 10px;
+        }
+
+        .closing {
+            font-size: 18pt;
+        }
+
+        .reveal-line,
+        .section .title,
+        .section p,
+        .closing {
+            opacity: 0;
+            transform: translateY(18px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal-line.is-visible,
+        .section .title.is-visible,
+        .section p.is-visible,
+        .closing.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-up {
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeUp 10s ease forwards;
+        }
+
+        .delay1 { animation-delay: 1s; }
+        .delay2 { animation-delay: 2s; }
+        .delay3 { animation-delay: 3s; }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo animation */
+        .fade-in {
+            opacity: 0;
+            transform: scale(1.1);
+            animation: fadeIn 5s ease forwards;
+        }
+
+        /* Keyframes */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes intro-logo-blink {
+            0%, 10%, 30%, 50%, 70%, 100% {
+                opacity: 1;
+            }
+            20%, 40%, 60% {
+                opacity: 0.08;
+            }
+        }
+
+        /* Login & User Management Styles */
+        .user-info-panel {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 2200;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 8px 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-info-panel.hidden {
+            display: none;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: #666;
+            background: #e3f2fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .logout-btn, .admin-btn {
+            background: #065fd4;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .admin-btn {
+            background: #ff9800;
+        }
+
+        .logout-btn:hover {
+            background: #043fa0;
+        }
+
+        .admin-btn:hover {
+            background: #f57c00;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .login-modal.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            margin: 0 0 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .login-box label {
+            display: block;
+            margin-top: 12px;
+            color: #555;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #065fd4;
+            box-shadow: 0 0 4px rgba(6, 95, 212, 0.3);
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #065fd4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .login-box button:hover {
+            background: #043fa0;
+        }
+
+        .login-error {
+            color: #d32f2f;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Admin Panel */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3001;
+            overflow-y: auto;
+        }
+
+        .admin-modal.hidden {
+            display: none;
+        }
+
+        .admin-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 700px;
+            margin: 20px auto;
+        }
+
+        .admin-box h2 {
+            margin: 0 0 20px;
+            color: #333;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .admin-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+        }
+
+        .admin-tab.active {
+            color: #065fd4;
+            border-bottom-color: #065fd4;
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+        }
+
+        .user-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 150px;
+            gap: 10px;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .user-item-info {
+            display: grid;
+            gap: 4px;
+        }
+
+        .user-item-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-item-role {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .user-item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .user-item-actions button {
+            padding: 5px 10px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .edit-user-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .delete-user-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .close-admin {
+            float: right;
+            background: #999;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .close-admin:hover {
+            background: #666;
+        }
+
+        .admin-form {
+            display: grid;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .checkbox-item input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .sidebar-button-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        /* QS and QAQC submenu layering: panels slide out from behind the fixed sidebar */
+        .sidebar {
+            position: fixed;
+            z-index: 2600;
+            isolation: isolate;
+        }
+
+        #qsPanel,
+        #qaqcPanel {
+            z-index: 2400;
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: opacity 2s ease, transform 2s ease, visibility 0s linear 2s;
+        }
+
+        #qsPanel.is-open,
+        #qaqcPanel.is-open {
+            transform: translateX(0);
+            opacity: 1;
+            transition: opacity 2s ease, transform 2s ease;
+        }
+
+        /* Professional polished sidebar + compact subsystem styling */
+        .sidebar a,
+        .sidebar-settings-toggle,
+        .sidebar-link-button {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.90) 0%, rgba(105,205,255,0.95) 13%, rgba(0,103,255,1) 48%, rgba(0,33,145,1) 100%) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(208, 244, 255, 0.92) !important;
+            border-radius: 11px !important;
+            box-shadow:
+                inset 0 2px 2px rgba(255,255,255,0.95),
+                inset 0 -7px 12px rgba(0,14,92,0.62),
+                0 7px 14px rgba(0,41,135,0.38) !important;
+            text-shadow: 0 1px 2px rgba(0,10,60,0.88) !important;
+            letter-spacing: 0.01em;
+        }
+
+        .sidebar a::before,
+        .sidebar-settings-toggle::before,
+        .sidebar-link-button::before {
+            content: "";
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 5px;
+            height: 38%;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.18));
+            pointer-events: none;
+        }
+
+        .sidebar a:hover,
+        .sidebar-settings-toggle:hover,
+        .sidebar-link-button:hover {
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(145,221,255,1) 13%, rgba(0,128,255,1) 50%, rgba(0,45,170,1) 100%) !important;
+            transform: translateY(-1px);
+            box-shadow:
+                inset 0 2px 2px rgba(255,255,255,0.98),
+                inset 0 -7px 12px rgba(0,14,92,0.56),
+                0 10px 18px rgba(0,41,135,0.46) !important;
+        }
+
+        .sidebar-link-button {
+            padding: 10px 16px !important;
+            margin: 6px 8px !important;
+            min-height: 40px;
+        }
+
+        .qaqc-panel {
+            min-width: 124px !important;
+            max-width: 148px !important;
+            padding: 3px !important;
+            border-radius: 10px !important;
+            background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(236,240,247,0.94) 100%) !important;
+            box-shadow: 0 12px 22px rgba(8, 22, 53, 0.22) !important;
+        }
+
+        .qaqc-panel::before {
+            width: 0 !important;
+            opacity: 0 !important;
+        }
+
+        .qaqc-panel-title {
+            padding: 4px 6px 2px !important;
+            font-size: 0.72rem !important;
+            line-height: 1.1 !important;
+            letter-spacing: 0.03em !important;
+            color: #4b0000 !important;
+        }
+
+        .qaqc-panel-links {
+            gap: 2px !important;
+            padding: 1px 0 2px !important;
+        }
+
+        .qaqc-panel-links a {
+            position: relative;
+            overflow: hidden;
+            min-height: 28px;
+            padding: 5px 7px !important;
+            margin: 1px 0 !important;
+            border-radius: 8px !important;
+            color: #ffffff !important;
+            font-size: 0.76rem !important;
+            font-weight: 800 !important;
+            line-height: 1.05 !important;
+            letter-spacing: 0.01em;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,116,116,0.96) 15%, rgba(238,0,0,1) 48%, rgba(126,0,0,1) 100%) !important;
+            border: 1px solid rgba(255,202,202,0.90) !important;
+            box-shadow:
+                inset 0 2px 2px rgba(255,255,255,0.96),
+                inset 0 -6px 10px rgba(86,0,0,0.58),
+                0 5px 10px rgba(132,0,0,0.28) !important;
+            text-shadow: 0 1px 2px rgba(55,0,0,0.90) !important;
+        }
+
+        .qaqc-panel-links a::before {
+            content: "";
+            position: absolute;
+            left: 8%;
+            right: 8%;
+            top: 3px;
+            height: 36%;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.16));
+            pointer-events: none;
+        }
+
+        .qaqc-panel-links a:hover {
+            transform: translateX(2px) translateY(-1px) !important;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(255,142,142,1) 15%, rgba(255,10,10,1) 50%, rgba(151,0,0,1) 100%) !important;
+            box-shadow:
+                inset 0 2px 2px rgba(255,255,255,0.98),
+                inset 0 -6px 10px rgba(86,0,0,0.52),
+                0 7px 14px rgba(132,0,0,0.34) !important;
+        }
+
+        .qaqc-panel-links a.is-disabled {
+            opacity: 0.72;
+        }
+
+        @media (max-width: 900px) {
+            .qaqc-panel {
+                width: min(148px, calc(100vw - 80px)) !important;
+            }
+        }
+
+        /* Remove white shaped reflection overlays while keeping glossy polished color */
+        .sidebar a::before,
+        .sidebar-settings-toggle::before,
+        .sidebar-link-button::before,
+        .qaqc-panel-links a::before {
+            content: none !important;
+            display: none !important;
+        }
+
+        .sidebar a,
+        .sidebar-settings-toggle,
+        .sidebar-link-button {
+            background:
+                linear-gradient(180deg, #5fd7ff 0%, #0084ff 40%, #0036d8 72%, #001970 100%) !important;
+            box-shadow:
+                inset 0 1px 2px rgba(190,235,255,0.75),
+                inset 0 -7px 12px rgba(0,14,92,0.62),
+                0 7px 14px rgba(0,41,135,0.38) !important;
+        }
+
+        .sidebar a:hover,
+        .sidebar-settings-toggle:hover,
+        .sidebar-link-button:hover {
+            background:
+                linear-gradient(180deg, #82e2ff 0%, #0095ff 40%, #0048ee 72%, #00228f 100%) !important;
+        }
+
+        .qaqc-panel-links a {
+            background:
+                linear-gradient(180deg, #ff6868 0%, #ff1111 42%, #c40000 72%, #740000 100%) !important;
+            box-shadow:
+                inset 0 1px 2px rgba(255,190,190,0.72),
+                inset 0 -6px 10px rgba(86,0,0,0.58),
+                0 5px 10px rgba(132,0,0,0.28) !important;
+        }
+
+        .qaqc-panel-links a:hover {
+            background:
+                linear-gradient(180deg, #ff8585 0%, #ff2424 42%, #de0000 72%, #8f0000 100%) !important;
+        }
+
+        /* Shiny vivid metallic sidebar shell */
+        .sidebar {
+            background:
+                linear-gradient(115deg,
+                    rgba(255,255,255,0.72) 0%,
+                    rgba(91,118,150,0.88) 10%,
+                    rgba(230,241,255,0.80) 18%,
+                    rgba(29,54,88,0.96) 31%,
+                    rgba(153,178,210,0.92) 45%,
+                    rgba(18,33,58,0.98) 60%,
+                    rgba(196,216,240,0.88) 74%,
+                    rgba(48,70,102,0.96) 88%,
+                    rgba(238,247,255,0.72) 100%),
+                linear-gradient(180deg,
+                    #eff8ff 0%,
+                    #8aa7c9 20%,
+                    #344b70 48%,
+                    #d7e6f7 52%,
+                    #263b5f 78%,
+                    #101d35 100%) !important;
+            border: 1px solid rgba(232,246,255,0.85) !important;
+            border-radius: 12px !important;
+            box-shadow:
+                inset 2px 2px 2px rgba(255,255,255,0.92),
+                inset -3px -4px 9px rgba(4,16,36,0.58),
+                inset 0 14px 22px rgba(255,255,255,0.20),
+                inset 0 -16px 24px rgba(1,9,28,0.38),
+                9px 0 20px rgba(6,18,38,0.34) !important;
+            background-size: 220% 100%, 100% 100%;
+        }
+
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background:
+                linear-gradient(90deg,
+                    rgba(255,255,255,0.45) 0%,
+                    rgba(255,255,255,0.08) 12%,
+                    rgba(255,255,255,0.00) 34%,
+                    rgba(255,255,255,0.24) 52%,
+                    rgba(255,255,255,0.00) 72%,
+                    rgba(255,255,255,0.18) 100%),
+                linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.02) 34%, rgba(0,0,0,0.16) 100%);
+            mix-blend-mode: screen;
+        }
+
+/* ===== HOLLYWOOD LEVEL TEXT ===== */
+.hollywood {
+    position: relative;
+    font-weight: inherit;
+    font-size: inherit;
+    letter-spacing: inherit;
+
+    background: linear-gradient(
+        to bottom,
+        #ffffff 0%,
+        #b3d9ff 8%,
+        #4da6ff 30%,
+        #0066cc 60%,
+        #001a33 100%
+    );
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,0.7),
+        0 6px 14px rgba(0,0,0,0.6),
+        0 12px 30px rgba(0,0,0,0.5),
+        0 0 25px rgba(0,120,255,0.9),
+        0 0 60px rgba(0,120,255,0.6);
+
+    filter: contrast(1.4) saturate(1.6);
+}
+
+/* cinematic sweep */
+.hollywood::before {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,1) 45%,
+        transparent 70%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hollywoodSweep 4s linear infinite;
+    mix-blend-mode: screen;
+}
+
+/* glow aura */
+.hollywood::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    filter: blur(10px);
+    opacity: 0.6;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,120,255,0.8),
+        rgba(0,60,120,0.3)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes hollywoodSweep {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ===== INTERACTIVE CINEMATIC ===== */
+.hollywood {
+    transition: transform 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* mouse reactive glow */
+body:hover .hollywood {
+    text-shadow:
+        0 2px 6px rgba(0,0,0,0.7),
+        0 10px 25px rgba(0,0,0,0.6),
+        0 0 30px rgba(0,120,255,0.9),
+        0 0 80px rgba(255,0,0,0.7);
+}
+
+/* per-line colors */
+.section p:nth-child(2) { color: #4da6ff; }
+.section p:nth-child(3) { color: #b3d9ff; }
+.section p:nth-child(4) { color: #4da6ff; }
+
+/* ULTRA STYLE MAIN TITLE */
+.cinematic-main {
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    transform: perspective(500px) rotateX(10deg);
+    text-shadow:
+        0 5px 10px rgba(0,0,0,0.8),
+        0 15px 35px rgba(0,0,0,0.7),
+        0 0 40px rgba(255,0,0,1),
+        0 0 80px rgba(0,120,255,0.9);
+}
+
+/* hover animation */
+.cinematic-main:hover {
+    transform: perspective(500px) rotateX(0deg) scale(1.05);
+}
+
+/* ===== GLASS + NEON BLUE UI (TITLE ENHANCED) ===== */
+.cinematic-main {
+    transform: perspective(600px) rotateX(10deg) scaleY(1.2); /* +20% height */
+    backdrop-filter: blur(6px) saturate(140%);
+    text-shadow:
+        0 4px 10px rgba(0,0,0,0.8),
+        0 12px 30px rgba(0,0,0,0.7),
+        0 0 20px rgba(0,150,255,1),
+        0 0 60px rgba(0,150,255,0.9),
+        0 0 120px rgba(0,150,255,0.6);
+}
+
+/* neon glow layer */
+.cinematic-main::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    filter: blur(12px);
+    opacity: 0.7;
+    background: linear-gradient(
+        to bottom,
+        rgba(180,220,255,0.9),
+        rgba(0,120,255,0.6),
+        rgba(0,40,120,0.4)
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* glass shine sweep */
+.cinematic-main::before {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 20%,
+        rgba(255,255,255,0.95) 45%,
+        transparent 70%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glassSweep 3.5s linear infinite;
+    mix-blend-mode: screen;
+}
+
+@keyframes glassSweep {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+</style>
+
+</head>
+
+<body>
+    <div class="system-watermark" aria-hidden="true">
+        <div class="sys3d" aria-hidden="true">
+            <!-- Simplified static watermark: single front face, no rotation -->
+            <div class="face front" style="position:relative;"><img src="syslogo.png" alt=""></div>
+        </div>
+        <div id="watermarkUsername" class="watermark-username" aria-hidden="true"></div>
+    </div>
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <h2>LOGIN</h2>
+            <label for="loginUsername">Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter username">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password">
+            <button id="loginBtn">Login</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+    </div>
+
+    <!-- User Info Panel -->
+    <div id="userInfoPanel" class="user-info-panel hidden">
+        <div class="user-name" id="displayUsername"></div>
+        <div class="user-role" id="displayUserRole"></div>
+        <button id="adminPanelBtn" class="admin-btn hidden">ADMIN</button>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminModal" class="admin-modal hidden">
+        <div class="admin-box">
+            <button class="close-admin" id="closeAdminBtn">Close</button>
+            <h2 style="clear: both;">Admin Control Panel</h2>
+
+            <div class="admin-tabs">
+                <button class="admin-tab active" data-tab="users">Manage Users</button>
+                <button class="admin-tab" data-tab="permissions">User Permissions</button>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="admin-content active" id="usersTab">
+                <h3>Users</h3>
+                <div class="admin-form">
+                    <h4>Add New User</h4>
+                    <div class="form-row">
+                        <input type="text" id="newUsername" placeholder="Username" style="width:100%;">
+                        <input type="password" id="newPassword" placeholder="Password" style="width:100%;">
+                    </div>
+                    <div class="form-row">
+                        <select id="newUserRole" style="width:100%;">
+                            <option value="user">User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button id="addUserBtn" style="background: #4caf50; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Add User</button>
+                    </div>
+                    <div class="form-row">
+                        <button id="exportShareHtmlBtn" type="button" style="background:#673ab7; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Export Share HTML</button>
+                        <button id="exportUsersBtn" type="button" style="background:#607d8b; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">Export Users JSON</button>
+                    </div>
+                    <small style="color:#555;">Use Export Share HTML after adding users, then share the downloaded HTML so the new users are included on other computers.</small>
+                </div>
+                <h4 style="margin-top: 20px;">Existing Users</h4>
+                <div id="usersList"></div>
+            </div>
+
+            <!-- Permissions Tab -->
+            <div class="admin-content" id="permissionsTab">
+                <h3>Set User Permissions</h3>
+                <div class="admin-form">
+                    <label for="permissionUserSelect">Select User</label>
+                    <select id="permissionUserSelect" style="width:100%;">
+                        <option value="">-- Select User --</option>
+                    </select>
+
+                    <h4 style="margin-top: 15px;">Sidebar Access Permissions</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="personnel-eval"> PERSONNEL EVALUATION
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="contracts"> CONTRACTS & SPECIFICATIONS
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="qs"> QS SYSTEM
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="qaqc"> QAQC SYSTEM
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="inventory"> CONSTRUCTION INVENTORY
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="project-progress"> PROJECT PROGRESS AND MONITORING
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="management"> MANAGEMENT REVIEW
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" value="settings"> SETTINGS / EDIT CONTROLS
+                        </label>
+                    </div>
+                    <button id="savePermissionsBtn" style="background: #065fd4; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Save Permissions</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="toggleSidebar">☰ MENU</button>
+    <div class="sidebar">
+        <a href="./forms/PME.html" id="sb-personnel-eval" class="sidebar-link">HUMAN RESOURCES</a>
+        <a href="./forms/designbuildcostproposal.html" id="sb-contracts" class="sidebar-link">CONTRACTS & SPECIFICATIONS</a>
+        <div class="qaqc-menu" id="sb-qs-container">
+            <button type="button" id="sb-qs" class="sidebar-link-button">QS SYSTEM</button>
+            <div id="qsPanel" class="qaqc-panel" data-access="qs" aria-hidden="true">
+                <p class="qaqc-panel-title">QS FILES</p>
+                <div class="qaqc-panel-links">
+                    <a href="./qs/estimation.html" target="_self">PROJECT ESTIMATION</a>
+                    <a href="./qs/pipeline.html" target="_self">PROJECT PIPELINE</a>
+                </div>
+            </div>
+        </div>
+        <div class="qaqc-menu" id="sb-qaqc-container">
+            <button type="button" id="sb-qaqc" class="sidebar-link-button">QAQC SYSTEM</button>
+            <div id="qaqcPanel" class="qaqc-panel" data-access="qaqc" aria-hidden="true">
+                <p class="qaqc-panel-title">QAQC FILES</p>
+                <div class="qaqc-panel-links">
+                    <a href="./QAQCFILES/qitp.html" target="_self">PROJECT QITP</a>
+                    <a href="./QAQCFILES/StandardCodes.html" target="_self" class="is-disabled">STANDARD CODES</a>
+                </div>
+            </div>
+        </div>
+        <a href="./INVENTORY_FILES/Construction_Inventory.html" id="sb-inventory" class="sidebar-link">CONSTRUCTION INVENTORY</a>
+        <a href="./projmonitoring/projmon.html" id="sb-project-progress" class="sidebar-link">PROJECT PROGRESS AND MONITORING</a>
+        <a href="./ManagementReview.html" id="sb-management" class="sidebar-link">MANAGEMENT REVIEW</a>
+
+        <div class="sidebar-settings">
+            <button type="button" class="sidebar-settings-toggle">SETTINGS</button>
+            <div class="sidebar-submenu" id="desktopSettingsPanel">
+                <button type="button" data-edit-target="current-form">Edit This Page</button>
+                <button type="button" data-edit-target="script">Edit Script</button>
+                <button type="button" data-edit-target="styles">Edit Styles</button>
+            </div>
+        </div>
+                </div>
+
+        <!-- Main Content Area -->
+        <div class="main">
+        <!-- removed duplicate watermark here; single centered watermark is at top of body -->
+
+        <div class="logo fade-in" style="margin-top: 10px;">
+            <img class="logo-dqs" src="dqs.png" alt="DQS Logo">
+            <img src="fclname.png?v=20260406" alt="FCL Name Logo">
+            <img src="iso.png.png" alt="ISO Logo">
+        </div>
+
+        <div class="intro fade-up">
+            <img class="intro-logo" src="syslogo1.png" alt="System Logo">
+        </div>
+
+        <div class="section">
+            <span class="title reveal-line hollywood cinematic-main" data-text="FCLDC INTEGRATED SYSTEM">FCLDC INTEGRATED SYSTEM</span>
+
+            <p class="hollywood" data-text="“Professional project controls,”">“Professional project controls,”</p>
+            <p class="hollywood" data-text="“quality, and”">“quality, and”</p>
+	    <p class="hollywood" data-text="“personnel dashboard.”">“personnel dashboard.”</p>
+
+        </div>
+
+        <div class="section">
+            <span class="title reveal-line hollywood" data-text="FULL MANAGEMENT CONTROL">FULL MANAGEMENT CONTROL</span>
+
+            <p class="hollywood" data-text="“Access evaluation forms, QS files, QAQC records.”">“Access evaluation forms, QS files, QAQC records.”</p>
+            <p class="hollywood" data-text="“construction inventory, project monitoring,”">“construction inventory, project monitoring,”</p>
+            <p class="hollywood" data-text="“and management review in one clean workspace.”">“and management review in one clean workspace.”</p>
+        </div>
+
+        <p class="closing reveal-line">
+            “© 2026 FCLDC Integrated Management Solutions. All rights reserved.”
+        </p>
+
+    </div>
+
+    <div class="corner-logo">
+        <img src="vkbconnectpro.png" alt="VKB Connect Pro Logo">
+    </div>
+
+<script id="fcldcAuthSeed" type="application/json">{"users":[{"username":"admin","password":"admin123","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"user","password":"user123","role":"user","permissions":[]}]}</script>
+
+    <script>
+        // ===== AUTHENTICATION SYSTEM =====
+        const AuthSystem = {
+            storageKey: 'fcldc_auth_system',
+            currentUser: null,
+            savedUserKey: 'fcldc_current_user',
+
+            // Initialize the system
+            init() {
+                this.loadSystemState();
+                this.checkLoginStatus();
+                this.setupEventListeners();
+                this.applyPermissions();
+            },
+
+            // Load or create system state
+            loadSystemState() {
+                let state = this.readStorage(this.storageKey) || this.readSeedState();
+                if (!state) {
+                    state = {
+                        users: [
+                            { username: 'admin', password: 'admin123', role: 'admin', permissions: ['personnel-eval', 'contracts', 'qs', 'qaqc', 'inventory', 'project-progress', 'management', 'settings'] },
+                            { username: 'user', password: 'user123', role: 'user', permissions: [] }
+                        ]
+                    };
+                    this.writeStorage(this.storageKey, state);
+                }
+                this.normalizeState(state);
+                this.writeStorage(this.storageKey, state);
+                this.state = state;
+            },
+
+            readSeedState() {
+                const seed = document.getElementById('fcldcAuthSeed');
+                if (!seed) return null;
+                try {
+                    const parsed = JSON.parse(seed.textContent || '{}');
+                    return parsed && Array.isArray(parsed.users) ? parsed : null;
+                } catch (e) {
+                    console.warn('Invalid embedded auth seed.', e);
+                    return null;
+                }
+            },
+
+            normalizeState(state) {
+                const validPermissions = ['personnel-eval', 'contracts', 'qs', 'qaqc', 'inventory', 'project-progress', 'management', 'settings'];
+                if (!state || !Array.isArray(state.users)) state.users = [];
+                state.users.forEach(user => {
+                    if (!Array.isArray(user.permissions)) user.permissions = [];
+                    user.permissions = user.permissions.filter((value, index, arr) => validPermissions.includes(value) && arr.indexOf(value) === index);
+                    if (user.role === 'admin') {
+                        validPermissions.forEach(permission => {
+                            if (!user.permissions.includes(permission)) user.permissions.push(permission);
+                        });
+                    }
+                });
+            },
+
+            // Read from localStorage or fallback cookie
+            readStorage(key) {
+                let raw = null;
+                try {
+                    raw = window.localStorage ? window.localStorage.getItem(key) : null;
+                } catch (e) {
+                    raw = null;
+                }
+                if (raw) {
+                    try {
+                        return JSON.parse(raw);
+                    } catch (e) {
+                        return null;
+                    }
+                }
+                const cookie = this.readCookie(key);
+                if (cookie) {
+                    try {
+                        return JSON.parse(cookie);
+                    } catch (e) {
+                        return null;
+                    }
+                }
+                return null;
+            },
+
+            // Write to localStorage and cookie fallback
+            writeStorage(key, value) {
+                const raw = JSON.stringify(value);
+                try {
+                    if (window.localStorage) {
+                        window.localStorage.setItem(key, raw);
+                    }
+                } catch (e) {
+                    // ignore storage errors
+                }
+                this.writeCookie(key, raw, 3650);
+            },
+
+            // Remove saved data from both storage types
+            removeStorage(key) {
+                try {
+                    if (window.localStorage) {
+                        window.localStorage.removeItem(key);
+                    }
+                } catch (e) {
+                    // ignore
+                }
+                this.eraseCookie(key);
+            },
+
+            writeCookie(name, value, days) {
+                try {
+                    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+                    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+                } catch (e) {
+                    // ignore
+                }
+            },
+
+            readCookie(name) {
+                try {
+                    const cookie = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+                    return cookie ? decodeURIComponent(cookie.split('=')[1]) : null;
+                } catch (e) {
+                    return null;
+                }
+            },
+
+            eraseCookie(name) {
+                try {
+                    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+                } catch (e) {
+                    // ignore
+                }
+            },
+
+            // Check if user is logged in
+            checkLoginStatus() {
+                const loggedInUser = this.readStorage(this.savedUserKey);
+                if (loggedInUser) {
+                    const matchedUser = this.state.users.find(u => u.username === loggedInUser.username);
+                    if (matchedUser) {
+                        this.currentUser = { username: matchedUser.username, role: matchedUser.role, permissions: matchedUser.permissions };
+                        this.showUserPanel();
+                        this.applyPermissions();
+                        return;
+                    }
+                }
+                this.removeStorage(this.savedUserKey);
+                this.showLoginModal();
+            },
+
+            // Show login modal
+            showLoginModal() {
+                document.getElementById('loginModal').classList.remove('hidden');
+                document.getElementById('userInfoPanel').classList.add('hidden');
+            },
+
+            // Show user info panel
+            showUserPanel() {
+                document.getElementById('loginModal').classList.add('hidden');
+                document.getElementById('userInfoPanel').classList.remove('hidden');
+                document.getElementById('displayUsername').textContent = this.currentUser.username;
+                document.getElementById('displayUserRole').textContent = this.currentUser.role.toUpperCase();
+                // also show username on the laptop watermark background
+                const wm = document.getElementById('watermarkUsername');
+                if (wm) wm.textContent = this.currentUser.username;
+
+                if (this.currentUser.role === 'admin') {
+                    document.getElementById('adminPanelBtn').classList.remove('hidden');
+                } else {
+                    document.getElementById('adminPanelBtn').classList.add('hidden');
+                }
+
+                this.refreshAdminPanel();
+            },
+
+            // Login user
+            login(username, password) {
+                const user = this.state.users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    this.currentUser = { username: user.username, role: user.role, permissions: user.permissions };
+                    this.writeStorage(this.savedUserKey, this.currentUser);
+                    document.getElementById('loginError').textContent = '';
+                    this.showUserPanel();
+                    this.applyPermissions();
+                    return true;
+                } else {
+                    document.getElementById('loginError').textContent = 'Invalid username or password';
+                    return false;
+                }
+            },
+
+            // Logout user
+            logout() {
+                this.removeStorage(this.savedUserKey);
+                this.currentUser = null;
+                // clear watermark username on logout
+                const wm = document.getElementById('watermarkUsername');
+                if (wm) wm.textContent = '';
+                document.getElementById('userInfoPanel').classList.add('hidden');
+                document.getElementById('adminModal').classList.add('hidden');
+                this.showLoginModal();
+            },
+
+            // Apply permissions to sidebar
+            applyPermissions() {
+                const allButtons = ['personnel-eval', 'contracts', 'qs', 'qaqc', 'inventory', 'project-progress', 'management', 'settings'];
+                const userPermissions = this.currentUser?.permissions || [];
+
+                allButtons.forEach(button => {
+                    const element = document.getElementById(`sb-${button}`);
+                    const container = document.getElementById(`sb-${button}-container`) || element;
+
+                    if (element) {
+                        if (userPermissions.includes(button)) {
+                            element.classList.remove('sidebar-button-disabled');
+                            element.style.opacity = '1';
+                            element.style.pointerEvents = 'auto';
+                        } else {
+                            element.classList.add('sidebar-button-disabled');
+                            element.style.opacity = '0.5';
+                            element.style.pointerEvents = 'none';
+                        }
+                    }
+                });
+            },
+
+            // Add new user
+            addUser(username, password, role) {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can add users.');
+                    return false;
+                }
+                if (this.state.users.find(u => u.username === username)) {
+                    alert('Username already exists');
+                    return false;
+                }
+                this.state.users.push({ username, password, role, permissions: role === 'admin' ? ['personnel-eval', 'contracts', 'qs', 'qaqc', 'inventory', 'project-progress', 'management', 'settings'] : [] });
+                this.saveState();
+                this.refreshAdminPanel();
+                return true;
+            },
+
+            // Delete user
+            deleteUser(username) {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can delete users.');
+                    return false;
+                }
+                if (username === 'admin' || this.state.users.length === 1) {
+                    alert('Cannot delete this user');
+                    return false;
+                }
+                this.state.users = this.state.users.filter(u => u.username !== username);
+                this.saveState();
+                this.refreshAdminPanel();
+                return true;
+            },
+
+            // Update user permissions
+            updateUserPermissions(username, permissions) {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can update permissions.');
+                    return false;
+                }
+                const user = this.state.users.find(u => u.username === username);
+                if (user) {
+                    user.permissions = permissions;
+                    this.saveState();
+                    if (this.currentUser.username === username) {
+                        this.currentUser.permissions = permissions;
+                        this.applyPermissions();
+                    }
+                    return true;
+                }
+                return false;
+            },
+
+            // Refresh admin panel UI
+            refreshAdminPanel() {
+                // Update users list
+                const usersList = document.getElementById('usersList');
+                if (usersList) {
+                    usersList.innerHTML = this.state.users.map(user => `
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name">${user.username}</div>
+                                <div class="user-item-role">Role: ${user.role}</div>
+                            </div>
+                            <div>Permissions: ${user.permissions.length}/8</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('${user.username}')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('${user.username}')">Delete</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+
+                // Update permissions dropdown
+                const permissionUserSelect = document.getElementById('permissionUserSelect');
+                if (permissionUserSelect) {
+                    permissionUserSelect.innerHTML = '<option value="">-- Select User --</option>' +
+                        this.state.users.map(user => `<option value="${user.username}">${user.username}</option>`).join('');
+                }
+            },
+
+            // Edit user permissions
+            editUserPermissions(username) {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can edit permissions.');
+                    return;
+                }
+                document.getElementById('permissionUserSelect').value = username;
+                this.loadPermissionCheckboxes(username);
+                document.querySelector('[data-tab="permissions"]').click();
+            },
+
+            // Load permission checkboxes for a user
+            loadPermissionCheckboxes(username) {
+                const user = this.state.users.find(u => u.username === username);
+                if (user) {
+                    document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+                        checkbox.checked = user.permissions.includes(checkbox.value);
+                    });
+                }
+            },
+
+            // Save permissions for selected user
+            savePermissions() {
+                const username = document.getElementById('permissionUserSelect').value;
+                if (!username) {
+                    alert('Please select a user');
+                    return;
+                }
+
+                const permissions = Array.from(document.querySelectorAll('.checkbox-item input:checked'))
+                    .map(cb => cb.value);
+
+                if (this.updateUserPermissions(username, permissions)) {
+                    alert('Permissions updated successfully');
+                } else {
+                    alert('Error updating permissions');
+                }
+            },
+
+            // Confirm delete user
+            deleteUserConfirm(username) {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can delete users.');
+                    return;
+                }
+                if (confirm(`Are you sure you want to delete user "${username}"?`)) {
+                    this.deleteUser(username);
+                    alert('User deleted successfully');
+                }
+            },
+
+            // Save system state
+            saveState() {
+                this.writeStorage(this.storageKey, this.state);
+            },
+
+            downloadTextFile(filename, content, type = 'text/plain') {
+                const blob = new Blob([content], { type });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            },
+
+            exportUsersJson() {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can export users.');
+                    return;
+                }
+                this.downloadTextFile('fcldc-users.json', JSON.stringify(this.state, null, 2), 'application/json');
+            },
+
+            exportShareHtml() {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can export share HTML.');
+                    return;
+                }
+
+                const clone = document.documentElement.cloneNode(true);
+                const seed = clone.querySelector('#fcldcAuthSeed');
+                if (seed) {
+                    seed.textContent = JSON.stringify(this.state);
+                }
+                clone.querySelector('#loginModal')?.classList.remove('hidden');
+                clone.querySelector('#userInfoPanel')?.classList.add('hidden');
+                clone.querySelector('#adminModal')?.classList.add('hidden');
+                const wm = clone.querySelector('#watermarkUsername');
+                if (wm) wm.textContent = '';
+
+                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
+            },
+
+            // Setup event listeners
+            setupEventListeners() {
+                // Login button
+                document.getElementById('loginBtn').addEventListener('click', () => {
+                    const username = document.getElementById('loginUsername').value;
+                    const password = document.getElementById('loginPassword').value;
+                    this.login(username, password);
+                });
+
+                // Logout button
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    this.logout();
+                });
+
+                // Admin panel button
+                document.getElementById('adminPanelBtn').addEventListener('click', () => {
+                    if (this.currentUser && this.currentUser.role === 'admin') {
+                        document.getElementById('adminModal').classList.remove('hidden');
+                    } else {
+                        alert('Access denied. Only administrators can access this panel.');
+                    }
+                });
+
+                // Close admin panel
+                document.getElementById('closeAdminBtn').addEventListener('click', () => {
+                    document.getElementById('adminModal').classList.add('hidden');
+                });
+
+                // Add user button
+                document.getElementById('addUserBtn').addEventListener('click', () => {
+                    const username = document.getElementById('newUsername').value;
+                    const password = document.getElementById('newPassword').value;
+                    const role = document.getElementById('newUserRole').value;
+
+                    if (!username || !password) {
+                        alert('Please enter username and password');
+                        return;
+                    }
+
+                    if (this.addUser(username, password, role)) {
+                        document.getElementById('newUsername').value = '';
+                        document.getElementById('newPassword').value = '';
+                        alert('User added successfully');
+                    }
+                });
+
+                // Save permissions button
+                document.getElementById('savePermissionsBtn').addEventListener('click', () => {
+                    this.savePermissions();
+                });
+
+                // Export buttons for sharing the updated user database
+                document.getElementById('exportShareHtmlBtn')?.addEventListener('click', () => {
+                    this.exportShareHtml();
+                });
+
+                document.getElementById('exportUsersBtn')?.addEventListener('click', () => {
+                    this.exportUsersJson();
+                });
+
+                // Admin tabs
+                document.querySelectorAll('.admin-tab').forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                        document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+                        tab.classList.add('active');
+                        document.getElementById(tab.dataset.tab + 'Tab').classList.add('active');
+                    });
+                });
+
+                // Permission user select
+                document.getElementById('permissionUserSelect').addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        this.loadPermissionCheckboxes(e.target.value);
+                    }
+                });
+
+                // Enter key in login form
+                document.getElementById('loginUsername').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') document.getElementById('loginPassword').focus();
+                });
+
+                document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') document.getElementById('loginBtn').click();
+                });
+            }
+        };
+
+        // Original sidebar functionality
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize auth system
+            AuthSystem.init();
+
+            const intro = document.querySelector(".intro");
+
+            function setupSidebarSubSystem(toggleId, panelId) {
+                const toggle = document.getElementById(toggleId);
+                const panel = document.getElementById(panelId);
+
+                if (!(toggle instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
+
+                if (panel.parentElement !== document.body) {
+                    document.body.appendChild(panel);
+                }
+
+                function closePanel() {
+                    panel.classList.remove("is-open");
+                    panel.setAttribute("aria-hidden", "true");
+                }
+
+                function positionPanel() {
+                    const toggleRect = toggle.getBoundingClientRect();
+                    const sidebar = document.querySelector(".sidebar");
+                    const sidebarRect = sidebar instanceof HTMLElement ? sidebar.getBoundingClientRect() : toggleRect;
+                    const gap = 0;
+                    const mobile = window.innerWidth <= 900;
+                    const panelWidth = mobile ? Math.min(165, window.innerWidth - 80) : 165;
+
+                    let left = mobile ? toggleRect.left : sidebarRect.right + gap;
+                    let top = mobile ? toggleRect.bottom + 8 : toggleRect.top;
+
+                    if (left + panelWidth > window.innerWidth - 16) {
+                        left = Math.max(16, window.innerWidth - panelWidth - 16);
+                    }
+
+                    const maxTop = Math.max(16, window.innerHeight - panel.offsetHeight - 16);
+                    top = Math.min(top, maxTop);
+
+                    panel.style.left = left + "px";
+                    panel.style.top = top + "px";
+                }
+
+                toggle.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                    const willOpen = !panel.classList.contains("is-open");
+
+                    document.querySelectorAll(".qaqc-panel.is-open").forEach(openPanel => {
+                        if (openPanel !== panel) {
+                            openPanel.classList.remove("is-open");
+                            openPanel.setAttribute("aria-hidden", "true");
+                        }
+                    });
+
+                    if (willOpen) positionPanel();
+
+                    const isOpen = panel.classList.toggle("is-open");
+                    panel.setAttribute("aria-hidden", String(!isOpen));
+                });
+
+                panel.addEventListener("click", function (event) {
+                    event.stopPropagation();
+                });
+
+                document.addEventListener("click", closePanel);
+
+                window.addEventListener("resize", function () {
+                    if (panel.classList.contains("is-open")) positionPanel();
+                });
+            }
+
+            setupSidebarSubSystem("sb-qs", "qsPanel");
+            setupSidebarSubSystem("sb-qaqc", "qaqcPanel");
+
+            if (!(intro instanceof HTMLElement)) return;
+
+            const introBlinkDurationMs = 2400;
+            const sequentialLines = Array.from(document.querySelectorAll(".section .title, .section p, .closing"));
+            const revealDelayMs = 2000;
+            intro.classList.add("is-blinking");
+
+            window.setTimeout(function () {
+                intro.classList.remove("is-blinking");
+            }, introBlinkDurationMs);
+
+            sequentialLines.forEach(function (line, index) {
+                window.setTimeout(function () {
+                    line.classList.add("is-visible");
+                }, introBlinkDurationMs + (index * revealDelayMs));
+            });
+        });
+    </script>
+
+        <script>
+        // Improve sidebar link navigation: try multiple path variants when a link fails
+        (function() {
+            function normalizeCandidates(href) {
+                const candidates = new Set();
+                if (!href) return [];
+                const raw = href;
+                candidates.add(raw);
+                try { candidates.add(decodeURIComponent(raw)); } catch(e){}
+                try { candidates.add(encodeURI(raw)); } catch(e){}
+                // swap %20 and spaces
+                candidates.add(raw.replace(/%20/g, ' '));
+                candidates.add(raw.replace(/ /g, '%20'));
+                // with and without leading ./
+                if (raw.startsWith('./')) {
+                    candidates.add(raw.replace(/^\.\//, ''));
+                } else {
+                    candidates.add('./' + raw);
+                }
+                // absolute path relative to current location
+                try {
+                    const base = window.location.pathname.replace(/[^\/]*$/, '');
+                    candidates.add(base + raw);
+                    candidates.add(base + raw.replace(/%20/g, ' '));
+                } catch(e){}
+                return Array.from(candidates);
+            }
+
+            async function tryNavigateSequentially(candidates) {
+                for (const c of candidates) {
+                    try {
+                        // attempt navigation; if it succeeds the page will unload and loop stops
+                        window.location.href = c;
+                        // wait briefly in case navigation failed (stays on same page)
+                        await new Promise(r => setTimeout(r, 400));
+                    } catch (e) {
+                        // ignore and continue
+                    }
+                }
+                // if none worked, show helpful message
+                alert('The requested file was not found via tried paths. Try opening the Records folder manually or contact support.');
+            }
+
+            document.addEventListener('click', function (e) {
+                const link = e.target.closest && e.target.closest('.sidebar-link');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href) return;
+                // let links that open in new window behave normally
+                if (link.target && link.target !== '' && link.target !== '_self') return;
+                e.preventDefault();
+                const candidates = normalizeCandidates(href);
+                tryNavigateSequentially(candidates);
+            }, true);
+        })();
+        </script>
+
+</body>
+</html>

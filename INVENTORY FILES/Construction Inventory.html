@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construction Inventory Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --bg:#0b1020;
+  --panel:#121a31;
+  --panel-2:#182341;
+  --line:#2a355c;
+  --text:#ebf0ff;
+  --muted:#a7b0cf;
+  --accent:#6ea8fe;
+  --accent-2:#7bf1c8;
+  --danger:#ff7b91;
+  --warn:#ffd166;
+  --shadow:0 14px 28px rgba(0,0,0,.24);
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Inter,system-ui,Arial,sans-serif;background:
+radial-gradient(circle at top right, rgba(110,168,254,.18), transparent 20%),
+radial-gradient(circle at left bottom, rgba(123,241,200,.12), transparent 18%),
+var(--bg);color:var(--text);font-size:13px;line-height:1.25}
+body{min-height:100vh}
+button,input,select,textarea{font:inherit}
+.app-shell{display:grid;grid-template-columns:190px 1fr;min-height:100vh}
+.sidebar{padding:12px 8px;border-right:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);backdrop-filter:blur(16px)}
+.brand{display:flex;gap:8px;align-items:center;margin-bottom:12px}
+.brand-mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;font-weight:800;color:#08111f;box-shadow:var(--shadow);font-size:13px}
+.brand h1{font-size:13px;margin:0;line-height:1.05}
+.brand p{margin:1px 0 0;color:var(--muted);font-size:10px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav-btn,.primary-btn,.secondary-btn,.danger-btn,.upload-btn,.subtab-btn{
+  border:none;border-radius:10px;padding:7px 8px;cursor:pointer;transition:.2s ease;font-size:11px;line-height:1.15;
+}
+.nav-btn{background:transparent;color:var(--text);text-align:left}
+.nav-btn:hover,.nav-btn.active{background:rgba(110,168,254,.13);color:#fff}
+.primary-btn{background:linear-gradient(135deg,var(--accent),#90b8ff);color:#08111f;font-weight:700}
+.primary-btn:hover{transform:translateY(-1px)}
+.secondary-btn,.upload-btn,.subtab-btn{background:#22325f;color:#fff}
+.danger-btn{background:rgba(255,123,145,.18);color:#ffd5dd}
+.sidebar-footer{display:grid;gap:6px;margin-top:12px}
+.upload-btn{display:flex;align-items:center;justify-content:center;text-align:center;padding:7px 8px}
+.main-content{padding:14px}
+.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
+.topbar h2{margin:0 0 4px;font-size:22px;line-height:1.1}
+.topbar p{margin:0;color:var(--muted);font-size:11px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+input[type="search"]{width:280px;max-width:44vw}
+input,select,textarea{width:100%;background:#0f1730;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:9px;outline:none;font-size:12px;line-height:1.2}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.stat-card,.panel{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stat-card{padding:12px}
+.stat-label{color:var(--muted);font-size:11px}
+.stat-value{font-size:22px;font-weight:800;margin:6px 0 4px;line-height:1}
+.stat-sub{font-size:10px;color:#c7d1f0}
+.panel-grid{display:grid;gap:10px;margin-bottom:10px}
+.panel-grid.two{grid-template-columns:1fr 1fr}
+.panel{padding:12px}
+.panel-header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.panel-header h3{margin:0;font-size:15px;line-height:1.1}
+.panel-note{color:var(--muted);font-size:11px}
+.panel-tools{display:flex;gap:6px;flex-wrap:wrap}
+.table-wrap{overflow:auto;border:1px solid rgba(255,255,255,.06);border-radius:10px}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:7px 9px;border-bottom:1px solid rgba(255,255,255,.06);text-align:left;font-size:11px;line-height:1.15;white-space:nowrap}
+thead th{position:sticky;top:0;background:#142042;color:#dfe7ff;z-index:1}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.single-column-form{grid-template-columns:1fr !important}
+.single-column-form button,.single-column-form textarea,.single-column-form input,.single-column-form select{grid-column:span 1 !important}
+.form-grid button,.form-grid textarea{grid-column:span 2}
+.summary-list{display:grid;gap:7px}
+.summary-item{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;background:#101932;border:1px solid rgba(255,255,255,.05);border-radius:10px}
+.summary-item .label{font-weight:600;font-size:12px;line-height:1.15}
+.summary-item .meta{color:var(--muted);font-size:10px;line-height:1.15}
+.subtabs,.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.filter-row label{font-size:11px;color:var(--muted)}
+.filter-row select{min-width:180px;max-width:240px}
+.subtab-btn.active{background:linear-gradient(135deg,var(--accent),#90b8ff);color:#08111f;font-weight:700}
+.note-box{display:grid;gap:8px;color:#dfe7ff;font-size:12px;line-height:1.25}
+.note-box p{margin:0}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:700;line-height:1.1}
+.badge.warn{background:rgba(255,209,102,.15);color:#ffe7a9}
+.badge.ok{background:rgba(123,241,200,.14);color:#baffec}
+.badge.info{background:rgba(110,168,254,.15);color:#cfe0ff}
+.category-bar-wrap{margin-top:6px}
+.category-bar-track{width:100%;height:8px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
+.category-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+.category-bar-meta{display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:10px;color:var(--muted)}
+.empty-state{padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:10px;color:var(--muted);text-align:center;font-size:11px}
+@media (max-width:1180px){
+  .stats-grid,.panel-grid.two,.form-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:980px){
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
+  .topbar{flex-direction:column;align-items:flex-start}
+  input[type="search"]{width:100%;max-width:none}
+  .stats-grid,.panel-grid.two,.form-grid{grid-template-columns:1fr}
+  .form-grid button,.form-grid textarea{grid-column:span 1}
+}
+  </style>
+</head>
+<body>
+  <script>
+    (function(){
+      try {
+        const target = '../INVENTORY_FILES/Construction_Inventory.html';
+        // If we're not already on the no-space copy, redirect there.
+        if (!location.pathname.endsWith('Construction_Inventory.html')) {
+          location.replace(target);
+        }
+      } catch (e) {
+        console.error('Redirect to no-space inventory failed', e);
+      }
+    })();
+  </script>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><img src="RA.ICO" alt="Inventory Logo" style="width:100%; height:100%; border-radius:8px;"></div>
+        <div>
+          <h1>FCLDC Inventory</h1>
+          <p>Warehouse & Site Control</p>
+        </div>
+      </div>
+
+      <nav class="nav" id="navTabs">
+        <a href="../index.html" class="nav-btn" style="text-decoration:none; display:flex; align-items:center; gap:6px;">🏠 HOME</a>
+        <button class="nav-btn active" data-tab="dashboard">Dashboard</button>
+        <button class="nav-btn" data-tab="masterlist">Masterlist</button>
+        <button class="nav-btn" data-tab="warehouse">Main Warehouse</button>
+        <button class="nav-btn" data-tab="sites">Project Sites</button>
+        <button class="nav-btn" data-tab="site-monitoring">Site Monitoring</button>
+        <button class="nav-btn" data-tab="client">Client Supplied</button>
+        <button class="nav-btn" data-tab="movements">Stock Movements</button>
+        <button class="nav-btn" data-tab="settings">Settings</button>
+        <button class="nav-btn" data-tab="records">Records</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="secondary-btn" id="exportDataBtn">Export JSON</button>
+        <button class="secondary-btn" id="exportToRecordsBtn">Save to Records</button>
+        <label class="upload-btn">
+          <span>Import JSON</span>
+          <input type="file" id="importDataInput" accept=".json" hidden />
+        </label>
+        <button class="danger-btn" id="resetBtn">Clear All Data</button>
+        <div style="font-size: 10px; color: #a7b0cf; margin-top: 8px; padding: 8px; border: 1px solid rgba(255,255,255,.06); border-radius: 8px;">
+          <strong>💾 Save Location:</strong><br/>
+          All exported files should be saved to:<br/>
+          <code style="word-break: break-all;">/INVENTORY FILES/RECORDS/</code>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p id="pageSubtitle">Overview of company-owned, site, and client-supplied inventory</p>
+        </div>
+        <div class="topbar-actions">
+          <input type="search" id="globalSearch" placeholder="Search item, code, category, site..." />
+          <button class="primary-btn" id="printBtn">Print</button>
+        </div>
+      </header>
+
+      <section class="tab-content active" id="tab-dashboard">
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Inventory by Category</h3>
+              <span class="panel-note">All tracked records</span>
+            </div>
+            <div id="categorySummary" class="summary-list"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Site Balances</h3>
+              <span class="panel-note">Current quantities per site</span>
+            </div>
+            <div id="siteSummary" class="summary-list"></div>
+          </section>
+        </div>
+
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Recent Movements</h3>
+              <span class="panel-note">Latest 10 transactions</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>From</th>
+                    <th>To</th>
+                  </tr>
+                </thead>
+                <tbody id="recentMovementsBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Low Stock Watch</h3>
+              <span class="panel-note">Warehouse minimums + site alerts based on remaining stock percentage</span>
+            </div>
+            <div id="lowStockList" class="summary-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-masterlist">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Masterlist Inventory</h3>
+            <div class="panel-tools">
+              <div class="filter-row" id="masterCategoryFilters"></div>
+              <button class="secondary-btn" onclick="InventoryApp.exportTableCSV('masterlistTable', 'masterlist_inventory.csv')">Export CSV</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="masterlistTable">
+              <thead>
+                <tr>
+                  <th>Item Code</th>
+                  <th>Item Name</th>
+                  <th>Category</th>
+                  <th>Unit</th>
+                  <th>Unit Cost</th>
+                  <th>Purchase Date</th>
+                  <th>Warranty</th>
+                  <th>Total Qty</th>
+                  <th>Total Value</th>
+                </tr>
+              </thead>
+              <tbody id="masterlistBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-warehouse">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Add or Update Warehouse Item</h3></div>
+            <form id="warehouseForm" class="form-grid">
+              <input name="code" placeholder="Item Code" required />
+              <input name="name" placeholder="Item Name" required />
+              <select name="category" required></select>
+              <input name="unit" placeholder="Unit (pcs, set, m, box)" required />
+              <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
+              <input name="purchaseDate" type="date" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="quantity" type="number" step="0.01" placeholder="Warehouse Qty" required />
+              <input name="minStock" type="number" step="0.01" placeholder="Min Stock Level" value="0" required />
+              <button class="primary-btn" type="submit">Save Warehouse Item</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Main Warehouse Inventory</h3>
+              <div class="filter-row" id="warehouseCategoryFilters"></div>
+            </div>
+            <div class="table-wrap">
+              <table id="warehouseTable">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Min</th>
+                    <th>Purchase Date</th>
+                    <th>Warranty</th>
+                  </tr>
+                </thead>
+                <tbody id="warehouseBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-sites">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Project Site Receipt / Direct Delivery</h3></div>
+            <form id="siteReceiptForm" class="form-grid">
+              <select name="site" required></select>
+              <select name="siteAction" required>
+                <option value="active_use">Active Use Area</option>
+                <option value="storage_area">Site Storage Area</option>
+                <option value="staging_area">Staging Area</option>
+                <option value="borrowed_tools">Borrowed Tools</option>
+              </select>
+              <input name="code" placeholder="Item Code" required />
+              <input name="name" placeholder="Item Name" required />
+              <select name="category" required></select>
+              <input name="unit" placeholder="Unit" required />
+              <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
+              <input name="purchaseDate" type="date" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="quantity" type="number" step="0.01" placeholder="Quantity Received" required />
+              <select name="receiptType" required>
+                <option value="warehouse_transfer">From Main Warehouse</option>
+                <option value="direct_delivery">Direct Delivery to Site</option>
+              </select>
+              <button class="primary-btn" type="submit">Record Site Receipt</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Project Site Inventory</h3>
+              <div class="filter-row">
+                <label for="quickSiteSelect">Project Site</label>
+                <select id="quickSiteSelect"></select>
+              </div>
+            </div>
+            <div class="subtabs" id="siteSubtabs"></div>
+            <div class="filter-row" id="siteCategoryFilters"></div>
+            <div class="table-wrap">
+              <table id="siteTable">
+                <thead>
+                  <tr>
+                    <th>Site</th>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Purchase Date</th>
+                    <th>Warranty</th>
+                  </tr>
+                </thead>
+                <tbody id="siteBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+
+      <section class="tab-content" id="tab-site-monitoring">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Update Remaining Stock on Site</h3></div>
+            <form id="siteStockUpdateForm" class="form-grid single-column-form">
+              <select name="site" required></select>
+              <input name="date" type="date" required />
+              <input name="code" placeholder="Item Code" required />
+              <input name="name" placeholder="Item Name" required />
+              <select name="category" required></select>
+              <input name="unit" placeholder="Unit" required />
+              <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
+              <input name="purchaseDate" type="date" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="remainingStock" type="number" step="0.01" placeholder="Remaining Stock on Site" required />
+              <input name="remarks" placeholder="Remarks / Actual count / Location" />
+              <button class="primary-btn" type="submit">Save Remaining Stock Update</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Site Consumption Summary</h3>
+              <div class="filter-row">
+                <label for="monitoringSiteSelect">Project Site</label>
+                <select id="monitoringSiteSelect"></select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="siteMonitoringTable">
+                <thead>
+                  <tr>
+                    <th>Site</th>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Total Delivered</th>
+                    <th>Remaining Stock</th>
+                    <th>Total Used</th>
+                    <th>Usage %</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Total Delivered Value</th>
+                    <th>Remaining Value</th>
+                    <th>Used Value</th>
+                    <th>Last Count Date</th>
+                    <th>Remarks</th>
+                  </tr>
+                </thead>
+                <tbody id="siteMonitoringBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-client">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Add Client-Supplied Materials</h3></div>
+            <form id="clientForm" class="form-grid">
+              <select name="site" required></select>
+              <input name="code" placeholder="Item Code" required />
+              <input name="name" placeholder="Item Name" required />
+              <select name="category" required></select>
+              <input name="unit" placeholder="Unit" required />
+              <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
+              <input name="purchaseDate" type="date" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
+              <button class="primary-btn" type="submit">Save Client Material</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Client Owner Supplied Inventory</h3>
+              <div class="filter-row" id="clientCategoryFilters"></div>
+            </div>
+            <div class="table-wrap">
+              <table id="clientTable">
+                <thead>
+                  <tr>
+                    <th>Site</th>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Purchase Date</th>
+                    <th>Warranty</th>
+                  </tr>
+                </thead>
+                <tbody id="clientBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-movements">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Record Stock Movement</h3></div>
+            <form id="movementForm" class="form-grid">
+              <input name="date" type="date" required />
+              <select name="type" required>
+                <option value="warehouse_in">Warehouse Receiving</option>
+                <option value="warehouse_to_site">Warehouse to Site</option>
+                <option value="site_return">Site Return to Warehouse</option>
+                <option value="site_direct_add">Direct Delivery to Site</option>
+                <option value="client_supplied_add">Client Supplied Delivery</option>
+              </select>
+              <select name="site"></select>
+              <input name="code" placeholder="Item Code" required />
+              <input name="name" placeholder="Item Name" required />
+              <select name="category" required></select>
+              <input name="unit" placeholder="Unit" required />
+              <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
+              <input name="purchaseDate" type="date" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
+              <input name="reference" placeholder="Reference / DR / Invoice / PO" />
+              <button class="primary-btn" type="submit">Post Movement</button>
+            </form>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h3>Movement Log</h3>
+              <div class="panel-tools">
+                <button class="secondary-btn" onclick="InventoryApp.exportTableCSV('movementTable', 'movement_log.csv')">Export CSV</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table id="movementTable">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Site</th>
+                    <th>Code</th>
+                    <th>Item</th>
+                    <th>Category</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Unit Cost</th>
+                    <th>Reference</th>
+                  </tr>
+                </thead>
+                <tbody id="movementBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="tab-content" id="tab-settings">
+        <div class="panel-grid two">
+          <section class="panel">
+            <div class="panel-header"><h3>Configuration</h3></div>
+            <form id="settingsForm" class="form-grid">
+              <textarea name="siteNames" rows="8" placeholder="Enter one project site per line"></textarea>
+              <input name="siteAlertPercent" type="number" min="1" max="100" step="1" placeholder="Site low-stock alert percent" />
+              <button class="primary-btn" type="submit">Save Site Names & Alert %</button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><h3>Notes</h3></div>
+            <div class="note-box">
+              <p><strong>Masterlist logic:</strong> reflects all company-owned items from the warehouse and project sites.</p>
+              <p><strong>Warehouse to Site:</strong> deducts from main warehouse and adds to project site balance.</p>
+              <p><strong>Direct Site Delivery:</strong> adds to project site balance and to company masterlist.</p>
+              <p><strong>Client Supplied:</strong> tracked separately and not added into company-owned masterlist.</p>
+              <p><strong>Site Alert %:</strong> triggers Low Stock Watch when a site balance falls at or below your chosen remaining percentage of total company stock.</p>
+              <p><strong>Site Monitoring:</strong> records total delivered, remaining stock, total used, and last stock count per project until completion.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Records tab -->
+  <section class="tab-content" id="tab-records">
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Records Folder</h3>
+        <div class="panel-tools">
+          <button class="secondary-btn" id="chooseRecordsFolderBtn">Choose Records Folder</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="recordsTable">
+          <thead>
+            <tr><th>Filename</th><th>Size</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="recordsBody"><tr><td colspan="3"><div class="empty-state">No records folder selected.</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+<script>
+const InventoryApp = (() => {
+  const STORAGE_KEY = "construction_inventory_dashboard_v2";
+  const categories = [
+    "Hand Tools",
+    "Heavy Equipment",
+    "Electrical Tools",
+    "Electronic Tools",
+    "Construction Support Equipment",
+    "Electrical Materials",
+    "Electronic Materials",
+    "Mechanical Materials",
+    "Structural Materials",
+    "Finishing Materials",
+    "Plumbing Materials"
+  ];
+
+  const emptyState = {
+    settings: {
+      sites: [
+        "Project Site 1",
+        "Project Site 2",
+        "Project Site 3",
+        "Project Site 4",
+        "Project Site 5"
+      ],
+      siteAlertPercent: 20
+    },
+    warehouseItems: [],
+    siteItems: [],
+    clientItems: [],
+    movements: [],
+    siteStockCounts: []
+  };
+
+  let state = loadState();
+  let activeSiteFilter = "ALL";
+  let categoryFilters = {
+    masterlist: "ALL",
+    warehouse: "ALL",
+    sites: "ALL",
+    client: "ALL"
+  };
+
+  function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+  function loadState() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return clone(emptyState);
+    try {
+      const parsed = JSON.parse(raw);
+      if (!parsed.settings) parsed.settings = {};
+      if (!Array.isArray(parsed.settings.sites) || !parsed.settings.sites.length) parsed.settings.sites = clone(emptyState.settings.sites);
+      if (parsed.settings.siteAlertPercent === undefined || parsed.settings.siteAlertPercent === null || parsed.settings.siteAlertPercent === "") parsed.settings.siteAlertPercent = 20;
+      if (!Array.isArray(parsed.siteStockCounts)) parsed.siteStockCounts = [];
+      return parsed;
+    }
+    catch { return clone(emptyState); }
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function money(v) {
+    return new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 2 }).format(Number(v || 0));
+  }
+
+  function number(v) {
+    return new Intl.NumberFormat("en-PH", { maximumFractionDigits: 2 }).format(Number(v || 0));
+  }
+
+  function warrantyLabel(months) {
+    months = Number(months || 0);
+    return months > 0 ? `${months} mo.` : "N/A";
+  }
+
+  function setSelectOptions() {
+    document.querySelectorAll('select[name="category"]').forEach(sel => {
+      sel.innerHTML = '<option value="">Select Category</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join("");
+    });
+
+    document.querySelectorAll('select[name="site"]').forEach(sel => {
+      const options = ['<option value="">Select Site</option>']
+        .concat(state.settings.sites.map(s => `<option value="${s}">${s}</option>`));
+      sel.innerHTML = options.join("");
+    });
+
+    document.querySelector('#settingsForm textarea[name="siteNames"]').value = state.settings.sites.join("\\n");
+  }
+
+  function renderCategoryDropdown(containerId, filterKey) {
+    const el = document.getElementById(containerId);
+    const all = ["ALL", ...categories];
+    el.innerHTML = `
+      <label for="${filterKey}CategorySelect">Category Filter</label>
+      <select id="${filterKey}CategorySelect" data-filter-select="${filterKey}">
+        ${all.map(cat => `<option value="${cat}" ${categoryFilters[filterKey] === cat ? 'selected' : ''}>${cat === "ALL" ? "All Categories" : cat}</option>`).join("")}
+      </select>
+    `;
+  }
+
+  function bindCategoryDropdowns() {
+    document.querySelectorAll("[data-filter-select]").forEach(sel => {
+      sel.addEventListener("change", () => {
+        categoryFilters[sel.dataset.filterSelect] = sel.value;
+        renderAll();
+      });
+    });
+  }
+
+  function normalizeRecord(rec) {
+    return {
+      ...rec,
+      unitCost: Number(rec.unitCost || 0),
+      warrantyMonths: Number(rec.warrantyMonths || 0),
+      quantity: Number(rec.quantity || 0),
+      minStock: Number(rec.minStock || 0)
+    };
+  }
+
+  function upsertWarehouseItem(item) {
+    item = normalizeRecord(item);
+    const idx = state.warehouseItems.findIndex(x => x.code === item.code);
+    if (idx >= 0) {
+      state.warehouseItems[idx] = { ...state.warehouseItems[idx], ...item };
+    } else {
+      state.warehouseItems.push(item);
+    }
+  }
+
+  function addToSite(item) {
+    item = normalizeRecord(item);
+    const idx = state.siteItems.findIndex(x => x.site === item.site && x.code === item.code);
+    if (idx >= 0) {
+      state.siteItems[idx].quantity += item.quantity;
+      state.siteItems[idx] = { ...state.siteItems[idx], ...item, quantity: state.siteItems[idx].quantity };
+    } else {
+      state.siteItems.push(item);
+    }
+  }
+
+  function addToClient(item) {
+    item = normalizeRecord(item);
+    const idx = state.clientItems.findIndex(x => x.site === item.site && x.code === item.code);
+    if (idx >= 0) {
+      state.clientItems[idx].quantity += item.quantity;
+      state.clientItems[idx] = { ...state.clientItems[idx], ...item, quantity: state.clientItems[idx].quantity };
+    } else {
+      state.clientItems.push(item);
+    }
+  }
+
+  function deductWarehouse(code, quantity) {
+    const row = state.warehouseItems.find(x => x.code === code);
+    if (!row) throw new Error(`Warehouse item ${code} not found.`);
+    if (Number(row.quantity) < Number(quantity)) throw new Error(`Insufficient warehouse stock for ${row.name}.`);
+    row.quantity = Number(row.quantity) - Number(quantity);
+  }
+
+  function addWarehouseQuantity(item) {
+    item = normalizeRecord(item);
+    const row = state.warehouseItems.find(x => x.code === item.code);
+    if (row) {
+      row.quantity += item.quantity;
+      Object.assign(row, item, { quantity: row.quantity });
+    } else {
+      state.warehouseItems.push({ ...item, minStock: Number(item.minStock || 0) });
+    }
+  }
+
+  function postMovement(m) {
+    m = normalizeRecord(m);
+    switch (m.type) {
+      case "warehouse_in":
+        addWarehouseQuantity(m);
+        break;
+      case "warehouse_to_site":
+        if (!m.site) throw new Error("Site is required for warehouse-to-site transfer.");
+        deductWarehouse(m.code, m.quantity);
+        addToSite(m);
+        break;
+      case "site_return":
+        if (!m.site) throw new Error("Site is required for site return.");
+        const srow = state.siteItems.find(x => x.site === m.site && x.code === m.code);
+        if (!srow || Number(srow.quantity) < Number(m.quantity)) throw new Error(`Insufficient site stock for return.`);
+        srow.quantity -= Number(m.quantity);
+        addWarehouseQuantity(m);
+        break;
+      case "site_direct_add":
+        if (!m.site) throw new Error("Site is required for direct delivery.");
+        addToSite(m);
+        break;
+      case "client_supplied_add":
+        if (!m.site) throw new Error("Site is required for client supplied materials.");
+        addToClient(m);
+        break;
+      default:
+        throw new Error("Unknown movement type.");
+    }
+    state.movements.unshift(m);
+  }
+
+
+  function getTotalDeliveredToSite(site, code) {
+    return state.movements
+      .filter(m => m.site === site && m.code === code && (m.type === "warehouse_to_site" || m.type === "site_direct_add"))
+      .reduce((s, m) => s + Number(m.quantity || 0), 0);
+  }
+
+  function upsertSiteStockCount(rec) {
+    rec = normalizeRecord(rec);
+    const idx = state.siteStockCounts.findIndex(x => x.site === rec.site && x.code === rec.code);
+    const totalDelivered = getTotalDeliveredToSite(rec.site, rec.code);
+    const remainingStock = Number(rec.remainingStock || 0);
+    const totalUsed = Math.max(totalDelivered - remainingStock, 0);
+
+    const payload = {
+      site: rec.site,
+      date: rec.date,
+      code: rec.code,
+      name: rec.name,
+      category: rec.category,
+      unit: rec.unit,
+      unitCost: Number(rec.unitCost || 0),
+      purchaseDate: rec.purchaseDate || "",
+      warrantyMonths: Number(rec.warrantyMonths || 0),
+      totalDelivered,
+      remainingStock,
+      totalUsed,
+      usagePercent: totalDelivered > 0 ? (totalUsed / totalDelivered) * 100 : 0,
+      remarks: rec.remarks || ""
+    };
+
+    if (idx >= 0) state.siteStockCounts[idx] = payload;
+    else state.siteStockCounts.push(payload);
+
+    const siteRow = state.siteItems.find(x => x.site === rec.site && x.code === rec.code);
+    if (siteRow) {
+      siteRow.quantity = remainingStock;
+      siteRow.name = rec.name;
+      siteRow.category = rec.category;
+      siteRow.unit = rec.unit;
+      siteRow.unitCost = Number(rec.unitCost || siteRow.unitCost || 0);
+      siteRow.purchaseDate = rec.purchaseDate || siteRow.purchaseDate || "";
+      siteRow.warrantyMonths = Number(rec.warrantyMonths || siteRow.warrantyMonths || 0);
+    } else if (remainingStock > 0) {
+      state.siteItems.push({
+        site: rec.site,
+        code: rec.code,
+        name: rec.name,
+        category: rec.category,
+        unit: rec.unit,
+        unitCost: Number(rec.unitCost || 0),
+        purchaseDate: rec.purchaseDate || "",
+        warrantyMonths: Number(rec.warrantyMonths || 0),
+        quantity: remainingStock
+      });
+    }
+  }
+
+  function getSiteMonitoringRows(selectedSite) {
+    const deliveryMap = new Map();
+
+    state.movements
+      .filter(m => m.type === "warehouse_to_site" || m.type === "site_direct_add")
+      .forEach(m => {
+        if (!m.site) return;
+        const key = `${m.site}||${m.code}`;
+        const row = deliveryMap.get(key) || {
+          site: m.site,
+          code: m.code,
+          name: m.name,
+          category: m.category,
+          unit: m.unit,
+          unitCost: Number(m.unitCost || 0),
+          purchaseDate: m.purchaseDate || "",
+          warrantyMonths: Number(m.warrantyMonths || 0),
+          totalDelivered: 0,
+          remainingStock: 0,
+          totalUsed: 0,
+          usagePercent: 0,
+          date: "",
+          remarks: ""
+        };
+        row.totalDelivered += Number(m.quantity || 0);
+        row.unitCost = Number(m.unitCost || row.unitCost || 0);
+        row.purchaseDate = m.purchaseDate || row.purchaseDate;
+        row.warrantyMonths = Number(m.warrantyMonths || row.warrantyMonths || 0);
+        deliveryMap.set(key, row);
+      });
+
+    state.siteStockCounts.forEach(c => {
+      const key = `${c.site}||${c.code}`;
+      const existing = deliveryMap.get(key) || {
+        site: c.site,
+        code: c.code,
+        name: c.name,
+        category: c.category,
+        unit: c.unit,
+        unitCost: Number(c.unitCost || 0),
+        purchaseDate: c.purchaseDate || "",
+        warrantyMonths: Number(c.warrantyMonths || 0),
+        totalDelivered: getTotalDeliveredToSite(c.site, c.code),
+        remainingStock: 0,
+        totalUsed: 0,
+        usagePercent: 0,
+        date: "",
+        remarks: ""
+      };
+      existing.name = c.name || existing.name;
+      existing.category = c.category || existing.category;
+      existing.unit = c.unit || existing.unit;
+      existing.unitCost = Number(c.unitCost || existing.unitCost || 0);
+      existing.purchaseDate = c.purchaseDate || existing.purchaseDate;
+      existing.warrantyMonths = Number(c.warrantyMonths || existing.warrantyMonths || 0);
+      existing.totalDelivered = Number(existing.totalDelivered || 0);
+      existing.remainingStock = Number(c.remainingStock || 0);
+      existing.totalUsed = Math.max(existing.totalDelivered - existing.remainingStock, 0);
+      existing.usagePercent = existing.totalDelivered > 0 ? (existing.totalUsed / existing.totalDelivered) * 100 : 0;
+      existing.date = c.date || "";
+      existing.remarks = c.remarks || "";
+      deliveryMap.set(key, existing);
+    });
+
+    let rows = Array.from(deliveryMap.values()).sort((a,b) => a.site.localeCompare(b.site) || a.name.localeCompare(b.name));
+    if (selectedSite && selectedSite !== "ALL") rows = rows.filter(x => x.site === selectedSite);
+    return rows;
+  }
+
+  function renderSiteMonitoring() {
+    const select = document.getElementById("monitoringSiteSelect");
+    if (select) {
+      const current = select.value || "ALL";
+      select.innerHTML = ['<option value="ALL">All Project Sites</option>']
+        .concat(state.settings.sites.map(site => `<option value="${site}">${site}</option>`))
+        .join("");
+      select.value = (state.settings.sites.includes(current) || current === "ALL") ? current : "ALL";
+    }
+
+    const selectedSite = select ? select.value : "ALL";
+    const rows = getSiteMonitoringRows(selectedSite);
+    document.getElementById("siteMonitoringBody").innerHTML = rows.length ? rows.map(x => `
+      <tr>
+        <td>${x.site}</td>
+        <td>${x.code}</td>
+        <td>${x.name}</td>
+        <td>${x.category}</td>
+        <td>${number(x.totalDelivered)}</td>
+        <td>${number(x.remainingStock)}</td>
+        <td>${number(x.totalUsed)}</td>
+        <td>${x.totalDelivered > 0 ? x.usagePercent.toFixed(1) + '%' : '0.0%'}</td>
+        <td>${x.unit}</td>
+        <td>${money(x.unitCost)}</td>
+        <td>${money(Number(x.totalDelivered || 0) * Number(x.unitCost || 0))}</td>
+        <td>${money(Number(x.remainingStock || 0) * Number(x.unitCost || 0))}</td>
+        <td>${money(Number(x.totalUsed || 0) * Number(x.unitCost || 0))}</td>
+        <td>${x.date || ""}</td>
+        <td>${x.remarks || ""}</td>
+      </tr>
+    `).join("") : emptyRow(15, "No delivered items found yet for this project site.");
+  }
+
+  function companyMasterlist() {
+    const map = new Map();
+    function add(rec) {
+      const key = rec.code;
+      const row = map.get(key) || {
+        code: rec.code, name: rec.name, category: rec.category, unit: rec.unit,
+        unitCost: Number(rec.unitCost || 0), purchaseDate: rec.purchaseDate || "",
+        warrantyMonths: Number(rec.warrantyMonths || 0), quantity: 0
+      };
+      row.quantity += Number(rec.quantity || 0);
+      row.unitCost = Number(rec.unitCost || row.unitCost || 0);
+      row.purchaseDate = rec.purchaseDate || row.purchaseDate;
+      row.warrantyMonths = Number(rec.warrantyMonths || row.warrantyMonths || 0);
+      map.set(key, row);
+    }
+    state.warehouseItems.forEach(add);
+    state.siteItems.forEach(add);
+    return Array.from(map.values()).sort((a,b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name));
+  }
+
+  function totals() {
+    const master = companyMasterlist();
+    return {
+      itemsTracked: master.length,
+      warehouseQty: state.warehouseItems.reduce((s,x)=>s+Number(x.quantity||0),0),
+      siteQty: state.siteItems.reduce((s,x)=>s+Number(x.quantity||0),0),
+      clientQty: state.clientItems.reduce((s,x)=>s+Number(x.quantity||0),0),
+      totalValue: master.reduce((s,x)=>s+(Number(x.quantity||0)*Number(x.unitCost||0)),0)
+    };
+  }
+
+  function emptyRow(colspan, msg) {
+    return `<tr><td colspan="${colspan}"><div class="empty-state">${msg}</div></td></tr>`;
+  }
+
+  function renderStats() {
+    const t = totals();
+    const cards = [
+      {label:"Company-Owned SKUs", value:number(t.itemsTracked), sub:"Distinct items in masterlist"},
+      {label:"Warehouse Quantity", value:number(t.warehouseQty), sub:"Current main warehouse balance"},
+      {label:"Site Quantity", value:number(t.siteQty), sub:"Current all project sites balance"},
+      {label:"Company Inventory Value", value:money(t.totalValue), sub:"Warehouse + site total value"}
+    ];
+    document.getElementById("statsGrid").innerHTML = cards.map(c => `
+      <div class="stat-card">
+        <div class="stat-label">${c.label}</div>
+        <div class="stat-value">${c.value}</div>
+        <div class="stat-sub">${c.sub}</div>
+      </div>
+    `).join("");
+  }
+
+  function renderDashboard() {
+    const master = companyMasterlist();
+    const catMap = {};
+    const catValueMap = {};
+    master.forEach(x => {
+      catMap[x.category] = (catMap[x.category] || 0) + Number(x.quantity || 0);
+      catValueMap[x.category] = (catValueMap[x.category] || 0) + (Number(x.quantity || 0) * Number(x.unitCost || 0));
+    });
+    const totalCategoryValue = Object.values(catValueMap).reduce((s, v) => s + Number(v || 0), 0);
+    document.getElementById("categorySummary").innerHTML = categories.map(cat => {
+      const qty = Number(catMap[cat] || 0);
+      const value = Number(catValueMap[cat] || 0);
+      const pct = totalCategoryValue > 0 ? (value / totalCategoryValue) * 100 : 0;
+      return `
+      <div class="summary-item">
+        <div style="width:100%">
+          <div class="label">${cat}</div>
+          <div class="meta">Qty: ${number(qty)} • Value: ${money(value)}</div>
+          <div class="category-bar-wrap">
+            <div class="category-bar-track">
+              <div class="category-bar-fill" style="width:${pct.toFixed(2)}%"></div>
+            </div>
+            <div class="category-bar-meta">
+              <span>${pct.toFixed(1)}% of total value</span>
+              <span>${money(value)}</span>
+            </div>
+          </div>
+        </div>
+        <div><span class="badge info">${pct.toFixed(1)}%</span></div>
+      </div>`;
+    }).join("") || `<div class="empty-state">No category data yet.</div>`;
+
+    const siteTotals = {};
+    const siteValueTotals = {};
+    state.settings.sites.forEach(site => {
+      siteTotals[site] = 0;
+      siteValueTotals[site] = 0;
+    });
+    state.siteItems.forEach(x => {
+      siteTotals[x.site] = (siteTotals[x.site] || 0) + Number(x.quantity || 0);
+      siteValueTotals[x.site] = (siteValueTotals[x.site] || 0) + (Number(x.quantity || 0) * Number(x.unitCost || 0));
+    });
+    const totalSiteValue = Object.values(siteValueTotals).reduce((s, v) => s + Number(v || 0), 0);
+    document.getElementById("siteSummary").innerHTML = state.settings.sites.map(site => {
+      const qty = Number(siteTotals[site] || 0);
+      const value = Number(siteValueTotals[site] || 0);
+      const pct = totalSiteValue > 0 ? (value / totalSiteValue) * 100 : 0;
+      return `
+      <div class="summary-item">
+        <div style="width:100%">
+          <div class="label">${site}</div>
+          <div class="meta">Qty: ${number(qty)} • Value: ${money(value)}</div>
+          <div class="category-bar-wrap">
+            <div class="category-bar-track">
+              <div class="category-bar-fill" style="width:${pct.toFixed(2)}%"></div>
+            </div>
+            <div class="category-bar-meta">
+              <span>${pct.toFixed(1)}% of total site value</span>
+              <span>${money(value)}</span>
+            </div>
+          </div>
+        </div>
+        <div><span class="badge ok">${pct.toFixed(1)}%</span></div>
+      </div>`;
+    }).join("");
+
+    document.getElementById("recentMovementsBody").innerHTML = state.movements.length ? state.movements.slice(0,10).map(m => `
+      <tr>
+        <td>${m.date || ""}</td>
+        <td>${prettyType(m.type)}</td>
+        <td>${m.name}</td>
+        <td>${number(m.quantity)}</td>
+        <td>${movementFrom(m)}</td>
+        <td>${movementTo(m)}</td>
+      </tr>
+    `).join("") : emptyRow(6, "No movements recorded yet.");
+
+    const warehouseLow = state.warehouseItems
+      .filter(x => Number(x.quantity || 0) <= Number(x.minStock || 0) && Number(x.quantity || 0) > 0)
+      .map(x => ({
+        label: x.name,
+        meta: `${x.code} • Warehouse minimum ${number(x.minStock)} ${x.unit}`,
+        qty: `${number(x.quantity)} ${x.unit}`,
+        type: "warehouse"
+      }));
+
+    const siteThreshold = Number(state.settings.siteAlertPercent || 20);
+    const siteLow = state.siteItems
+      .filter(x => {
+        const masterRow = companyMasterlist().find(m => m.code === x.code);
+        const totalQty = Number(masterRow ? masterRow.quantity : 0);
+        const siteQty = Number(x.quantity || 0);
+        if (totalQty <= 0 || siteQty <= 0) return false;
+        return (siteQty / totalQty) * 100 <= siteThreshold;
+      })
+      .map(x => {
+        const masterRow = companyMasterlist().find(m => m.code === x.code);
+        const totalQty = Number(masterRow ? masterRow.quantity : 0);
+        const pct = totalQty > 0 ? ((Number(x.quantity || 0) / totalQty) * 100) : 0;
+        return {
+          label: `${x.site} - ${x.name}`,
+          meta: `${x.code} • Site stock is ${pct.toFixed(1)}% of company total • Alert at ${siteThreshold}%`,
+          qty: `${number(x.quantity)} ${x.unit}`,
+          type: "site"
+        };
+      });
+
+    const combinedLow = [...warehouseLow, ...siteLow];
+    document.getElementById("lowStockList").innerHTML = combinedLow.length ? combinedLow.map(x => `
+      <div class="summary-item">
+        <div><div class="label">${x.label}</div><div class="meta">${x.meta}</div></div>
+        <div><span class="badge warn">${x.qty}</span></div>
+      </div>
+    `).join("") : `<div class="summary-item"><div><div class="label">No low stock alerts</div><div class="meta">Warehouse minimums and site percentage alerts are within safe levels.</div></div><div><span class="badge ok">OK</span></div></div>`;
+  }
+
+  function prettyType(type) {
+    return ({
+      warehouse_in:"Warehouse Receiving",
+      warehouse_to_site:"Warehouse to Site",
+      site_return:"Site Return",
+      site_direct_add:"Direct Delivery to Site",
+      client_supplied_add:"Client Supplied"
+    })[type] || type;
+  }
+
+  function movementFrom(m) {
+    if (m.type === "warehouse_to_site") return "Main Warehouse";
+    if (m.type === "site_return") return m.site;
+    if (m.type === "warehouse_in") return "Supplier";
+    if (m.type === "site_direct_add") return "Supplier";
+    if (m.type === "client_supplied_add") return "Client";
+    return "-";
+  }
+
+  function movementTo(m) {
+    if (m.type === "warehouse_to_site") return m.site;
+    if (m.type === "site_return") return "Main Warehouse";
+    if (m.type === "warehouse_in") return "Main Warehouse";
+    if (m.type === "site_direct_add") return m.site;
+    if (m.type === "client_supplied_add") return `${m.site} (Client Stock)`;
+    return "-";
+  }
+
+  function applyCategoryFilter(rows, key) {
+    return categoryFilters[key] === "ALL" ? rows : rows.filter(x => x.category === categoryFilters[key]);
+  }
+
+  function renderMasterlist() {
+    renderCategoryDropdown("masterCategoryFilters", "masterlist");
+    const rows = applyCategoryFilter(companyMasterlist(), "masterlist");
+    document.getElementById("masterlistBody").innerHTML = rows.length ? rows.map(x => `
+      <tr>
+        <td>${x.code}</td>
+        <td>${x.name}</td>
+        <td>${x.category}</td>
+        <td>${x.unit}</td>
+        <td>${money(x.unitCost)}</td>
+        <td>${x.purchaseDate || ""}</td>
+        <td>${warrantyLabel(x.warrantyMonths)}</td>
+        <td>${number(x.quantity)}</td>
+        <td>${money(Number(x.quantity || 0) * Number(x.unitCost || 0))}</td>
+      </tr>
+    `).join("") : emptyRow(9, "No masterlist records found for this category.");
+  }
+
+  function renderWarehouse() {
+    renderCategoryDropdown("warehouseCategoryFilters", "warehouse");
+    let rows = state.warehouseItems.slice().sort((a,b) => a.name.localeCompare(b.name));
+    rows = applyCategoryFilter(rows, "warehouse");
+    document.getElementById("warehouseBody").innerHTML = rows.length ? rows.map(x => `
+      <tr>
+        <td>${x.code}</td>
+        <td>${x.name}</td>
+        <td>${x.category}</td>
+        <td>${number(x.quantity)}</td>
+        <td>${x.unit}</td>
+        <td>${money(x.unitCost)}</td>
+        <td>${number(x.minStock)}</td>
+        <td>${x.purchaseDate || ""}</td>
+        <td>${warrantyLabel(x.warrantyMonths)}</td>
+      </tr>
+    `).join("") : emptyRow(9, "No warehouse records found for this category.");
+  }
+
+  function renderSites() {
+    const quickSiteSelect = document.getElementById("quickSiteSelect");
+    if (quickSiteSelect) {
+      quickSiteSelect.innerHTML = ['<option value="ALL">All Project Sites</option>']
+        .concat(state.settings.sites.map(site => `<option value="${site}">${site}</option>`))
+        .join("");
+      quickSiteSelect.value = (state.settings.sites.includes(activeSiteFilter) || activeSiteFilter === "ALL") ? activeSiteFilter : "ALL";
+    }
+
+    const tabs = ['<button class="subtab-btn ' + (activeSiteFilter === 'ALL' ? 'active':'') + '" data-site-filter="ALL">All Sites</button>']
+      .concat(state.settings.sites.map(site => `<button class="subtab-btn ${activeSiteFilter === site ? 'active':''}" data-site-filter="${site}">${site}</button>`));
+    document.getElementById("siteSubtabs").innerHTML = tabs.join("");
+    renderCategoryDropdown("siteCategoryFilters", "sites");
+
+    let rows = state.siteItems.slice().sort((a,b) => a.site.localeCompare(b.site) || a.name.localeCompare(b.name));
+    if (activeSiteFilter !== "ALL") rows = rows.filter(x => x.site === activeSiteFilter);
+    rows = applyCategoryFilter(rows, "sites");
+
+    document.getElementById("siteBody").innerHTML = rows.length ? rows.map(x => `
+      <tr>
+        <td>${x.site}</td>
+        <td>${x.code}</td>
+        <td>${x.name}</td>
+        <td>${x.category}</td>
+        <td>${number(x.quantity)}</td>
+        <td>${x.unit}</td>
+        <td>${money(x.unitCost)}</td>
+        <td>${x.purchaseDate || ""}</td>
+        <td>${warrantyLabel(x.warrantyMonths)}</td>
+      </tr>
+    `).join("") : emptyRow(9, "No site records found for this filter.");
+
+    document.querySelectorAll("[data-site-filter]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeSiteFilter = btn.dataset.siteFilter;
+        renderAll();
+      });
+    });
+
+    if (quickSiteSelect) {
+      quickSiteSelect.onchange = () => {
+        activeSiteFilter = quickSiteSelect.value;
+        renderAll();
+      };
+    }
+  }
+
+  function renderClient() {
+    renderCategoryDropdown("clientCategoryFilters", "client");
+    let rows = state.clientItems.slice().sort((a,b) => a.site.localeCompare(b.site) || a.name.localeCompare(b.name));
+    rows = applyCategoryFilter(rows, "client");
+    document.getElementById("clientBody").innerHTML = rows.length ? rows.map(x => `
+      <tr>
+        <td>${x.site}</td>
+        <td>${x.code}</td>
+        <td>${x.name}</td>
+        <td>${x.category}</td>
+        <td>${number(x.quantity)}</td>
+        <td>${x.unit}</td>
+        <td>${money(x.unitCost)}</td>
+        <td>${x.purchaseDate || ""}</td>
+        <td>${warrantyLabel(x.warrantyMonths)}</td>
+      </tr>
+    `).join("") : emptyRow(9, "No client-supplied records found for this category.");
+  }
+
+  function renderMovements() {
+    document.getElementById("movementBody").innerHTML = state.movements.length ? state.movements.map(m => `
+      <tr>
+        <td>${m.date || ""}</td>
+        <td>${prettyType(m.type)}</td>
+        <td>${m.site || "-"}</td>
+        <td>${m.code}</td>
+        <td>${m.name}</td>
+        <td>${m.category}</td>
+        <td>${number(m.quantity)}</td>
+        <td>${m.unit}</td>
+        <td>${money(m.unitCost)}</td>
+        <td>${m.reference || ""}</td>
+      </tr>
+    `).join("") : emptyRow(10, "No movement records yet.");
+  }
+
+  function renderAll() {
+    saveState();
+    setSelectOptions();
+    renderStats();
+    renderDashboard();
+    renderMasterlist();
+    renderWarehouse();
+    renderSites();
+    renderSiteMonitoring();
+    renderClient();
+    renderMovements();
+    bindCategoryDropdowns();
+  }
+
+  function bindTabs() {
+    const meta = {
+      dashboard:["Dashboard","Overview of company-owned, site, and client-supplied inventory"],
+      masterlist:["Masterlist","Combined company-owned inventory from warehouse and project sites"],
+      warehouse:["Main Warehouse","Manage central warehouse stock and item details"],
+      sites:["Project Sites","Separate site inventory and direct deliveries"],
+      "site-monitoring":["Site Monitoring","Track total delivered, remaining stock, and total used until project completion"],
+      client:["Client Supplied","Owner-furnished materials tracked separately"],
+      movements:["Stock Movements","Post receipts, transfers, returns, and deliveries"],
+      settings:["Settings","Project site names and package notes"],
+      records:["Records","Files saved to your chosen Records folder"]
+    };
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(".tab-content").forEach(x => x.classList.remove("active"));
+        document.getElementById(`tab-${tab}`).classList.add("active");
+        document.getElementById("pageTitle").textContent = meta[tab][0];
+        document.getElementById("pageSubtitle").textContent = meta[tab][1];
+      });
+    });
+  }
+
+  function bindForms() {
+    document.getElementById("warehouseForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      upsertWarehouseItem(data);
+      e.target.reset();
+      initDates();
+      renderAll();
+      alert("Warehouse item saved.");
+    });
+
+    document.getElementById("siteReceiptForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      try {
+        if (data.receiptType === "warehouse_transfer") {
+          postMovement({
+            date: new Date().toISOString().slice(0,10),
+            type: "warehouse_to_site",
+            site: data.site,
+            code: data.code,
+            name: data.name,
+            category: data.category,
+            unit: data.unit,
+            unitCost: data.unitCost,
+            purchaseDate: data.purchaseDate,
+            warrantyMonths: data.warrantyMonths,
+            quantity: data.quantity,
+            siteAction: data.siteAction,
+            reference: `Site Receipt - ${data.siteAction.replaceAll("_", " ")}`
+          });
+        } else {
+          postMovement({
+            date: new Date().toISOString().slice(0,10),
+            type: "site_direct_add",
+            site: data.site,
+            code: data.code,
+            name: data.name,
+            category: data.category,
+            unit: data.unit,
+            unitCost: data.unitCost,
+            purchaseDate: data.purchaseDate,
+            warrantyMonths: data.warrantyMonths,
+            quantity: data.quantity,
+            siteAction: data.siteAction,
+            reference: `Direct Delivery - ${data.siteAction.replaceAll("_", " ")}`
+          });
+        }
+        e.target.reset();
+        initDates();
+        renderAll();
+        alert("Site receipt recorded.");
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    document.getElementById("siteStockUpdateForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      try {
+        upsertSiteStockCount(data);
+        e.target.reset();
+        initDates();
+        renderAll();
+        alert("Site remaining stock updated.");
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    const monitoringSelect = document.getElementById("monitoringSiteSelect");
+    if (monitoringSelect) {
+      monitoringSelect.addEventListener("change", () => renderSiteMonitoring());
+    }
+
+    document.getElementById("clientForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      try {
+        postMovement({
+          date: new Date().toISOString().slice(0,10),
+          type: "client_supplied_add",
+          site: data.site,
+          code: data.code,
+          name: data.name,
+          category: data.category,
+          unit: data.unit,
+          unitCost: data.unitCost,
+          purchaseDate: data.purchaseDate,
+          warrantyMonths: data.warrantyMonths,
+          quantity: data.quantity,
+          reference: "Client Supplied"
+        });
+        e.target.reset();
+        initDates();
+        renderAll();
+        alert("Client-supplied material saved.");
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    document.getElementById("movementForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      try {
+        postMovement(data);
+        e.target.reset();
+        initDates();
+        renderAll();
+        alert("Movement posted successfully.");
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    document.getElementById("settingsForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const text = e.target.siteNames.value;
+      const sites = text.split("\\n").map(x => x.trim()).filter(Boolean);
+      if (!sites.length) return alert("Please enter at least one site.");
+      state.settings.sites = sites;
+      if (!sites.includes(activeSiteFilter)) activeSiteFilter = "ALL";
+      renderAll();
+      alert("Site names updated.");
+    });
+
+    document.getElementById("exportDataBtn").addEventListener("click", exportJSON);
+    document.getElementById("importDataInput").addEventListener("change", importJSON);
+    document.getElementById("exportToRecordsBtn").addEventListener("click", exportToRecords);
+    const chooseBtn = document.getElementById('chooseRecordsFolderBtn');
+    if (chooseBtn) chooseBtn.addEventListener('click', async () => {
+      if (!window.showDirectoryPicker) return alert('Your browser does not support folder access.');
+      try {
+        const dir = await window.showDirectoryPicker();
+        await loadRecordsFromHandle(dir);
+        alert('Records folder selected.');
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      if (!confirm("Clear all saved inventory data?")) return;
+      state = clone(emptyState);
+      activeSiteFilter = "ALL";
+      categoryFilters = { masterlist:"ALL", warehouse:"ALL", sites:"ALL", client:"ALL" };
+      renderAll();
+    });
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+
+    document.getElementById("globalSearch").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase().trim();
+      document.querySelectorAll("tbody tr").forEach(tr => {
+        tr.style.display = tr.textContent.toLowerCase().includes(q) ? "" : "none";
+      });
+    });
+  }
+
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "construction_inventory_data.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  // Export using File System Access API into a user-selected "Records" folder.
+  async function exportToRecords() {
+    if (!window.showDirectoryPicker) {
+      return alert('Your browser does not support direct folder saving. Use Export JSON instead.');
+    }
+
+    try {
+      // Ask user to choose the RECORDS folder (one-time per save)
+      const dirHandle = await window.showDirectoryPicker();
+
+      const filename = 'construction_inventory_data.json';
+      const fileHandle = await dirHandle.getFileHandle(filename, { create: true });
+      const writable = await fileHandle.createWritable();
+      await writable.write(JSON.stringify(state, null, 2));
+      await writable.close();
+
+      alert(`Saved to ${filename} in the selected folder.`);
+
+      // After saving, read directory entries and show them in the Records tab
+      await loadRecordsFromHandle(dirHandle);
+
+      // Switch to Records tab in UI (if present)
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const recordsNavBtn = document.querySelector('.nav-btn[data-tab="records"]');
+      if (recordsNavBtn) {
+        recordsNavBtn.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+        const recordsTab = document.getElementById('tab-records');
+        if (recordsTab) recordsTab.classList.add('active');
+        document.getElementById('pageTitle').textContent = 'Records';
+        document.getElementById('pageSubtitle').textContent = 'Files saved to the chosen Records folder';
+      }
+
+    } catch (err) {
+      console.error('Error saving to records:', err);
+      alert('Save to Records cancelled or failed.');
+    }
+  }
+
+  async function loadRecordsFromHandle(dirHandle) {
+    const rows = [];
+    for await (const entry of dirHandle.values()) {
+      try {
+        if (entry.kind === 'file') {
+          const file = await entry.getFile();
+          rows.push({ name: entry.name, size: file.size, file, handle: entry });
+        }
+      } catch (e) {
+        // ignore individual entry errors
+      }
+    }
+
+    const body = document.getElementById('recordsBody');
+    if (!body) return;
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="3"><div class="empty-state">No files found in chosen folder.</div></td></tr>';
+      return;
+    }
+
+    body.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r.name}</td>
+        <td>${(r.size/1024).toFixed(1)} KB</td>
+        <td>
+          <button class="secondary-btn" data-file="${r.name}">Download</button>
+        </td>
+      </tr>
+    `).join('');
+
+    // Wire download buttons
+    body.querySelectorAll('button[data-file]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const name = btn.getAttribute('data-file');
+        try {
+          const fh = await dirHandle.getFileHandle(name);
+          const file = await fh.getFile();
+          const url = URL.createObjectURL(file);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = name;
+          a.click();
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          alert('Failed to download file.');
+        }
+      });
+    });
+  }
+
+  function importJSON(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        state = JSON.parse(reader.result);
+        renderAll();
+        alert("Data imported successfully.");
+      } catch {
+        alert("Invalid JSON file.");
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  }
+
+  function exportTableCSV(tableId, filename) {
+    const rows = Array.from(document.querySelectorAll(`#${tableId} tr`));
+    const csv = rows.map(row => Array.from(row.children)
+      .map(cell => `"${String(cell.innerText).replace(/"/g, '""')}"`)
+      .join(",")).join("\\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function initDates() {
+    const today = new Date().toISOString().slice(0,10);
+    document.querySelectorAll('input[type="date"]').forEach(input => {
+      if (!input.value) input.value = today;
+    });
+  }
+
+  function init() {
+    bindTabs();
+    bindForms();
+    initDates();
+    renderAll();
+  }
+
+  return { init, exportTableCSV };
+})();
+
+window.addEventListener("DOMContentLoaded", InventoryApp.init);
+</script>
+</body>
+</html>

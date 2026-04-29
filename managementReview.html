@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construction Management Review</title>
+  <style>
+    :root {
+      --bg: #eef4f8;
+      --panel: #ffffff;
+      --panel-soft: #f8fbfd;
+      --text: #15202b;
+      --muted: #66758a;
+      --line: #d9e4ec;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --accent-soft: #ccfbf1;
+      --good: #15803d;
+      --warn: #b45309;
+      --bad: #b91c1c;
+      --navy: #0f172a;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(15,118,110,0.12), transparent 26%),
+        linear-gradient(180deg, #f4f8fb 0%, #e9f0f5 100%);
+    }
+
+    .wrap {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      background: linear-gradient(135deg, var(--navy) 0%, #134e4a 100%);
+      color: white;
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: 2.1rem;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.86);
+      max-width: 760px;
+    }
+
+    .hero-side {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-content: start;
+    }
+
+    .hero-stat {
+      background: rgba(255,255,255,0.09);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      padding: 16px;
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-stat .label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .hero-stat .value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-top: 10px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 440px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 22px 24px 10px;
+    }
+
+    .card-header h2,
+    .card-header h3 {
+      margin: 0;
+      font-size: 1.18rem;
+    }
+
+    .card-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .card-body {
+      padding: 10px 24px 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: 0.18s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
+    }
+
+    textarea {
+      min-height: 96px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .input-with-button {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .mini-button {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      min-width: 48px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    .primary { background: var(--accent); color: white; }
+    .secondary { background: #e7edf2; color: var(--text); }
+    .ghost { background: #f8fafc; color: var(--accent-strong); border: 1px solid var(--line); }
+
+    .dashboard {
+      display: grid;
+      gap: 20px;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .metric-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .metric-card .label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-card .value {
+      margin-top: 10px;
+      font-size: 1.6rem;
+      font-weight: 900;
+    }
+
+    .metric-card .sub {
+      margin-top: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .summary-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+    }
+
+    .summary-box {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      min-height: 180px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-panel {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .mini-panel h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .helper, .mini-panel p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.92rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .badge.good { background: #dcfce7; color: var(--good); }
+    .badge.warn { background: #fef3c7; color: var(--warn); }
+    .badge.bad { background: #fee2e2; color: var(--bad); }
+    .badge.soft { background: #e6f7f5; color: var(--accent-strong); }
+
+    .progress-block {
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+
+    .progress-row {
+      margin-bottom: 16px;
+    }
+
+    .progress-row:last-child { margin-bottom: 0; }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 8px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .bar {
+      width: 100%;
+      height: 12px;
+      background: #e6edf2;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+      width: 0;
+      transition: width 0.35s ease;
+    }
+
+    .fill.schedule { background: linear-gradient(90deg, #0f766e, #14b8a6); }
+    .fill.budget { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+    .fill.safety { background: linear-gradient(90deg, #15803d, #4ade80); }
+    .fill.quality { background: linear-gradient(90deg, #b45309, #f59e0b); }
+
+    .list {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.75;
+    }
+
+    .kpi-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 6px;
+    }
+
+    .kpi-table th,
+    .kpi-table td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.93rem;
+      vertical-align: top;
+    }
+
+    .kpi-table th {
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .risk-list,
+    .issue-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .risk-item,
+    .issue-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      line-height: 1.55;
+    }
+
+    .issue-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .issue-number {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .issue-title {
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .issue-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .issue-grid .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .issue-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 16px 0;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.52);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 50;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-panel {
+      width: min(1180px, 100%);
+      max-height: 92vh;
+      overflow: auto;
+      background: #fff;
+      border-radius: 28px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
+      border: 1px solid var(--line);
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      padding: 20px 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .modal-header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .modal-body {
+      padding: 20px 24px 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+
+    .toolbar .left,
+    .toolbar .right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .print-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 1180px) {
+      .layout,
+      .summary-layout,
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .wrap { padding: 16px; }
+      .form-grid,
+      .two-col,
+      .metrics-grid,
+      .hero-side,
+      .issue-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .wrap { max-width: 100%; padding: 0; }
+      .hero { color: black; background: white; border: 1px solid #ddd; }
+      .actions, .print-note, .modal { display: none !important; }
+      .card, .metric-card { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Construction Management Review</h1>
+        <p>Use the form to capture project performance, risks, and actions. The page automatically builds an executive-ready management review with KPI cards, progress visualization, meeting highlights, a dedicated quality issue register, and a print-friendly snapshot.</p>
+        <div class="actions">
+          <button class="ghost" type="button" onclick="window.location.href='./index.html'">Home</button>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div class="hero-stat">
+          <div class="label">Reviewed Project</div>
+          <div class="value" id="heroProject">Mega Tower Residence 2</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Review Date</div>
+          <div class="value" id="heroDate">—</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Project Manager</div>
+          <div class="value" id="heroManager">M. Corpuz</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Client</div>
+          <div class="value" id="heroClient">Megapines Realty and Development, Inc</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="card">
+        <div class="card-header">
+          <h2>Project Inputs</h2>
+          <p>Enter the latest site and project controls information. The management review will update the summary, visual bars, and action focus areas.</p>
+        </div>
+        <div class="card-body">
+          <form id="reviewForm" class="form-grid">
+            <div class="field">
+              <label for="projectName">Project Name</label>
+              <input id="projectName" value="Mega Tower Residence 2" />
+            </div>
+
+            <div class="field">
+              <label for="projectManager">Project Manager</label>
+              <input id="projectManager" value="M. Corpuz" />
+            </div>
+
+            <div class="field">
+              <label for="client">Client</label>
+              <input id="client" value="Megapines Realty and Development, Inc" />
+            </div>
+
+            <div class="field">
+              <label for="reviewDate">Review Date</label>
+              <input id="reviewDate" type="date" />
+            </div>
+
+            <div class="field">
+              <label for="scheduleProgress">Schedule Progress (%)</label>
+              <input id="scheduleProgress" type="number" min="0" max="100" value="64" />
+            </div>
+
+            <div class="field">
+              <label for="budgetUsed">Budget Used (%)</label>
+              <input id="budgetUsed" type="number" min="0" max="100" value="61" />
+            </div>
+
+            <div class="field">
+              <label for="safetyIncidents">Safety Incidents</label>
+              <input id="safetyIncidents" type="number" min="0" value="1" />
+            </div>
+
+            <div class="field">
+              <label for="qualityIssues">Open Quality Issues</label>
+              <div class="input-with-button">
+                <button class="mini-button" type="button" onclick="openQualityModal()">≡</button>
+                <input id="qualityIssues" type="number" min="0" value="3" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="riskLevel">Overall Risk Level</label>
+              <select id="riskLevel">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="status">Current Status</label>
+              <select id="status">
+                <option>On Track</option>
+                <option selected>Needs Attention</option>
+                <option>Critical</option>
+              </select>
+            </div>
+
+            <div class="field full">
+              <label for="keyAchievements">Key Achievements</label>
+              <textarea id="keyAchievements">Structural framing completed for levels 8 to 12. Elevator shaft concrete pour passed inspection. Procurement finalized for facade materials.</textarea>
+            </div>
+
+            <div class="field full">
+              <label for="topRisks">Top Risks / Issues</label>
+              <textarea id="topRisks">Rain delays affecting exterior work. Late approval of revised MEP drawings. Subcontractor manpower below target for finishing works.</textarea>
+            </div>
+
+            <div class="field full">
+              <label for="nextActions">Next Actions</label>
+              <textarea id="nextActions">Accelerate facade installation with second crew. Escalate drawing approval with consultant by Friday. Conduct toolbox talk and targeted reinspection for outstanding quality items.</textarea>
+            </div>
+          </form>
+
+          <div class="actions">
+            <button class="ghost" type="button" onclick="window.location.href='./index.html'">Home</button>
+            <button class="primary" type="button" onclick="generateSummary()">Refresh Management Review</button>
+            <button class="secondary" type="button" onclick="resetFormValues()">Reset Sample</button>
+            <button class="ghost" type="button" onclick="window.print()">Print Review</button>
+          </div>
+          <div class="print-note">The layout is optimized for both on-screen review and printable management meeting handouts.</div>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="label">Project Health</div>
+            <div class="value" id="healthValue">Moderate</div>
+            <div class="sub" id="healthSub">Balanced performance with watch points</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">Current Status</div>
+            <div class="value"><span class="badge warn" id="statusBadge">Needs Attention</span></div>
+            <div class="sub">Management visibility indicator</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">Risk Level</div>
+            <div class="value" id="riskValue">Medium</div>
+            <div class="sub">Overall project risk exposure</div>
+          </div>
+          <div class="metric-card">
+            <div class="label">Cost vs Progress</div>
+            <div class="value" id="varianceValue">+0%</div>
+            <div class="sub" id="varianceSub">Spend aligned with progress</div>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Executive Summary</h3>
+            <p>A concise management overview for schedule, cost, safety, quality, and current delivery posture.</p>
+          </div>
+          <div class="card-body summary-layout">
+            <div>
+              <div class="summary-box" id="executiveSummary"></div>
+              <div class="progress-block">
+                <div class="progress-row">
+                  <div class="progress-head"><span>Schedule Progress</span><span id="scheduleLabel">64%</span></div>
+                  <div class="bar"><div class="fill schedule" id="scheduleFill"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-head"><span>Budget Used</span><span id="budgetLabel">61%</span></div>
+                  <div class="bar"><div class="fill budget" id="budgetFill"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-head"><span>Safety Performance</span><span id="safetyLabel">1 incident</span></div>
+                  <div class="bar"><div class="fill safety" id="safetyFill"></div></div>
+                </div>
+                <div class="progress-row">
+                  <div class="progress-head">
+                    <span>Quality Closeout</span>
+                    <span style="display:flex; align-items:center; gap:8px;">
+                      <button class="mini-button" type="button" onclick="openQualityModal()">View</button>
+                      <span id="qualityLabel">3 open items</span>
+                    </span>
+                  </div>
+                  <div class="bar"><div class="fill quality" id="qualityFill"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="two-col" style="grid-template-columns: 1fr;">
+              <div class="mini-panel">
+                <h4>Priority Actions</h4>
+                <ul class="list" id="actionList"></ul>
+              </div>
+              <div class="mini-panel">
+                <h4>Top Risks Snapshot</h4>
+                <div class="risk-list" id="riskList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h3>Management Review Table</h3>
+            <p>Structured view for quick review in meetings and leadership reporting.</p>
+          </div>
+          <div class="card-body">
+            <table class="kpi-table">
+              <thead>
+                <tr>
+                  <th>Area</th>
+                  <th>Current Position</th>
+                  <th>Management Comment</th>
+                </tr>
+              </thead>
+              <tbody id="kpiTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <div class="modal" id="qualityModal">
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3>Quality Issue Register</h3>
+          <p>Track numbered quality issues, recommendations, and CAPA details. Use this page to manage corrective and preventive actions for open construction defects and inspection findings.</p>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button class="primary" type="button" onclick="addQualityIssue()">Add Issue</button>
+          <button class="secondary" type="button" onclick="closeQualityModal()">Close</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="toolbar">
+          <div class="left">
+            <span class="badge soft">Total Open Issues: <span id="qualityCountDisplay" style="margin-left:6px;">3</span></span>
+            <span class="small-note">Issue numbering updates automatically.</span>
+          </div>
+          <div class="right">
+            <button class="ghost" type="button" onclick="syncQualityIssueCount()">Sync Count</button>
+            <button class="ghost" type="button" onclick="generateSummary()">Update Management Review</button>
+          </div>
+        </div>
+
+        <div class="issue-list" id="qualityIssueList"></div>
+      </div>
+    </div>
+  </div>
+
+  <template id="qualityIssueTemplate">
+    <div class="issue-card">
+      <div class="issue-card-header">
+        <div>
+          <div class="issue-number">Issue #<span data-role="issue-number">1</span></div>
+          <div class="issue-title">Quality Issue</div>
+        </div>
+        <div class="issue-meta">
+          <span class="badge soft" data-role="issue-status-badge">Open</span>
+          <button class="ghost" type="button" data-action="remove-issue">Remove</button>
+        </div>
+      </div>
+
+      <div class="issue-grid">
+        <div class="field">
+          <label>Issue No.</label>
+          <input type="text" data-field="issueNo" readonly />
+        </div>
+        <div class="field">
+          <label>Issue Status</label>
+          <select data-field="status">
+            <option>Open</option>
+            <option>In Progress</option>
+            <option>Closed</option>
+            <option>On Hold</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Issue Title / Description</label>
+          <textarea data-field="title"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Location / Area</label>
+          <input type="text" data-field="location" />
+        </div>
+        <div class="field">
+          <label>Trade / Discipline</label>
+          <input type="text" data-field="trade" />
+        </div>
+
+        <div class="field">
+          <label>Severity</label>
+          <select data-field="severity">
+            <option>Low</option>
+            <option selected>Medium</option>
+            <option>High</option>
+            <option>Critical</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Raised By</label>
+          <input type="text" data-field="raisedBy" />
+        </div>
+
+        <div class="field">
+          <label>Date Raised</label>
+          <input type="date" data-field="dateRaised" />
+        </div>
+        <div class="field">
+          <label>Target Closure Date</label>
+          <input type="date" data-field="targetDate" />
+        </div>
+
+        <div class="field">
+          <label>Responsible Owner</label>
+          <input type="text" data-field="owner" />
+        </div>
+        <div class="field">
+          <label>Verification / Inspector</label>
+          <input type="text" data-field="verifier" />
+        </div>
+
+        <div class="field full">
+          <label>Recommendation</label>
+          <textarea data-field="recommendation"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Corrective Action (CA)</label>
+          <textarea data-field="correctiveAction"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>Preventive Action (PA)</label>
+          <textarea data-field="preventiveAction"></textarea>
+        </div>
+
+        <div class="field full">
+          <label>CAPA Verification / Closeout Notes</label>
+          <textarea data-field="capaNotes"></textarea>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const sampleData = {
+      projectName: 'Mega Tower Residence 2',
+      projectManager: 'M. Corpuz',
+      client: 'Megapines Realty and Development, Inc',
+      scheduleProgress: 64,
+      budgetUsed: 61,
+      safetyIncidents: 1,
+      qualityIssues: 3,
+      riskLevel: 'Medium',
+      status: 'Needs Attention',
+      keyAchievements: 'Structural framing completed for levels 8 to 12. Elevator shaft concrete pour passed inspection. Procurement finalized for facade materials.',
+      topRisks: 'Rain delays affecting exterior work. Late approval of revised MEP drawings. Subcontractor manpower below target for finishing works.',
+      nextActions: 'Accelerate facade installation with second crew. Escalate drawing approval with consultant by Friday. Conduct toolbox talk and targeted reinspection for outstanding quality items.'
+    };
+
+    const sampleQualityIssues = [
+      {
+        title: 'Honeycombing observed at core wall patch area during inspection.',
+        location: 'Level 10 core wall',
+        trade: 'Concrete Works',
+        severity: 'High',
+        raisedBy: 'QA/QC Engineer',
+        dateRaised: '',
+        targetDate: '',
+        owner: 'Civil Subcontractor',
+        verifier: 'Resident Engineer',
+        status: 'Open',
+        recommendation: 'Chip loose concrete, assess extent, and submit approved repair method statement.',
+        correctiveAction: 'Remove defective section, repair with approved non-shrink repair mortar, and reinspect before closeout.',
+        preventiveAction: 'Improve vibration checks and formwork inspection before every pour.',
+        capaNotes: 'Pending consultant verification after repair completion.'
+      },
+      {
+        title: 'Misalignment of blockwork line noted at corridor partition.',
+        location: 'Level 7 corridor',
+        trade: 'Masonry',
+        severity: 'Medium',
+        raisedBy: 'Site Architect',
+        dateRaised: '',
+        targetDate: '',
+        owner: 'Architectural Subcontractor',
+        verifier: 'QA/QC Supervisor',
+        status: 'In Progress',
+        recommendation: 'Check wall plumbness and line against approved drawings before finishing works.',
+        correctiveAction: 'Realign affected blockwork section and recheck tolerance before plastering.',
+        preventiveAction: 'Use benchmark string line and daily supervisor signoff for new wall runs.',
+        capaNotes: 'Partial rectification completed; awaiting final measurement.'
+      },
+      {
+        title: 'Waterproofing upturn height below specification at wet area.',
+        location: 'Level 5 toilet room',
+        trade: 'Waterproofing',
+        severity: 'Critical',
+        raisedBy: 'Client Inspector',
+        dateRaised: '',
+        targetDate: '',
+        owner: 'Finishes Contractor',
+        verifier: 'Consultant Inspector',
+        status: 'Open',
+        recommendation: 'Stop covering works and repeat waterproofing application to required detail.',
+        correctiveAction: 'Remove affected finish build-up, reapply waterproofing with correct upturn, and conduct flood test.',
+        preventiveAction: 'Pre-pour and pre-cover inspection checklist to include mandatory upturn measurement.',
+        capaNotes: 'Flood test to be witnessed prior to tile reinstatement.'
+      }
+    ];
+
+    function setToday() {
+      const dateInput = document.getElementById('reviewDate');
+      if (!dateInput.value) {
+        const today = new Date();
+        dateInput.value = today.toISOString().split('T')[0];
+      }
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function formatDate(dateValue) {
+      if (!dateValue) return '—';
+      const date = new Date(dateValue + 'T00:00:00');
+      return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function getStatusClass(status) {
+      if (status === 'On Track' || status === 'Closed') return 'good';
+      if (status === 'Critical') return 'bad';
+      return 'warn';
+    }
+
+    function calculateHealthScore(schedule, budget, incidents, quality, risk, status) {
+      let score = 100;
+      score -= Math.max(0, budget - schedule) * 1.6;
+      score -= incidents * 10;
+      score -= quality * 3;
+      if (risk === 'Medium') score -= 10;
+      if (risk === 'High') score -= 22;
+      if (status === 'Needs Attention') score -= 10;
+      if (status === 'Critical') score -= 22;
+      return clamp(Math.round(score), 0, 100);
+    }
+
+    function healthLabel(score) {
+      if (score >= 80) return 'Strong';
+      if (score >= 60) return 'Moderate';
+      return 'At Risk';
+    }
+
+    function healthSubtitle(score) {
+      if (score >= 80) return 'Healthy performance across key controls';
+      if (score >= 60) return 'Balanced performance with watch points';
+      return 'Escalation and corrective action required';
+    }
+
+    function splitItems(text) {
+      return text
+        .split('.')
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function toBullets(text) {
+      const items = splitItems(text);
+      return items.length ? items.map(item => `<li>${item}</li>`).join('') : '<li>No actions listed</li>';
+    }
+
+    function toRiskCards(text) {
+      const items = splitItems(text);
+      return items.length ? items.map(item => `<div class="risk-item">${item}</div>`).join('') : '<div class="risk-item">No risks listed</div>';
+    }
+
+    function safetyPerformanceWidth(incidents) {
+      return clamp(100 - incidents * 18, 12, 100);
+    }
+
+    function qualityPerformanceWidth(issues) {
+      return clamp(100 - issues * 12, 12, 100);
+    }
+
+    function buildManagementComments(data, variance, score) {
+      const scheduleComment = data.scheduleProgress >= data.budgetUsed
+        ? 'Delivery progress is in line with or ahead of spend.'
+        : 'Spend is ahead of progress and warrants tighter cost-to-complete review.';
+
+      const safetyComment = data.safetyIncidents === 0
+        ? 'No incidents recorded; maintain current controls and supervision.'
+        : `${data.safetyIncidents} incident(s) recorded; confirm corrective actions and reinforce site discipline.`;
+
+      const qualityComment = data.qualityIssues <= 2
+        ? 'Open quality items remain within a manageable range.'
+        : `Open defects remain elevated at ${data.qualityIssues}; accelerate closeout ownership.`;
+
+      const riskComment = data.riskLevel === 'High'
+        ? 'High risk exposure requires active mitigation tracking at management level.'
+        : data.riskLevel === 'Medium'
+        ? 'Medium risk profile should stay under close weekly review.'
+        : 'Risk position is currently contained.';
+
+      return [
+        { area: 'Schedule', position: `${data.scheduleProgress}% complete`, comment: scheduleComment },
+        { area: 'Cost', position: `${data.budgetUsed}% spent (${variance >= 0 ? '+' : ''}${variance}% variance)`, comment: variance > 5 ? 'Cost burn is materially ahead of progress and should be escalated.' : 'Cost position is currently within a manageable range.' },
+        { area: 'Safety', position: `${data.safetyIncidents} incident(s)`, comment: safetyComment },
+        { area: 'Quality', position: `${data.qualityIssues} open item(s)`, comment: qualityComment },
+        { area: 'Risk', position: data.riskLevel, comment: riskComment },
+        { area: 'Overall', position: `${healthLabel(score)} / ${data.status}`, comment: 'Use the action plan below to protect schedule, cost, and stakeholder confidence.' }
+      ];
+    }
+
+    function openQualityModal() {
+      document.getElementById('qualityModal').classList.add('open');
+      syncQualityIssueCount();
+    }
+
+    function closeQualityModal() {
+      document.getElementById('qualityModal').classList.remove('open');
+    }
+
+    function createIssueCard(data = {}) {
+      const template = document.getElementById('qualityIssueTemplate');
+      const node = template.content.firstElementChild.cloneNode(true);
+
+      node.querySelector('[data-field="title"]').value = data.title || '';
+      node.querySelector('[data-field="location"]').value = data.location || '';
+      node.querySelector('[data-field="trade"]').value = data.trade || '';
+      node.querySelector('[data-field="severity"]').value = data.severity || 'Medium';
+      node.querySelector('[data-field="raisedBy"]').value = data.raisedBy || '';
+      node.querySelector('[data-field="dateRaised"]').value = data.dateRaised || '';
+      node.querySelector('[data-field="targetDate"]').value = data.targetDate || '';
+      node.querySelector('[data-field="owner"]').value = data.owner || '';
+      node.querySelector('[data-field="verifier"]').value = data.verifier || '';
+      node.querySelector('[data-field="status"]').value = data.status || 'Open';
+      node.querySelector('[data-field="recommendation"]').value = data.recommendation || '';
+      node.querySelector('[data-field="correctiveAction"]').value = data.correctiveAction || '';
+      node.querySelector('[data-field="preventiveAction"]').value = data.preventiveAction || '';
+      node.querySelector('[data-field="capaNotes"]').value = data.capaNotes || '';
+
+      node.querySelector('[data-action="remove-issue"]').addEventListener('click', () => {
+        node.remove();
+        renumberIssues();
+        syncQualityIssueCount();
+        generateSummary();
+      });
+
+      node.querySelector('[data-field="status"]').addEventListener('change', event => {
+        const badge = node.querySelector('[data-role="issue-status-badge"]');
+        badge.textContent = event.target.value;
+        badge.className = `badge ${getStatusClass(event.target.value)}`;
+        syncQualityIssueCount();
+        generateSummary();
+      });
+
+      node.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('input', () => {
+          if (el.dataset.field === 'title') {
+            node.querySelector('.issue-title').textContent = el.value.trim() || 'Quality Issue';
+          }
+          syncQualityIssueCount();
+          generateSummary();
+        });
+        el.addEventListener('change', () => {
+          syncQualityIssueCount();
+          generateSummary();
+        });
+      });
+
+      const badge = node.querySelector('[data-role="issue-status-badge"]');
+      badge.textContent = data.status || 'Open';
+      badge.className = `badge ${getStatusClass(data.status || 'Open')}`;
+      node.querySelector('.issue-title').textContent = data.title || 'Quality Issue';
+
+      document.getElementById('qualityIssueList').appendChild(node);
+      renumberIssues();
+      syncQualityIssueCount();
+      return node;
+    }
+
+    function addQualityIssue() {
+      createIssueCard({ status: 'Open', severity: 'Medium' });
+      openQualityModal();
+    }
+
+    function renumberIssues() {
+      const cards = [...document.querySelectorAll('#qualityIssueList .issue-card')];
+      cards.forEach((card, index) => {
+        const issueNo = `QI-${String(index + 1).padStart(3, '0')}`;
+        card.querySelector('[data-role="issue-number"]').textContent = index + 1;
+        card.querySelector('[data-field="issueNo"]').value = issueNo;
+      });
+    }
+
+    function getQualityIssuesData() {
+      return [...document.querySelectorAll('#qualityIssueList .issue-card')].map(card => ({
+        issueNo: card.querySelector('[data-field="issueNo"]').value,
+        status: card.querySelector('[data-field="status"]').value,
+        title: card.querySelector('[data-field="title"]').value.trim(),
+        location: card.querySelector('[data-field="location"]').value.trim(),
+        trade: card.querySelector('[data-field="trade"]').value.trim(),
+        severity: card.querySelector('[data-field="severity"]').value,
+        raisedBy: card.querySelector('[data-field="raisedBy"]').value.trim(),
+        dateRaised: card.querySelector('[data-field="dateRaised"]').value,
+        targetDate: card.querySelector('[data-field="targetDate"]').value,
+        owner: card.querySelector('[data-field="owner"]').value.trim(),
+        verifier: card.querySelector('[data-field="verifier"]').value.trim(),
+        recommendation: card.querySelector('[data-field="recommendation"]').value.trim(),
+        correctiveAction: card.querySelector('[data-field="correctiveAction"]').value.trim(),
+        preventiveAction: card.querySelector('[data-field="preventiveAction"]').value.trim(),
+        capaNotes: card.querySelector('[data-field="capaNotes"]').value.trim()
+      }));
+    }
+
+    function syncQualityIssueCount() {
+      const issues = getQualityIssuesData();
+      const openCount = issues.filter(issue => issue.status !== 'Closed').length;
+      document.getElementById('qualityIssues').value = openCount;
+      document.getElementById('qualityCountDisplay').textContent = openCount;
+      return openCount;
+    }
+
+    function populateQualityIssues() {
+      document.getElementById('qualityIssueList').innerHTML = '';
+      sampleQualityIssues.forEach(issue => createIssueCard(issue));
+      syncQualityIssueCount();
+    }
+
+    function generateSummary() {
+      const openQualityCount = syncQualityIssueCount();
+      const qualityIssueData = getQualityIssuesData();
+      const openTitles = qualityIssueData
+        .filter(issue => issue.status !== 'Closed')
+        .slice(0, 3)
+        .map(issue => issue.title)
+        .filter(Boolean);
+
+      const data = {
+        projectName: document.getElementById('projectName').value.trim(),
+        projectManager: document.getElementById('projectManager').value.trim(),
+        client: document.getElementById('client').value.trim(),
+        reviewDate: document.getElementById('reviewDate').value,
+        scheduleProgress: Number(document.getElementById('scheduleProgress').value || 0),
+        budgetUsed: Number(document.getElementById('budgetUsed').value || 0),
+        safetyIncidents: Number(document.getElementById('safetyIncidents').value || 0),
+        qualityIssues: openQualityCount,
+        riskLevel: document.getElementById('riskLevel').value,
+        status: document.getElementById('status').value,
+        keyAchievements: document.getElementById('keyAchievements').value.trim(),
+        topRisks: document.getElementById('topRisks').value.trim(),
+        nextActions: document.getElementById('nextActions').value.trim()
+      };
+
+      const score = calculateHealthScore(
+        data.scheduleProgress,
+        data.budgetUsed,
+        data.safetyIncidents,
+        data.qualityIssues,
+        data.riskLevel,
+        data.status
+      );
+
+      const health = healthLabel(score);
+      const variance = Math.round((data.budgetUsed - data.scheduleProgress) * 10) / 10;
+      const scheduleComment = data.scheduleProgress >= data.budgetUsed
+        ? 'Progress is broadly aligned with current spend.'
+        : 'Spend is trending ahead of physical progress and should be reviewed.';
+      const safetyComment = data.safetyIncidents === 0
+        ? 'No safety incidents were recorded during the review period.'
+        : `${data.safetyIncidents} safety incident(s) were recorded and require management follow-through.`;
+      const qualityComment = data.qualityIssues <= 2
+        ? 'Quality performance remains manageable with limited open issues.'
+        : `There are ${data.qualityIssues} open quality issue(s) requiring closure planning.`;
+      const registerComment = openTitles.length
+        ? `Priority open items include: ${openTitles.join('; ')}.`
+        : 'No open issues are currently listed in the quality register.';
+
+      const summary = `${data.projectName} for ${data.client} was reviewed on ${formatDate(data.reviewDate)}. The project is currently marked as ${data.status.toLowerCase()} with an overall ${data.riskLevel.toLowerCase()} risk profile and ${health.toLowerCase()} project health score of ${score}/100. Schedule progress stands at ${data.scheduleProgress}% against budget usage of ${data.budgetUsed}% (${variance >= 0 ? '+' : ''}${variance}% variance). ${scheduleComment} ${safetyComment} ${qualityComment} ${registerComment}\n\nKey achievements: ${data.keyAchievements || 'No achievements entered.'}\n\nTop risks/issues: ${data.topRisks || 'No risks entered.'}`;
+
+      document.getElementById('heroProject').textContent = data.projectName || '—';
+      document.getElementById('heroDate').textContent = formatDate(data.reviewDate);
+      document.getElementById('heroManager').textContent = data.projectManager || '—';
+      document.getElementById('heroClient').textContent = data.client || '—';
+
+      document.getElementById('healthValue').textContent = health;
+      document.getElementById('healthSub').textContent = healthSubtitle(score);
+      document.getElementById('riskValue').textContent = data.riskLevel;
+      document.getElementById('varianceValue').textContent = `${variance >= 0 ? '+' : ''}${variance}%`;
+      document.getElementById('varianceSub').textContent = variance > 5 ? 'Spend ahead of progress' : 'Spend aligned with progress';
+
+      const badge = document.getElementById('statusBadge');
+      badge.textContent = data.status;
+      badge.className = `badge ${getStatusClass(data.status)}`;
+
+      document.getElementById('executiveSummary').textContent = summary;
+      document.getElementById('actionList').innerHTML = toBullets(data.nextActions);
+      document.getElementById('riskList').innerHTML = toRiskCards(data.topRisks);
+
+      document.getElementById('scheduleLabel').textContent = `${data.scheduleProgress}%`;
+      document.getElementById('budgetLabel').textContent = `${data.budgetUsed}%`;
+      document.getElementById('safetyLabel').textContent = `${data.safetyIncidents} incident${data.safetyIncidents === 1 ? '' : 's'}`;
+      document.getElementById('qualityLabel').textContent = `${data.qualityIssues} open item${data.qualityIssues === 1 ? '' : 's'}`;
+
+      document.getElementById('scheduleFill').style.width = `${clamp(data.scheduleProgress, 0, 100)}%`;
+      document.getElementById('budgetFill').style.width = `${clamp(data.budgetUsed, 0, 100)}%`;
+      document.getElementById('safetyFill').style.width = `${safetyPerformanceWidth(data.safetyIncidents)}%`;
+      document.getElementById('qualityFill').style.width = `${qualityPerformanceWidth(data.qualityIssues)}%`;
+
+      const comments = buildManagementComments(data, variance, score);
+      document.getElementById('kpiTableBody').innerHTML = comments.map(item => `
+        <tr>
+          <td><strong>${item.area}</strong></td>
+          <td>${item.position}</td>
+          <td>${item.comment}</td>
+        </tr>
+      `).join('');
+    }
+
+    function resetFormValues() {
+      Object.entries(sampleData).forEach(([key, value]) => {
+        const el = document.getElementById(key);
+        if (el) el.value = value;
+      });
+      setToday();
+      populateQualityIssues();
+      generateSummary();
+    }
+
+    document.getElementById('qualityModal').addEventListener('click', event => {
+      if (event.target.id === 'qualityModal') closeQualityModal();
+    });
+
+    setToday();
+    populateQualityIssues();
+    generateSummary();
+  </script>
+</body>
+</html>

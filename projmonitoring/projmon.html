@@ -1,0 +1,2921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Monitoring System</title>
+  <style>
+    :root {
+      --bg: #eef4ff;
+      --panel: rgba(255,255,255,0.95);
+      --text: #183153;
+      --muted: #60708a;
+      --line: #d6e1f0;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --primary-soft: #dbeafe;
+      --accent: #7c3aed;
+      --good: #059669;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --shadow: 0 14px 40px rgba(37, 99, 235, 0.12);
+      --radius: 16px;
+    }
+
+    /* Item row background (darker saturated blue) */
+    .item-row { background-color: #0b5fff; color: #ffffff; }
+    .item-row td { background-clip: padding-box; }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.10), transparent 24%),
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 28%),
+        linear-gradient(180deg, #f6f9ff 0%, #edf3ff 100%);
+      color: var(--text);
+    }
+    .app { max-width: 1680px; margin: 0 auto; padding: 10px; }
+    body.screen-fit .app { max-width: none; width: 100vw; margin: 0; padding: 8px 10px; }
+    body.screen-fit .hero, body.screen-fit .panel, body.screen-fit .sidebar { border-radius: 14px; }
+    body.screen-fit .main-grid { width: 100%; }
+    body.screen-fit .table-wrap { max-height: calc(100vh - 250px); }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8 0%, #4f46e5 55%, #7c3aed 100%);
+      color: white;
+      border-radius: 22px;
+      padding: 12px 16px;
+      box-shadow: 0 18px 50px rgba(37, 99, 235, 0.25);
+      margin-bottom: 10px;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+    .hero-logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      flex: 0 0 36px;
+      display: block;
+    }
+    .hero-title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .hero-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .hero-view-menu {
+      position: relative;
+      display: inline-block;
+    }
+    .hero-view-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 6px 12px 6px 0;
+      border-radius: 0;
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--text);
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      box-shadow: none;
+      height: 24px;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+    .hero-view-toggle::after {
+      content: '▾';
+      font-size: 0.62rem;
+      opacity: 0.9;
+      margin-left: 8px;
+    }
+    .hero-view-menu[open] .hero-view-toggle::after {
+      transform: rotate(180deg);
+    }
+    .hero-view-menu summary {
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+      border-radius: 0;
+    }
+    .hero-view-menu summary::-webkit-details-marker { display: none; }
+    .hero-view-label { display:inline-block; margin-left:5px; }
+    .hero-view-panel {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 170px;
+      padding: 0px;
+      border-radius: 14px;
+      border: 1px solid #dbe4f6;
+      background: white;
+      box-shadow: 0 16px 34px rgba(15, 23, 42, 0.18);
+      z-index: 20;
+    }
+    .hero-view-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: white;
+    }
+    .hero-view-option:hover {
+      background: #f8fbff;
+    }
+    .hero-view-option input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      min-height: 14px;
+      margin: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex: 0 0 14px;
+    }
+    .hero h1 { margin: 0; font-size: 1.32rem; line-height: 1.0; }
+    .hero p { margin: 2px 0 0; font-size: 0.72rem; line-height: 1.15; color: rgba(255,255,255,0.9); max-width: 760px; }
+    .hero-badges, .top-actions, .row-actions, .module-actions, .subsection-nav { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+    .hero-badges { gap: 5px; justify-content: flex-end; margin-left: auto; }
+    .hero-tools { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+    .screen-fit-btn {
+      width: 32px;
+      min-width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(255,255,255,0.14);
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    .screen-fit-btn:hover { background: rgba(255,255,255,0.2); }
+    .screen-fit-btn.is-active { background: rgba(255,255,255,0.24); border-color: rgba(255,255,255,0.42); }
+    .shell-actions { display: flex; justify-content: flex-start; gap: 8px; margin-bottom: 8px; }
+    .badge {
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 4px 7px;
+      border-radius: 999px;
+      font-size: 0.64rem;
+      font-weight: 700;
+    }
+
+    button {
+      border: none; border-radius: 8px; padding: 6px 9px;
+      font-size: 0.75rem; font-weight: 700; line-height: 1;
+      cursor: pointer; transition: 0.18s ease;
+    }
+    button:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-secondary { background: white; color: var(--text); border: 1px solid var(--line); }
+    .btn-ghost { background: rgba(255,255,255,0.16); color: white; border: 1px solid rgba(255,255,255,0.22); }
+    .mini-primary { background: var(--primary-soft); color: var(--primary-dark); }
+    .mini-danger { background: #fee2e2; color: var(--danger); }
+    .mini-warn { background: #fff1dc; color: var(--warn); }
+
+    .main-grid { display: grid; grid-template-columns: var(--sidebar-width, 220px) 1fr; gap: 10px; align-items: start; transition: grid-template-columns 0.25s ease; }
+    body.sidebar-hidden .main-grid { grid-template-columns: 0 1fr; }
+    .sidebar, .panel {
+      background: var(--panel);
+      border: 1px solid rgba(214,225,240,0.95);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .sidebar {
+      padding: 8px;
+      position: sticky;
+      top: 10px;
+      width: var(--sidebar-width, 220px);
+      min-width: var(--sidebar-width, 220px);
+      max-width: var(--sidebar-width, 220px);
+      transition: transform 0.25s ease, opacity 0.25s ease, width 0.25s ease, min-width 0.25s ease, max-width 0.25s ease, padding 0.25s ease, margin 0.25s ease;
+      transform: translateX(0);
+      opacity: 1;
+      overflow: hidden;
+    }
+    body.sidebar-hidden .sidebar {
+      transform: translateX(calc(-1 * var(--sidebar-width, 220px) - 14px));
+      opacity: 0;
+      width: 0;
+      min-width: 0;
+      max-width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      margin-right: -10px;
+      border-width: 0;
+      box-shadow: none;
+    }
+    .sidebar h2, .section-head h2, .section-head h3 { margin: 0; }
+    .sidebar h2 { font-size: 0.9rem; margin-bottom: 6px; }
+    .section-link-list, .project-mini-list, .summary-list, .item-totals, .kpi-list { display: grid; gap: 6px; }
+    .section-link {
+      width: 100%; text-align: left; background: white; border: 1px solid var(--line);
+      color: var(--text); padding: 7px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 700;
+    }
+    .section-link.active, .subsection-nav button.active {
+      background: linear-gradient(135deg, #dbeafe 0%, #eef2ff 100%);
+      color: var(--primary-dark); border-color: #bdd5fb;
+    }
+
+    .project-mini-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 7px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      cursor: pointer;
+      transition: 0.18s ease;
+    }
+    .project-mini-card:hover {
+      transform: translateY(-1px);
+      border-color: #bdd5fb;
+      box-shadow: 0 8px 18px rgba(37,99,235,0.10);
+    }
+    .project-mini-card.active {
+      background: linear-gradient(135deg, #dbeafe 0%, #eef2ff 100%);
+      border-color: #bdd5fb;
+    }
+    .project-mini-card strong { display: block; font-size: 0.72rem; margin-bottom: 3px; }
+    .project-mini-card span { display: block; font-size: 0.64rem; color: var(--muted); line-height: 1.2; }
+
+    .panel { padding: 10px; }
+    body.sidebar-hidden #moduleScheduleSection .panel:first-child { min-width: 0; }
+    body.sidebar-hidden #moduleScheduleSection .panel:last-child { max-width: 260px; justify-self: end; width: 100%; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+    .section-head h2 { font-size: 1rem; }
+    .section-head h3 { font-size: 0.88rem; }
+    .muted { color: var(--muted); font-size: 0.72rem; line-height: 1.25; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 7px; margin-top: 8px; }
+    .metric-card, .soft-card, .info-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px;
+    }
+    .metric-label { font-size: 0.68rem; color: var(--muted); margin-bottom: 4px; }
+    .metric-value { font-size: 1.05rem; font-weight: 800; line-height: 1.05; }
+    .metric-note { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+
+    .project-grid { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 10px; margin-top: 8px; }
+    .project-card {
+      border: 1px solid var(--line); border-radius: 16px; padding: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,249,255,0.98) 100%);
+      box-shadow: 0 10px 28px rgba(37,99,235,0.08);
+    }
+    .project-card h3 { margin: 0 0 4px; font-size: 0.92rem; color: var(--primary-dark); }
+    .project-card p { margin: 0 0 8px; font-size: 0.69rem; color: var(--muted); line-height: 1.25; }
+    .pill-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
+    .pill {
+      font-size: 0.63rem; font-weight: 700; padding: 4px 7px; border-radius: 999px;
+      background: #eff6ff; color: var(--primary-dark); border: 1px solid #d6e7ff;
+    }
+    .module-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .module-buttons button {
+      background: white; border: 1px solid var(--line); color: var(--text);
+      padding: 8px; border-radius: 10px; text-align: left; font-size: 0.7rem; line-height: 1.15;
+    }
+
+    .two-col, .three-col { display: grid; gap: 10px; }
+    .two-col { grid-template-columns: 1.08fr 0.92fr; }
+
+    /* Keep the BOQ Summary tight so the Bill of Quantities table gets the extra width. */
+    #moduleBoqSection > .two-col {
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 6px;
+      align-items: start;
+    }
+    #boqSummaryPanel {
+      width: 280px;
+      max-width: 280px;
+      justify-self: end;
+    }
+    #boqSummaryPanel .summary-list,
+    #boqSummaryPanel .item-totals,
+    #boqSummaryPanel .kpi-list { gap: 4px; }
+    #boqSummaryPanel .summary-row,
+    #boqSummaryPanel .kpi-row {
+      padding: 4px 5px;
+      font-size: 0.66rem;
+      gap: 5px;
+    }
+    #boqSummaryPanel .summary-row strong,
+    #boqSummaryPanel .kpi-row strong { font-size: 0.72rem; }
+    #boqSummaryPanel .soft-card { padding: 6px; border-radius: 10px; }
+    #boqSummaryPanel .soft-card h4 { font-size: 0.72rem; margin-bottom: 4px; }
+    #boqSummaryPanel.hidden { display: none !important; }
+    #moduleBoqSection.boq-summary-hidden .two-col { grid-template-columns: 1fr; }
+    #moduleBoqSection.boq-summary-hidden #boqSummaryPanel { width: auto; max-width: none; }
+    body.sidebar-hidden #moduleScheduleSection .two-col { grid-template-columns: minmax(0, 1.55fr) minmax(220px, 0.28fr); gap: 6px; }
+    .three-col { grid-template-columns: minmax(0, 1.18fr) minmax(0, 1.18fr) minmax(240px, 0.44fr); }
+    body.sidebar-hidden .three-col { grid-template-columns: minmax(0, 1.28fr) minmax(0, 1.28fr) minmax(210px, 0.30fr); }
+    .project-meta-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+    .meta-field { display: grid; gap: 4px; }
+    .meta-field label { font-size: 0.68rem; font-weight: 700; color: var(--muted); }
+
+    .table-wrap { overflow: auto; overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; max-height: 72vh; background: white; }
+    body.sidebar-hidden #moduleScheduleSection .table-wrap { overflow-x: hidden; }
+    body.sidebar-hidden .tracking-panel .table-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 1100px; border-collapse: collapse; background: white; }
+    body.sidebar-hidden #moduleScheduleSection table { min-width: 0; table-layout: auto; }
+    .tracking-panel table { min-width: 0; width: 100%; table-layout: auto; }
+    .tracking-panel, .tracking-summary-panel { min-width: 0; }
+    body.sidebar-hidden .tracking-panel td:first-child,
+    body.sidebar-hidden .tracking-panel th:first-child {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    body.sidebar-hidden .tracking-panel table { min-width: 0; width: 100%; }
+    thead th {
+      position: sticky; top: 0; background: linear-gradient(180deg, #eff6ff 0%, #edf2ff 100%);
+      color: #1e3a8a; z-index: 1; font-size: 0.68rem;
+    }
+    th, td {
+      border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
+      padding: 4px 5px; text-align: left; vertical-align: middle; font-size: 0.7rem; line-height: 1.05;
+    }
+    body.sidebar-hidden #moduleScheduleSection th,
+    body.sidebar-hidden #moduleScheduleSection td {
+      padding: 3px 4px;
+      font-size: 0.66rem;
+    }
+    body.sidebar-hidden #moduleScheduleSection input {
+      font-size: 0.64rem;
+      padding: 2px 4px;
+      min-height: 20px;
+    }
+    body.sidebar-hidden .tracking-panel th,
+    body.sidebar-hidden .tracking-panel td {
+      padding: 3px 4px;
+      font-size: 0.66rem;
+    }
+    body.sidebar-hidden .tracking-panel input {
+      font-size: 0.64rem;
+      padding: 2px 4px;
+      min-height: 20px;
+    }
+    th:first-child, td:first-child { border-left: 1px solid var(--line); }
+    thead tr:first-child th { border-top: 1px solid var(--line); }
+
+    .item-row { background: #123a8f; color: #ffffff; }
+    .subitem-row { background: #ffffff; }
+    .subsub-row { background: #fcfcfd; }
+    .inventory-sub-row td:first-child { font-weight: 700; }
+    .inventory-material-row td:first-child, .inventory-material-row td:first-child input { font-style: italic; }
+    .level-item { font-weight: 700; color: #123a8f; }
+    .item-row .level-item { color: #ffffff; }
+    .item-row td { background: transparent; color: inherit; }
+
+    .item-row .level-item { color: #ffffff; }
+    .item-row input { color: #ffffff; }
+    .item-row td.cost-col, .item-row td.cost-col input {
+      background: #123a8f; color: #ffffff; font-weight: 700;
+    }
+    .item-row .name-input-wrap input, .item-row .item-code-cell {
+      background: transparent; color: #ffffff; font-weight: 700;
+    }
+    .item-code-cell {
+      width: 52px; min-width: 52px; max-width: 52px; text-align: center;
+      padding-left: 3px; padding-right: 3px; white-space: nowrap; vertical-align: top;
+    }
+    .level-sub { padding-left: 14px; font-weight: 700; }
+    .level-subsub { padding-left: 30px; }
+    .name-cell { display: flex; align-items: center; gap: 4px; width: 100%; }
+    .name-input-wrap { flex: 1; min-width: 0; width: 100%; }
+    .name-input-wrap input {
+      white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+      height: auto; min-height: 22px; line-height: 1.2; text-align: left;
+    }
+
+    .toggle-btn, .icon-btn {
+      width: 20px; min-width: 20px; height: 20px; padding: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.68rem; line-height: 1; border-radius: 5px;
+    }
+    .toggle-btn { background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe; }
+    .toggle-spacer { width: 20px; min-width: 20px; height: 20px; display: inline-block; }
+    .plain-add-btn {
+      background: transparent; border: none; box-shadow: none; color: var(--warn);
+      font-size: 0.95rem; font-weight: 800; width: auto; min-width: auto; height: auto; padding: 0 2px; line-height: 1;
+    }
+    .plain-add-btn:hover { transform: none; }
+
+    input, select {
+      width: 100%; padding: 3px 5px; border: 1px solid #d1d5db; border-radius: 5px;
+      font-size: 0.68rem; line-height: 1; min-height: 22px; background: #fff;
+    }
+    textarea {
+      width: 100%; min-height: 72px; padding: 8px; border: 1px solid #d1d5db;
+      border-radius: 8px; font-size: 0.74rem; resize: vertical; font-family: inherit;
+    }
+    input[readonly] { background: #f9fafb; color: #374151; font-weight: 700; }
+    .unit-col, .unit-col input { text-align: center; }
+    .cost-col, .cost-col input { text-align: right; }
+    .negative-value { color: var(--danger) !important; font-weight: 700; }
+    .delay-value-cell { text-align: center; }
+    .delay-value-cell .delay-value-text { display: inline-block; font-weight: 800; color: var(--danger); text-align: center; }
+
+    .summary-row, .kpi-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px;
+      padding: 6px 7px; border-radius: 7px; border: 1px solid var(--line);
+      background: #f9fafb; font-size: 0.7rem; white-space: nowrap;
+    }
+    .summary-row strong, .kpi-row strong { font-size: 0.78rem; white-space: nowrap; flex-shrink: 0; text-align: right; }
+    .soft-card h4 { margin: 0 0 5px; font-size: 0.78rem; color: var(--primary-dark); }
+    .schedule-progress { height: 9px; background: #e5edff; border-radius: 999px; overflow: hidden; margin-top: 5px; }
+    .schedule-progress > span { display: block; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); border-radius: 999px; }
+    .footer-note { margin-top: 6px; color: var(--muted); font-size: 0.66rem; line-height: 1.2; }
+    .tracking-layout { align-items: start; }
+    .tracking-summary-panel { max-width: 280px; width: 100%; justify-self: end; }
+    .tracking-summary-panel .summary-list { gap: 4px; }
+    .tracking-summary-panel .summary-row { padding: 4px 5px; font-size: 0.68rem; }
+    .tracking-summary-panel .summary-row strong { font-size: 0.74rem; }
+    .ongoing-row td,
+    .ongoing-row td span,
+    .ongoing-row td strong { color: var(--good) !important; font-weight: 700; }
+    .ongoing-row td input {
+      color: var(--good) !important;
+      font-weight: 700;
+      border-color: rgba(5, 150, 105, 0.35);
+      background: #f0fdf4;
+    }
+    .tracking-check {
+      width: 13px;
+      height: 13px;
+      min-height: 13px;
+      margin: 0;
+      accent-color: var(--good);
+      flex: 0 0 auto;
+    }
+    .tracking-note {
+      margin-top: 8px;
+      padding: 7px 8px;
+      border: 1px solid #d1fae5;
+      border-radius: 8px;
+      background: #f0fdf4;
+      color: #065f46;
+      font-size: 0.68rem;
+      line-height: 1.35;
+    }
+
+    #inventoryBody .item-row .level-item { color: #ffffff !important; }
+    #inventoryBody .item-row .toggle-btn { background: rgba(255,255,255,0.92); color: #123a8f; }
+    .hidden { display: none !important; }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.42);
+      display: flex; align-items: center; justify-content: center; padding: 18px; z-index: 1000;
+    }
+    .modal {
+      width: min(720px, 100%); background: white; border-radius: 18px;
+      border: 1px solid var(--line); box-shadow: 0 25px 80px rgba(15, 23, 42, 0.24); overflow: hidden;
+    }
+    .modal-head { padding: 14px 16px; background: linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%); color: white; }
+    .modal-head h3 { margin: 0; font-size: 1rem; }
+    .modal-head p { margin: 4px 0 0; font-size: 0.72rem; color: rgba(255,255,255,0.9); }
+    .modal-body { padding: 14px 16px; display: grid; gap: 10px; }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .form-group { display: grid; gap: 5px; }
+    .form-group label { font-size: 0.7rem; font-weight: 700; color: var(--text); }
+    .modal-foot { padding: 12px 16px 16px; display: flex; justify-content: flex-end; gap: 8px; }
+
+    .schedule-column-control {
+      display: inline-block;
+      min-width: min(100%, 560px);
+      background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08);
+      overflow: hidden;
+    }
+    .schedule-column-control summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      list-style: none;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+    }
+    .schedule-column-control summary::-webkit-details-marker { display: none; }
+    .schedule-column-control summary::after {
+      content: '▾';
+      font-size: 0.78rem;
+      color: var(--muted);
+      transition: transform 0.18s ease;
+    }
+    .schedule-column-control[open] summary::after { transform: rotate(180deg); }
+    .schedule-column-body {
+      padding: 10px 12px 12px;
+      border-top: 1px solid #e7eefb;
+      background: rgba(255,255,255,0.94);
+    }
+    .schedule-column-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 1fr));
+      gap: 8px 12px;
+      align-items: start;
+    }
+    .schedule-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 6px 8px;
+      min-height: 34px;
+      border: 1px solid #e6edf8;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+      cursor: pointer;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+    .schedule-checkbox:hover {
+      border-color: #bfd4fb;
+      background: #f8fbff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);
+    }
+    .schedule-checkbox input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      min-height: 14px;
+      margin: 0;
+      flex: 0 0 14px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+    .delay-header-cell {
+      padding: 3px 4px;
+    }
+    .delay-header-select {
+      width: 100%;
+      min-height: 22px;
+      padding: 2px 22px 2px 6px;
+      border: 1px solid #cfd9ea;
+      border-radius: 6px;
+      font-size: 0.64rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      background: #ffffff;
+      line-height: 1.1;
+    }
+    body.sidebar-hidden #moduleScheduleSection .delay-header-cell {
+      padding: 2px 3px;
+    }
+    body.sidebar-hidden #moduleScheduleSection .delay-header-select {
+      min-height: 20px;
+      font-size: 0.62rem;
+      padding: 1px 18px 1px 5px;
+    }
+    .schedule-checkbox span {
+      display: inline-flex;
+      align-items: center;
+    }
+
+
+    .tracking-work-item { cursor: default; }
+    .tracking-work-item.clickable { cursor: pointer; text-decoration: underline dotted rgba(37,99,235,0.55); text-underline-offset: 3px; }
+    .tracking-work-item.clickable:hover { color: var(--primary-dark); }
+    .actual-cost-sheet .modal { width: min(980px, 100%); max-height: 92vh; overflow: auto; }
+    .actual-cost-title { display: grid; gap: 3px; }
+    .actual-cost-table table { min-width: 760px; }
+    .actual-cost-table th, .actual-cost-table td { font-size: 0.72rem; }
+    .actual-cost-total { display: flex; justify-content: flex-end; gap: 10px; align-items: center; margin-top: 8px; font-weight: 800; color: var(--primary-dark); }
+
+    @media (max-width: 1250px) {
+      .main-grid, .two-col, .three-col, .project-meta-grid { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .table-wrap { max-height: none; }
+    }
+    @media (max-width: 900px) {
+      .metrics, .project-grid, .form-grid, .module-buttons { grid-template-columns: 1fr; }
+      .hero-top { align-items: flex-start; }
+      .hero-tools { width: 100%; justify-content: flex-end; }
+      .hero-badges { width: 100%; justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="hero-top">
+        <div class="hero-brand">
+          <img src="FCLDCLOG.png" alt="FCLDC logo" class="hero-logo">
+          <div class="hero-title-block">
+            <div class="hero-title-row">
+              <h1>Project Monitoring System</h1>
+              <a href="../index.html" class="btn-secondary" style="margin-left:6px; padding:4px 8px; font-size:0.78rem; font-weight:700; text-decoration:none;">Home</a>
+              <details class="hero-view-menu" id="heroViewMenu">
+                <summary class="hero-view-toggle"><span class="hero-view-label">View</span></summary>
+                <div class="hero-view-panel">
+                  <label class="hero-view-option">
+                    <input type="checkbox" id="viewNavigationToggle" checked onchange="setNavigationVisibility(this.checked)">
+                    <span>Navigation</span>
+                  </label>
+                  <label class="hero-view-option">
+                    <input type="checkbox" id="viewBoqSummaryToggle" checked onchange="setBoqSummaryVisibility(this.checked)">
+                    <span>BOQ Summary Table</span>
+                  </label>
+                </div>
+              </details>
+            </div>
+            <p>Multi-project control center</p>
+          </div>
+        </div>
+        <div class="hero-tools">
+          <button class="screen-fit-btn" id="screenFitBtn" type="button" onclick="toggleScreenFit()" title="Fit to screen" aria-label="Fit to screen">⛶</button>
+          <div class="hero-badges" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <aside class="sidebar">
+        <h2>Navigation</h2>
+        <div class="section-link-list">
+          <button class="section-link active" id="navHomeBtn" onclick="showHome()">Home Page</button>
+          <button class="section-link" id="navProjectBtn" onclick="showProjectDashboard()">Project Workspace</button>
+        </div>
+        <div class="top-actions" style="margin-top:8px; margin-bottom:8px;">
+          <button class="btn-secondary" onclick="saveCurrentOrAllProjects()">Save</button>
+          <button class="btn-secondary" onclick="triggerLoadProjects()">Load</button>
+        </div>
+        <div class="project-mini-list" id="projectMiniList"></div>
+      </aside>
+
+      <main>
+        <section class="panel" id="homePageSection">
+          <div class="section-head">
+            <div>
+              <h2>Home Page</h2>
+              <div class="muted">Select a project, then open BOQ, Schedule, Inventory, or Tracking.</div>
+            </div>
+            <div class="top-actions">
+              <button class="btn-secondary" onclick="loadSampleProjects()">Load Sample Projects</button>
+              <button class="btn-secondary" onclick="saveCurrentOrAllProjects()">Save Projects</button>
+              <button class="btn-secondary" onclick="triggerLoadProjects()">Load Projects</button>
+              <button class="btn-primary" onclick="openProjectModal()">Add Project</button>
+            </div>
+          </div>
+
+          <div class="metrics">
+            <div class="metric-card"><div class="metric-label">Projects</div><div class="metric-value" id="homeMetricProjects">0</div><div class="metric-note">Tracked in system</div></div>
+            <div class="metric-card"><div class="metric-label">Active Module</div><div class="metric-value" id="homeMetricModule">BOQ</div><div class="metric-note">Current workspace</div></div>
+            <div class="metric-card"><div class="metric-label">Total Portfolio Cost</div><div class="metric-value" id="homeMetricCost">₱ 0.00</div><div class="metric-note">Across loaded projects</div></div>
+            <div class="metric-card"><div class="metric-label">Selected Project</div><div class="metric-value" id="homeMetricSelected">None</div><div class="metric-note">Click a card to open</div></div>
+          </div>
+
+          <div class="project-grid" id="projectGrid"></div>
+        </section>
+
+        <section class="panel hidden" id="projectDashboardSection">
+          <div class="section-head">
+            <div>
+              <h2 id="currentProjectTitle">Project Workspace</h2>
+              <div class="muted" id="currentProjectSubtitle">Select a project from the home page.</div>
+            </div>
+            <div class="top-actions">
+              <button class="btn-secondary" onclick="showHome()">Back to Home</button>
+              <button class="btn-secondary" onclick="saveCurrentOrAllProjects()">Save</button>
+              <button class="btn-secondary" onclick="convertCurrentProjectToCSV()">Export CSV</button>
+              <button class="btn-secondary" onclick="exportFormattedWorkbook()">Export Formatted Excel</button>
+              <button class="btn-secondary" onclick="triggerLoadProjects()">Load</button>
+              <button class="btn-primary" onclick="loadCurrentProjectSampleBOQ()">Load Project BOQ</button>
+            </div>
+          </div>
+
+          <div class="section-head" style="margin-top:8px; margin-bottom:8px; justify-content:flex-start;">
+            <div style="display:inline-flex; align-items:center; gap:8px;">
+              <h3 style="margin:0;">Project Information</h3>
+              <button class="btn-secondary" id="projectInfoToggleBtn" onclick="toggleProjectInfo()">Hide</button>
+            </div>
+          </div>
+
+          <div class="project-meta-grid" id="projectInfoSection">
+            <div class="info-card meta-field"><label>Project Name</label><input id="editProjectName" type="text" onchange="updateProjectInfo('name', this.value)"></div>
+            <div class="info-card meta-field"><label>Project Code</label><input id="editProjectCode" type="text" onchange="updateProjectInfo('code', this.value)"></div>
+            <div class="info-card meta-field"><label>Status</label><select id="editProjectStatus" onchange="updateProjectInfo('status', this.value)"><option>Planning</option><option>In Progress</option><option>Procurement</option><option>For Closeout</option><option>Completed</option></select></div>
+            <div class="info-card meta-field"><label>Location</label><input id="editProjectLocation" type="text" onchange="updateProjectInfo('location', this.value)"></div>
+            <div class="info-card meta-field"><label>Project Owner / Client</label><input id="editProjectOwner" type="text" onchange="updateProjectInfo('owner', this.value)"></div>
+            <div class="info-card meta-field"><label>Target Start</label><input id="editProjectStartDate" type="date" onchange="updateProjectInfo('startDate', this.value)"></div>
+            <div class="info-card meta-field" style="grid-column: 1 / -1;"><label>Description</label><textarea id="editProjectDescription" onchange="updateProjectInfo('description', this.value)"></textarea></div>
+          </div>
+
+          <div class="subsection-nav">
+            <button class="btn-secondary active" id="moduleBoqBtn" onclick="setProjectModule('boq')">Bill of Quantities</button>
+            <button class="btn-secondary" id="moduleScheduleBtn" onclick="setProjectModule('schedule')">Project Schedule</button>
+            <button class="btn-secondary" id="moduleInventoryBtn" onclick="setProjectModule('inventory')">Project Inventory</button>
+            <button class="btn-secondary" id="moduleTrackingBtn" onclick="setProjectModule('tracking')">Labor & Material Tracking</button>
+          </div>
+
+          <div class="metrics" id="workspaceMetrics"></div>
+
+          <div id="moduleBoqSection">
+            <div class="two-col">
+              <div class="panel" style="padding:8px;">
+                <div class="section-head">
+                  <h3>Bill of Quantities</h3>
+                  <div class="module-actions">
+                      <button class="btn-secondary" onclick="resetCurrentProjectBOQ()">Reset</button>
+                      <button class="btn-secondary" onclick="convertCurrentProjectToCSV()">Export CSV</button>
+                      <button class="btn-secondary" onclick="exportSectionExcel('boq')">Export Excel</button>
+                      <button class="btn-secondary" onclick="triggerSectionExcelImport('boq')">Import Excel</button>
+                      <button class="btn-primary" onclick="addItem()">Add Item</button>
+                  </div>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width:52px;">WBS</th>
+                        <th style="width:250px;">Item / Sub-Item / Sub-Sub-Item</th>
+                        <th style="width:80px;">Qty</th>
+                        <th class="unit-col" style="width:80px;">Unit</th>
+                        <th class="cost-col" style="width:125px;">Labor/Equip't Cost</th>
+                        <th class="cost-col" style="width:145px;">Mat'l Total Cost</th>
+                        <th class="cost-col" style="width:125px;">Total Labor/Equip't Cost</th>
+                        <th class="cost-col" style="width:145px;">Total Mat'l Cost</th>
+                        <th class="cost-col" style="width:125px;">Grand Total Cost</th>
+                        <th style="width:74px;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="boqBody"></tbody>
+                  </table>
+                </div>
+                <div class="footer-note">Top-level items are highlighted. Sub-items are bold. Unit columns are centered. Cost columns are right-aligned and formatted.</div>
+              </div>
+
+              <div class="panel" id="boqSummaryPanel" style="padding:8px;">
+                <div class="section-head"><h3>BOQ Summary</h3></div>
+                <div class="summary-list">
+                  <div class="summary-row"><span>Total Items</span><strong id="metricItems">0</strong></div>
+                  <div class="summary-row"><span>Sub-Items / Sub-Sub-Items</span><strong id="metricSubItems">0 / 0</strong></div>
+                  <div class="summary-row"><span>Total Labor/Equip't Cost</span><strong id="sumLabor">₱ 0.00</strong></div>
+                  <div class="summary-row"><span>Total Mat'l Cost</span><strong id="sumMaterial">₱ 0.00</strong></div>
+                  <div class="summary-row"><span>Overall Grand Total</span><strong id="sumGrand">₱ 0.00</strong></div>
+                </div>
+                <div style="margin-top:8px;">
+                  <h3 style="margin-bottom:6px;">Item Totals</h3>
+                  <div class="item-totals" id="itemTotals"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="moduleScheduleSection" class="hidden">
+            <div class="two-col">
+              <div class="panel" style="padding:8px;">
+                <div class="section-head"><h3>Project Schedule</h3><div class="module-actions"><button class="btn-secondary" onclick="exportSectionExcel('schedule')">Export Excel</button><button class="btn-secondary" onclick="triggerSectionExcelImport('schedule')">Import Excel</button></div></div>
+                <div class="top-actions" style="margin-bottom:6px; gap:10px;">
+                  <details id="scheduleColumnControl" class="schedule-column-control">
+                    <summary>Show / Hide Columns</summary>
+                    <div class="schedule-column-body">
+                      <div id="scheduleColumnToggles" class="schedule-column-grid"></div>
+                    </div>
+                  </details>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width:60px;">WBS</th>
+                        <th>Work Package</th>
+                        <th data-col="boqCost" style="width:120px;">BOQ Cost</th>
+                        <th data-col="startDate" style="width:105px;">Start Date</th>
+                        <th data-col="finishDate" style="width:105px;">Finish Date</th>
+                        <th data-col="actualStart" style="width:105px;">Actual Start</th>
+                        <th data-col="actualFinish" style="width:105px;">Actual Finish</th>
+                        <th data-col="durationDays" style="width:85px;">Duration</th>
+                        <th data-col="percentAccomplished" style="width:110px;">% Accomplished</th>
+                        <th data-col="progressBar" style="width:130px;">Progress Bar</th>
+                        <th data-col="earnedValue" style="width:120px;">Earned Value</th>
+                        <th data-col="delay" class="delay-header-cell" style="width:165px;">
+                          <select class="delay-header-select" aria-label="Delay mode" onchange="updateScheduleDelayMode(this.value)">
+                            <option value="Delay in Completion">Delay in Completion</option>
+                            <option value="Delay to Date">Delay to Date</option>
+                            <option value="Start Delay">Start Delay</option>
+                          </select>
+                        </th>
+                        <th data-col="updated" style="width:100px;">Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody id="scheduleBody"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="panel" style="padding:8px;">
+                <div class="section-head"><h3>Schedule Progress Summary</h3></div>
+                <div class="summary-list" id="scheduleSummary"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="moduleInventorySection" class="hidden">
+            <div class="two-col">
+              <div class="panel" style="padding:8px;">
+                <div class="section-head">
+                  <h3>Project Inventory</h3>
+                  <div class="module-actions"><button class="btn-secondary" onclick="exportSectionExcel('inventory')">Export Excel</button><button class="btn-secondary" onclick="triggerSectionExcelImport('inventory')">Import Excel</button><button class="btn-primary" onclick="addInventoryRow()">Add Inventory</button></div>
+                </div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Material / Equipment</th>
+                        <th style="width:95px;">Unit</th>
+                        <th style="width:110px;">BOQ Qty</th>
+                        <th style="width:110px;">On Hand</th>
+                        <th style="width:110px;">Issued</th>
+                        <th style="width:110px;">Balance</th>
+                        <th style="width:100px;">Updated</th>
+                        <th style="width:56px;">Act</th>
+                      </tr>
+                    </thead>
+                    <tbody id="inventoryBody"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="panel" style="padding:8px;">
+                <div class="section-head"><h3>Inventory Insight</h3></div>
+                <div class="summary-list" id="inventorySummary"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="moduleTrackingSection" class="hidden">
+            <div class="three-col tracking-layout">
+              <div class="panel tracking-panel" style="padding:8px;">
+                <div class="section-head"><h3>Labor Tracking Against BOQ</h3><div class="module-actions"><button class="btn-secondary" onclick="exportSectionExcel('tracking')">Export Excel</button><button class="btn-secondary" onclick="triggerSectionExcelImport('tracking')">Import Excel</button></div></div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 42%; min-width: 0;">Work Item</th>
+                        <th style="width:120px;">BOQ Labor</th>
+                        <th style="width:120px;">Estimated Cost</th>
+                        <th style="width:120px;">Actual Labor</th>
+                        <th style="width:120px;">Variance</th>
+                        <th style="width:100px;">Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody id="laborTrackingBody"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="panel tracking-panel" style="padding:8px;">
+                <div class="section-head"><h3>Material Tracking Against BOQ</h3></div>
+                <div class="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 42%; min-width: 0;">Work Item</th>
+                        <th style="width:120px;">BOQ Material</th>
+                        <th style="width:120px;">Estimated Material</th>
+                        <th style="width:120px;">Actual Material</th>
+                        <th style="width:120px;">Variance</th>
+                        <th style="width:100px;">Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody id="materialTrackingBody"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="panel tracking-summary-panel" style="padding:8px;">
+                <div class="section-head"><h3>Controls Summary</h3></div>
+                <div class="summary-list" id="trackingSummary"></div>
+                <div class="tracking-note">Note: Tick the checkbox before a sub-item in Labor Tracking to mark it as ongoing work. Estimated columns are linked from BOQ values. Double-click any work item with no child rows to open its actual cost calculation sheet. If a row has children, double-click the child row instead.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop hidden" id="projectModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Add Project</h3>
+        <p>Enter project information before creating a new project workspace.</p>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="form-group"><label for="projectNameInput">Project Name</label><input id="projectNameInput" type="text" placeholder="e.g. VkBconnectPro Residences"></div>
+          <div class="form-group"><label for="projectCodeInput">Project Code</label><input id="projectCodeInput" type="text" placeholder="e.g. PRJ-004"></div>
+          <div class="form-group"><label for="projectLocationInput">Location</label><input id="projectLocationInput" type="text" placeholder="e.g. Sagada City"></div>
+          <div class="form-group"><label for="projectStatusInput">Status</label><select id="projectStatusInput"><option>Planning</option><option>In Progress</option><option>Procurement</option><option>For Closeout</option><option>Completed</option></select></div>
+          <div class="form-group"><label for="projectOwnerInput">Project Owner / Client</label><input id="projectOwnerInput" type="text" placeholder="e.g. ABC Development Corp."></div>
+          <div class="form-group"><label for="projectStartInput">Target Start</label><input id="projectStartInput" type="date"></div>
+        </div>
+        <div class="form-group"><label for="projectDescriptionInput">Description</label><textarea id="projectDescriptionInput" placeholder="Brief description of the project scope"></textarea></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="closeProjectModal()">Cancel</button>
+        <button class="btn-primary" onclick="createProjectFromForm()">Create Project</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal-backdrop actual-cost-sheet hidden" id="actualCostSheet">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="actual-cost-title">
+          <h3 id="actualCostSheetTitle">Actual Cost Calculation</h3>
+          <p id="actualCostSheetSubtitle">Double-click a leaf work item from Labor or Material Tracking to open this sheet.</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="actual-cost-table table-wrap">
+          <table>
+            <thead id="actualCostSheetHead"></thead>
+            <tbody id="actualCostSheetBody"></tbody>
+          </table>
+        </div>
+        <div class="top-actions" id="actualCostSheetActions"></div>
+        <div class="actual-cost-total"><span>Actual Cost Total</span><strong id="actualCostSheetTotal">₱ 0.00</strong></div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="closeActualCostSheet()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <input id="loadProjectsInput" type="file" accept="application/json" class="hidden">
+  <input id="excelImportInput" type="file" accept=".xlsx,.xls" class="hidden">
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    let projects = [];
+    let currentProjectId = null;
+    let currentModule = 'boq';
+    let projectInfoVisible = true;
+    let sidebarVisible = true;
+    let boqSummaryVisible = true;
+    let scheduleColumnVisibility = {
+      boqCost: true,
+      startDate: true,
+      finishDate: true,
+      actualStart: true,
+      actualFinish: true,
+      durationDays: true,
+      percentAccomplished: true,
+      progressBar: true,
+      earnedValue: true,
+      delay: true,
+      updated: true
+    };
+    let activeActualCostSheet = null;
+
+    function peso(value) {
+      const num = Number(value || 0);
+      return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(num).replace('₱', '₱ ');
+    }
+    function pesoInput(value) {
+      const num = Number(String(value).replace(/[^0-9.-]/g, '') || 0);
+      return `₱ ${new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num)}`;
+    }
+    function formatNumber2(value) {
+      const num = Number(String(value).replace(/[^0-9.-]/g, '') || 0);
+      return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+    }
+    function parseNumber(value) { return Number(String(value ?? '').replace(/[^0-9.-]/g, '')) || 0; }
+    function varianceClass(value) { return Number(value || 0) < 0 ? ' negative-value' : ''; }
+    function currentStamp() { return new Date().toISOString().slice(0, 10); }
+    function uid() { return Math.random().toString(36).slice(2, 10); }
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
+    function createSubSubItem(name = '') { return { id: uid(), name, qty: 0, unit: '', laborUnitCost: 0, materialUnitCost: 0 }; }
+    function createSubItem(name = '') { return { id: uid(), name, qty: 0, unit: '', laborUnitCost: 0, materialUnitCost: 0, expanded: true, subSubItems: [] }; }
+    function createItem(name = '') { return { id: uid(), name, expanded: true, scheduleExpanded: true, subItems: [createSubItem('Sub-Item 1')] }; }
+    function createProject(name, code, location, status, description = '', owner = '', startDate = '') {
+      return {
+        id: uid(), name, code, location, status,
+        description: description || 'Integrated construction controls dashboard with BOQ, schedule, inventory, and resource tracking.',
+        owner, startDate, scheduleDelayMode: 'Delay in Completion', boq: [createItem('Item 1')], schedule: [], inventory: [], tracking: []
+      };
+    }
+
+    function getCurrentProject() { return projects.find(p => p.id === currentProjectId) || null; }
+    function getCurrentItems() { const project = getCurrentProject(); return project ? project.boq : []; }
+
+    function ensureStateShape() {
+      projects.forEach(project => {
+        if (!Array.isArray(project.boq)) project.boq = [createItem('Item 1')];
+        if (!Array.isArray(project.schedule)) project.schedule = [];
+        if (!Array.isArray(project.inventory)) project.inventory = [];
+        if (!Array.isArray(project.tracking)) project.tracking = [];
+        if (!project.scheduleDelayMode) project.scheduleDelayMode = 'Delay in Completion';
+        project.boq.forEach(item => {
+          if (typeof item.expanded !== 'boolean') item.expanded = true;
+          if (typeof item.scheduleExpanded !== 'boolean') item.scheduleExpanded = true;
+          if (!Array.isArray(item.subItems)) item.subItems = [];
+          item.subItems.forEach(sub => {
+            if (typeof sub.expanded !== 'boolean') sub.expanded = true;
+            if (!Array.isArray(sub.subSubItems)) sub.subSubItems = [];
+          });
+        });
+      });
+    }
+
+    function calcBaseCost(entry) {
+      const qty = Number(entry.qty || 0);
+      const laborUnit = Number(entry.laborUnitCost || 0);
+      const materialUnit = Number(entry.materialUnitCost || 0);
+      const totalLabor = qty * laborUnit;
+      const totalMaterial = qty * materialUnit;
+      const grandTotal = totalLabor + totalMaterial;
+      return { totalLabor, totalMaterial, grandTotal };
+    }
+    function calcSubItem(sub) {
+      const own = calcBaseCost(sub);
+      const childTotals = (sub.subSubItems || []).reduce((acc, child) => {
+        const c = calcBaseCost(child);
+        acc.totalLabor += c.totalLabor;
+        acc.totalMaterial += c.totalMaterial;
+        acc.grandTotal += c.grandTotal;
+        return acc;
+      }, { totalLabor: 0, totalMaterial: 0, grandTotal: 0 });
+      return {
+        totalLabor: own.totalLabor + childTotals.totalLabor,
+        totalMaterial: own.totalMaterial + childTotals.totalMaterial,
+        grandTotal: own.grandTotal + childTotals.grandTotal
+      };
+    }
+    function calcItem(item) {
+      return item.subItems.reduce((acc, sub) => {
+        const c = calcSubItem(sub);
+        acc.totalLabor += c.totalLabor;
+        acc.totalMaterial += c.totalMaterial;
+        acc.grandTotal += c.grandTotal;
+        return acc;
+      }, { totalLabor: 0, totalMaterial: 0, grandTotal: 0 });
+    }
+    function calcProjectTotals(project) {
+      return project.boq.reduce((acc, item) => {
+        const t = calcItem(item);
+        acc.totalLabor += t.totalLabor; acc.totalMaterial += t.totalMaterial; acc.totalGrand += t.grandTotal;
+        acc.totalItems += 1; acc.totalSubItems += item.subItems.length; acc.totalSubSubItems += item.subItems.reduce((sum, sub) => sum + sub.subSubItems.length, 0);
+        return acc;
+      }, { totalLabor: 0, totalMaterial: 0, totalGrand: 0, totalItems: 0, totalSubItems: 0, totalSubSubItems: 0 });
+    }
+    function capitalize(text) { return text.charAt(0).toUpperCase() + text.slice(1); }
+
+    function updateViewControls() {
+      const navToggle = document.getElementById('viewNavigationToggle');
+      if (navToggle) navToggle.checked = !!sidebarVisible;
+    }
+
+    function setNavigationVisibility(visible) {
+      sidebarVisible = !!visible;
+      document.body.classList.toggle('sidebar-hidden', !sidebarVisible);
+      updateViewControls();
+    }
+
+    function setBoqSummaryVisibility(visible) {
+      boqSummaryVisible = !!visible;
+      const panel = document.getElementById('boqSummaryPanel');
+      const section = document.getElementById('moduleBoqSection');
+      if (panel) panel.classList.toggle('hidden', !boqSummaryVisible);
+      if (section) section.classList.toggle('boq-summary-hidden', !boqSummaryVisible);
+      updateViewControls();
+    }
+
+    function updateScreenFitButton() {
+      const btn = document.getElementById('screenFitBtn');
+      const isFullscreen = !!document.fullscreenElement;
+      document.body.classList.toggle('screen-fit', isFullscreen);
+      if (!btn) return;
+      btn.classList.toggle('is-active', isFullscreen);
+      btn.textContent = isFullscreen ? '🗗' : '⛶';
+      btn.title = isFullscreen ? 'Return to default view' : 'Fit to screen';
+      btn.setAttribute('aria-label', btn.title);
+    }
+
+    async function toggleScreenFit() {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (err) {
+        console.error('Unable to toggle fullscreen mode.', err);
+      } finally {
+        updateScreenFitButton();
+      }
+    }
+
+    function toggleSidebar() {
+      setNavigationVisibility(!sidebarVisible);
+    }
+
+    function openProjectModal() {
+      document.getElementById('projectModal').classList.remove('hidden');
+      const next = projects.length + 1;
+      document.getElementById('projectNameInput').value = '';
+      document.getElementById('projectCodeInput').value = `PRJ-${String(next).padStart(3, '0')}`;
+      document.getElementById('projectLocationInput').value = '';
+      document.getElementById('projectStatusInput').value = 'Planning';
+      document.getElementById('projectOwnerInput').value = '';
+      document.getElementById('projectStartInput').value = '';
+      document.getElementById('projectDescriptionInput').value = '';
+    }
+    function closeProjectModal() { document.getElementById('projectModal').classList.add('hidden'); }
+    function createProjectFromForm() {
+      const name = document.getElementById('projectNameInput').value.trim();
+      const code = document.getElementById('projectCodeInput').value.trim();
+      const location = document.getElementById('projectLocationInput').value.trim();
+      const status = document.getElementById('projectStatusInput').value;
+      const owner = document.getElementById('projectOwnerInput').value.trim();
+      const startDate = document.getElementById('projectStartInput').value;
+      const description = document.getElementById('projectDescriptionInput').value.trim();
+      if (!name || !code || !location) { alert('Please fill in Project Name, Project Code, and Location.'); return; }
+      const project = createProject(name, code, location, status, description, owner, startDate);
+      projects.push(project);
+      currentProjectId = project.id;
+      closeProjectModal();
+      updateHome();
+      showProjectDashboard(project.id);
+    }
+
+    function updateProjectInfo(field, value) {
+      const project = getCurrentProject();
+      if (!project) return;
+      project[field] = value;
+      showProjectDashboard(project.id);
+    }
+    function populateProjectInfo(project) {
+      document.getElementById('editProjectName').value = project.name || '';
+      document.getElementById('editProjectCode').value = project.code || '';
+      document.getElementById('editProjectStatus').value = project.status || 'Planning';
+      document.getElementById('editProjectLocation').value = project.location || '';
+      document.getElementById('editProjectOwner').value = project.owner || '';
+      document.getElementById('editProjectStartDate').value = project.startDate || '';
+      document.getElementById('editProjectDescription').value = project.description || '';
+    }
+    function toggleProjectInfo() {
+      projectInfoVisible = !projectInfoVisible;
+      updateProjectInfoVisibility();
+    }
+    function updateProjectInfoVisibility() {
+      const section = document.getElementById('projectInfoSection');
+      const btn = document.getElementById('projectInfoToggleBtn');
+      if (!section || !btn) return;
+      section.classList.toggle('hidden', !projectInfoVisible);
+      btn.textContent = projectInfoVisible ? 'Hide' : 'Show';
+    }
+
+    function stampAllProjectDates() {
+      // Do not auto-set lastUpdated timestamps here.
+      // Dates should only change when a user explicitly modifies a row.
+      return;
+    }
+    function saveProjectsToFile() {
+      stampAllProjectDates();
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        currentProjectId,
+        currentModule,
+        projects
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'project_monitoring_system_data.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Save current project to a user-chosen folder (File System Access API), with fallbacks.
+    async function saveProjectToFolder(project) {
+      if (!project) return alert('No project selected to save.');
+      stampAllProjectDates();
+      // Prefer project name as default filename (sanitized), fallback to code or id
+      const baseName = (project.name || project.code || project.id || 'project').toString();
+      const safeBase = baseName.replace(/[^a-zA-Z0-9-_\.]/g, '_');
+      const filename = `${safeBase}.json`;
+      const payload = { exportedAt: new Date().toISOString(), project };
+
+      // Preferred: directory picker (lets user choose a folder)
+        try {
+          // Try to reuse persisted directory handle if available
+          const persistedDir = await getSavedDirectoryHandle();
+          let dirToUse = null;
+          if (persistedDir) {
+            try {
+              const perm = await verifyPermission(persistedDir, true);
+              if (perm) dirToUse = persistedDir;
+            } catch (e) {
+              console.warn('Permission check for persisted directory failed', e);
+            }
+          }
+
+          // If no usable persisted directory, prompt the user to choose one
+          if (!dirToUse && window.showDirectoryPicker) {
+            const dir = await window.showDirectoryPicker();
+            if (!dir) return; // user cancelled
+            const perm = await verifyPermission(dir, true);
+            if (perm) {
+              await saveDirectoryHandle(dir);
+              dirToUse = dir;
+            } else {
+              // User didn't grant permission; abort save
+              alert('Permission to save in the selected folder was not granted. Save canceled.');
+              return;
+            }
+          }
+
+          // If we have a directory to use, write the file there
+          if (dirToUse) {
+            const fileHandle = await dirToUse.getFileHandle(filename, { create: true });
+            const writable = await fileHandle.createWritable();
+            await writable.write(JSON.stringify(payload, null, 2));
+            await writable.close();
+            const folderName = dirToUse.name || 'selected folder';
+            alert(`Project saved to "${folderName}" as ${filename}`);
+            return;
+          }
+
+          // If directory picker not available, fall back to a single file save picker (no automatic download)
+          if (window.showSaveFilePicker) {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }]
+            });
+            if (!handle) return; // user canceled
+            const writable = await handle.createWritable();
+            await writable.write(JSON.stringify(payload, null, 2));
+            await writable.close();
+            const chosenName = handle.name || filename;
+            alert('Project saved as ' + chosenName);
+            return;
+          }
+
+          // If no File System Access APIs available, inform user (no automatic download)
+          alert('Your browser does not support folder/file pickers required for direct saving. No file was saved.');
+          return;
+        } catch (err) {
+          // If the user cancelled the picker (AbortError), do nothing
+          if (err && (err.name === 'AbortError' || err.name === 'NotAllowedError')) {
+            console.log('Save canceled by user. No file was saved.');
+            return;
+          }
+          console.error('Unexpected save error', err);
+          alert('An error occurred while saving. See console for details.');
+          return;
+        }
+    }
+
+    // Handler used by the sidebar Save button: if inside a project workspace, save only that project; otherwise save all projects.
+    function saveCurrentOrAllProjects() {
+      const projectSection = document.getElementById('projectDashboardSection');
+      const isProjectVisible = projectSection && !projectSection.classList.contains('hidden');
+      if (isProjectVisible && currentProjectId) {
+        const proj = getCurrentProject();
+        // Ask user to open folder to save the project. If canceled, do nothing.
+        const openFolder = confirm('Open project folder to save?\n\nIf you cancel, nothing will be saved.');
+        if (!openFolder) return;
+        saveProjectToFolder(proj);
+      } else {
+        // Save full workspace as before (ask for confirmation first)
+        const doSave = confirm('Save all projects?\n\nIf you cancel, nothing will be saved.');
+        if (!doSave) return;
+        saveProjectsToFile();
+      }
+    }
+
+    function csvEscape(value) {
+      if (value === null || value === undefined) return '';
+      const s = String(value);
+      if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+      return s;
+    }
+
+    /* --- IndexedDB helpers to persist FileSystemDirectoryHandle --- */
+    function openHandlesDB() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return resolve(null);
+        const rq = indexedDB.open('vkb-file-handles', 1);
+        rq.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('handles')) db.createObjectStore('handles');
+        };
+        rq.onsuccess = (e) => resolve(e.target.result);
+        rq.onerror = () => resolve(null);
+      });
+    }
+
+    async function saveDirectoryHandle(handle) {
+      try {
+        const db = await openHandlesDB();
+        if (!db) return;
+        const tx = db.transaction('handles', 'readwrite');
+        const store = tx.objectStore('handles');
+        store.put(handle, 'projectSaveDir');
+        return new Promise((res) => { tx.oncomplete = () => res(true); tx.onerror = () => res(false); });
+      } catch (e) {
+        console.warn('saveDirectoryHandle failed', e);
+        return false;
+      }
+    }
+
+    async function getSavedDirectoryHandle() {
+      try {
+        const db = await openHandlesDB();
+        if (!db) return null;
+        return await new Promise((resolve) => {
+          const tx = db.transaction('handles', 'readonly');
+          const store = tx.objectStore('handles');
+          const req = store.get('projectSaveDir');
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (e) {
+        console.warn('getSavedDirectoryHandle failed', e);
+        return null;
+      }
+    }
+
+    async function verifyPermission(handle, withWrite) {
+      if (!handle) return false;
+      try {
+        if (typeof handle.queryPermission === 'function') {
+          const q = await handle.queryPermission({ mode: withWrite ? 'readwrite' : 'read' });
+          if (q === 'granted') return true;
+        }
+        if (typeof handle.requestPermission === 'function') {
+          const r = await handle.requestPermission({ mode: withWrite ? 'readwrite' : 'read' });
+          return r === 'granted';
+        }
+      } catch (e) {
+        console.warn('verifyPermission error', e);
+      }
+      // Best-effort: assume writable if APIs unavailable
+      return true;
+    }
+
+    function convertBOQToCSV(project) {
+      if (!project) return null;
+      const lines = [];
+      const header = ['ProjectCode','ProjectName','Level','WBS','Name','Qty','Unit','LaborUnitCost','MaterialUnitCost','TotalLabor','TotalMaterial','GrandTotal','LastUpdated'];
+      lines.push(header.join(','));
+      project.boq.forEach((item, i) => {
+        const itemTotals = calcItem(item);
+        const wbsItem = `${i+1}.0.0`;
+        lines.push([
+          csvEscape(project.code || ''),
+          csvEscape(project.name || ''),
+          'Item',
+          csvEscape(wbsItem),
+          csvEscape(item.name || ''),
+          '', '', '', '',
+          Number(itemTotals.totalLabor).toFixed(2),
+          Number(itemTotals.totalMaterial).toFixed(2),
+          Number(itemTotals.grandTotal).toFixed(2),
+          csvEscape(item.lastUpdated || '')
+        ].join(','));
+
+        item.subItems.forEach((sub, j) => {
+          const subTotals = calcSubItem(sub);
+          const wbsSub = `${i+1}.${j+1}.0`;
+          lines.push([
+            csvEscape(project.code || ''),
+            csvEscape(project.name || ''),
+            'Sub-Item',
+            csvEscape(wbsSub),
+            csvEscape(sub.name || ''),
+            Number(sub.qty || 0).toFixed(2),
+            csvEscape(sub.unit || ''),
+            Number(sub.laborUnitCost || 0).toFixed(2),
+            Number(sub.materialUnitCost || 0).toFixed(2),
+            Number(subTotals.totalLabor).toFixed(2),
+            Number(subTotals.totalMaterial).toFixed(2),
+            Number(subTotals.grandTotal).toFixed(2),
+            csvEscape(sub.lastUpdated || '')
+          ].join(','));
+
+          (sub.subSubItems || []).forEach((child, k) => {
+            const childTotals = calcBaseCost(child);
+            const wbsChild = `${i+1}.${j+1}.${k+1}`;
+            lines.push([
+              csvEscape(project.code || ''),
+              csvEscape(project.name || ''),
+              'Sub-Sub-Item',
+              csvEscape(wbsChild),
+              csvEscape(child.name || ''),
+              Number(child.qty || 0).toFixed(2),
+              csvEscape(child.unit || ''),
+              Number(child.laborUnitCost || 0).toFixed(2),
+              Number(child.materialUnitCost || 0).toFixed(2),
+              Number(childTotals.totalLabor).toFixed(2),
+              Number(childTotals.totalMaterial).toFixed(2),
+              Number(childTotals.grandTotal).toFixed(2),
+              csvEscape(child.lastUpdated || '')
+            ].join(','));
+          });
+        });
+      });
+      return lines.join('\n');
+    }
+
+    async function convertCurrentProjectToCSV() {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected to export.');
+      const csv = convertBOQToCSV(project);
+      if (!csv) return alert('Nothing to export.');
+      const filenameBase = (project.name || project.code || project.id || 'project').toString().replace(/[^a-zA-Z0-9-_\.]/g, '_');
+      const filename = `${filenameBase}_BOQ.csv`;
+
+      try {
+        if (window.showSaveFilePicker) {
+          const handle = await window.showSaveFilePicker({ suggestedName: filename, types: [{ description: 'CSV', accept: { 'text/csv': ['.csv'] } }] });
+          const writable = await handle.createWritable();
+          await writable.write(csv);
+          await writable.close();
+          alert('CSV exported: ' + handle.name);
+          return;
+        }
+      } catch (err) {
+        console.warn('showSaveFilePicker failed, falling back to download', err);
+      }
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert('CSV download started: ' + filename);
+    }
+
+
+    let pendingExcelImportSection = null;
+
+    function excelLibraryReady() {
+      if (typeof XLSX === 'undefined') {
+        alert('Excel import/export library is still loading or unavailable. Please check your internet connection and try again.');
+        return false;
+      }
+      return true;
+    }
+    function safeSheetName(name) { return String(name || 'Sheet').replace(/[\\/?*\[\]:]/g, ' ').slice(0, 31) || 'Sheet'; }
+    function excelFilename(section) {
+      const project = getCurrentProject();
+      const base = (project && (project.name || project.code || project.id) || 'project').toString().replace(/[^a-zA-Z0-9-_\.]/g, '_');
+      const labels = { boq: 'Bill_of_Quantities', schedule: 'Project_Schedule', inventory: 'Project_Inventory', tracking: 'Labor_Material_Tracking' };
+      return `${base}_${labels[section] || section}.xlsx`;
+    }
+    function downloadWorkbook(wb, filename) { XLSX.writeFile(wb, filename); }
+    function readWorkbookFile(file, callback) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = new Uint8Array(event.target.result);
+          callback(XLSX.read(data, { type: 'array' }));
+        } catch (err) {
+          console.error(err);
+          alert('Unable to read the Excel file. Please use a valid .xlsx or .xls file.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    function sheetRows(workbook, sheetName) {
+      const name = sheetName || workbook.SheetNames[0];
+      const sheet = workbook.Sheets[name];
+      if (!sheet) return [];
+      const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+      if (!rawRows.length) return [];
+      const knownHeaders = ['Level', 'WBS', 'Name', 'Work Package', 'Material / Equipment', 'Work Item', 'Actual Labor', 'Actual Material'];
+      let headerIndex = rawRows.findIndex(row => knownHeaders.some(h => row.map(v => String(v).trim()).includes(h)));
+      if (headerIndex < 0) headerIndex = 0;
+      const headers = rawRows[headerIndex].map(h => String(h).trim());
+      return rawRows.slice(headerIndex + 1)
+        .filter(row => row.some(cell => String(cell).trim() !== ''))
+        .map(row => {
+          const obj = {};
+          headers.forEach((h, i) => { if (h) obj[h] = row[i]; });
+          return obj;
+        });
+    }
+
+    function buildBOQExcelRows(project) {
+      const rows = [];
+      project.boq.forEach((item, i) => {
+        const itemTotals = calcItem(item);
+        rows.push({
+          Level: 'Item', WBS: `${i + 1}.0.0`, Name: item.name || '', Qty: '', Unit: '',
+          "Labor/Equip't Cost": '', "Mat'l Total Cost": '',
+          "Total Labor/Equip't Cost": itemTotals.totalLabor, "Total Mat'l Cost": itemTotals.totalMaterial,
+          'Grand Total Cost': itemTotals.grandTotal
+        });
+        item.subItems.forEach((sub, j) => {
+          const subTotals = calcSubItem(sub);
+          rows.push({
+            Level: 'Sub-Item', WBS: `${i + 1}.${j + 1}.0`, Name: sub.name || '', Qty: Number(sub.qty || 0), Unit: sub.unit || '',
+            "Labor/Equip't Cost": Number(sub.laborUnitCost || 0), "Mat'l Total Cost": Number(sub.materialUnitCost || 0),
+            "Total Labor/Equip't Cost": subTotals.totalLabor, "Total Mat'l Cost": subTotals.totalMaterial,
+            'Grand Total Cost': subTotals.grandTotal
+          });
+          (sub.subSubItems || []).forEach((child, k) => {
+            const childTotals = calcBaseCost(child);
+            rows.push({
+              Level: 'Sub-Sub-Item', WBS: `${i + 1}.${j + 1}.${k + 1}`, Name: child.name || '', Qty: Number(child.qty || 0), Unit: child.unit || '',
+              "Labor/Equip't Cost": Number(child.laborUnitCost || 0), "Mat'l Total Cost": Number(child.materialUnitCost || 0),
+              "Total Labor/Equip't Cost": childTotals.totalLabor, "Total Mat'l Cost": childTotals.totalMaterial,
+              'Grand Total Cost': childTotals.grandTotal
+            });
+          });
+        });
+      });
+      return rows;
+    }
+    function buildScheduleExcelRows(project) {
+      deriveScheduleRows(project);
+      return project.schedule.map(row => ({
+        WBS: row.wbs, Level: row.level, 'Work Package': row.name, 'BOQ Cost': row.boqCost,
+        'Start Date': row.startDate, 'Finish Date': row.finishDate, 'Actual Start': row.actualStart || '',
+        'Actual Finish': row.actualFinish || '', Duration: row.durationDays, '% Accomplished': row.percentAccomplished,
+        'Earned Value': row.boqCost * (Number(row.percentAccomplished || 0) / 100),
+        Delay: getDelayDisplay(row, project.scheduleDelayMode || 'Delay in Completion'), Updated: row.lastUpdated || ''
+      }));
+    }
+    function buildInventoryExcelRows(project) {
+      buildInventoryFromBOQ(project);
+      return project.inventory.map(row => ({
+        Type: row.type, 'Material / Equipment': row.name || '', Unit: row.unit || '', 'BOQ Qty': row.boqQty || '',
+        'On Hand': Number(row.onHand || 0), Issued: Number(row.issued || 0),
+        Balance: Number(row.onHand || 0) - Number(row.issued || 0), Updated: row.lastUpdated || ''
+      }));
+    }
+    function buildTrackingExcelRows(project) {
+      buildTrackingFromBOQ(project);
+      return project.tracking.map(row => ({
+        Type: row.type, 'Work Item': row.name || '', 'Estimated Cost': Number(row.boqLabor || 0),
+        'Actual Labor': Number(row.actualLabor || 0), 'Labor Variance': Number(row.boqLabor || 0) - Number(row.actualLabor || 0),
+        'Estimated Material': Number(row.boqMaterial || 0), 'Actual Material': Number(row.actualMaterial || 0),
+        'Material Variance': Number(row.boqMaterial || 0) - Number(row.actualMaterial || 0),
+        Ongoing: row.ongoing ? 'Yes' : 'No', Updated: row.lastUpdated || ''
+      }));
+    }
+
+    function getSectionExportConfig(section, project) {
+      const configs = {
+        boq: {
+          title: 'BILL OF QUANTITIES', sheetName: 'Bill of Quantities', rows: buildBOQExcelRows(project),
+          headers: ['Level','WBS','Name','Qty','Unit',"Labor/Equip't Cost","Mat'l Total Cost","Total Labor/Equip't Cost","Total Mat'l Cost",'Grand Total Cost'],
+          widths: [15,12,36,12,12,18,18,22,18,18], currency: [5,6,7,8,9], number: [3]
+        },
+        schedule: {
+          title: 'PROJECT SCHEDULE', sheetName: 'Project Schedule', rows: buildScheduleExcelRows(project),
+          headers: ['WBS','Level','Work Package','BOQ Cost','Start Date','Finish Date','Actual Start','Actual Finish','Duration','% Accomplished','Earned Value','Delay','Updated'],
+          widths: [12,14,36,16,14,14,14,14,12,16,16,16,14], currency: [3,10], number: [8,9]
+        },
+        inventory: {
+          title: 'PROJECT INVENTORY', sheetName: 'Project Inventory', rows: buildInventoryExcelRows(project),
+          headers: ['Type','Material / Equipment','Unit','BOQ Qty','On Hand','Issued','Balance','Updated'],
+          widths: [12,36,12,14,14,14,14,14], number: [3,4,5,6]
+        },
+        tracking: {
+          title: 'LABOR AND MATERIAL TRACKING', sheetName: 'Labor Material Tracking', rows: buildTrackingExcelRows(project),
+          headers: ['Type','Work Item','Estimated Cost','Actual Labor','Labor Variance','Estimated Material','Actual Material','Material Variance','Ongoing','Updated'],
+          widths: [12,36,18,18,18,18,18,18,12,14], currency: [2,3,4,5,6,7]
+        }
+      };
+      return configs[section];
+    }
+
+    function applyFormattedSheetLayout(ws, config, rowCount) {
+      const headerRowNumber = 5;
+      const dataStartRow = headerRowNumber + 1;
+      const dataEndRow = dataStartRow + Math.max(rowCount - 1, 0);
+      ws['!cols'] = (config.widths || config.headers.map(() => 16)).map(w => ({ wch: w }));
+      ws['!freeze'] = { xSplit: 0, ySplit: headerRowNumber };
+      ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: headerRowNumber - 1, c: 0 }, e: { r: dataEndRow - 1, c: config.headers.length - 1 } }) };
+      ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: config.headers.length - 1 } }];
+      const currencyFormat = '₱ #,##0.00;[Red]-₱ #,##0.00';
+      const numberFormat = '#,##0.00';
+      for (let r = dataStartRow; r <= dataEndRow; r++) {
+        (config.currency || []).forEach(c => {
+          const addr = XLSX.utils.encode_cell({ r: r - 1, c });
+          if (ws[addr] && ws[addr].v !== '') ws[addr].z = currencyFormat;
+        });
+        (config.number || []).forEach(c => {
+          const addr = XLSX.utils.encode_cell({ r: r - 1, c });
+          if (ws[addr] && ws[addr].v !== '') ws[addr].z = numberFormat;
+        });
+      }
+    }
+
+    function formattedWorksheetFromRows(config, project) {
+      const aoa = [];
+      aoa.push([config.title]);
+      aoa.push(['Project Name', project.name || '', 'Project Code', project.code || '', 'Status', project.status || '']);
+      aoa.push(['Location', project.location || '', 'Owner / Client', project.owner || '', 'Exported', new Date().toISOString().slice(0, 10)]);
+      aoa.push([]);
+      aoa.push(config.headers);
+      config.rows.forEach(row => {
+        aoa.push(config.headers.map(header => row[header] === undefined ? '' : row[header]));
+      });
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      applyFormattedSheetLayout(ws, config, config.rows.length);
+      return ws;
+    }
+
+    function exportSectionExcel(section) {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      if (!excelLibraryReady()) return;
+      const config = getSectionExportConfig(section, project);
+      if (!config || !config.rows.length) return alert('Nothing to export.');
+      const wb = XLSX.utils.book_new();
+      const ws = formattedWorksheetFromRows(config, project);
+      XLSX.utils.book_append_sheet(wb, ws, safeSheetName(config.sheetName));
+      downloadWorkbook(wb, excelFilename(section));
+    }
+
+    function exportFormattedWorkbook() {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      if (!excelLibraryReady()) return;
+      const wb = XLSX.utils.book_new();
+      ['boq', 'schedule', 'inventory', 'tracking'].forEach(section => {
+        const config = getSectionExportConfig(section, project);
+        if (config && config.rows.length) {
+          XLSX.utils.book_append_sheet(wb, formattedWorksheetFromRows(config, project), safeSheetName(config.sheetName));
+        }
+      });
+      const base = (project.name || project.code || project.id || 'project').toString().replace(/[^a-zA-Z0-9-_\.]/g, '_');
+      downloadWorkbook(wb, `${base}_Formatted_Project_Workbook.xlsx`);
+    }
+
+    function triggerSectionExcelImport(section) {
+      if (!excelLibraryReady()) return;
+      pendingExcelImportSection = section;
+      const input = document.getElementById('excelImportInput');
+      if (!input) return alert('Excel import input is missing.');
+      input.value = '';
+      input.click();
+    }
+    function handleSectionExcelImport(event) {
+      const file = event.target.files[0];
+      const section = pendingExcelImportSection;
+      pendingExcelImportSection = null;
+      event.target.value = '';
+      if (!file || !section) return;
+      readWorkbookFile(file, (workbook) => {
+        if (section === 'boq') importBOQExcel(workbook);
+        else if (section === 'schedule') importScheduleExcel(workbook);
+        else if (section === 'inventory') importInventoryExcel(workbook);
+        else if (section === 'tracking') importTrackingExcel(workbook);
+      });
+    }
+
+    function importBOQExcel(workbook) {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      const rows = sheetRows(workbook);
+      if (!rows.length) return alert('No rows found in Excel file.');
+      if (!confirm('Importing BOQ Excel will replace the current Bill of Quantities for this project. Continue?')) return;
+      const items = [];
+      let currentItem = null, currentSub = null;
+      rows.forEach((r) => {
+        const level = String(r.Level || '').toLowerCase();
+        const wbs = String(r.WBS || '');
+        const parts = wbs.split('.').map(n => Number(n || 0));
+        const name = String(r.Name || r['Item / Sub-Item / Sub-Sub-Item'] || '').trim();
+        const qty = parseNumber(r.Qty);
+        const unit = String(r.Unit || '').trim();
+        const labor = parseNumber(r["Labor/Equip't Cost"] || r.LaborUnitCost || r['Labor Unit Cost']);
+        const material = parseNumber(r["Mat'l Total Cost"] || r.MaterialUnitCost || r["Mat'l/Equip't Unit Cost"]);
+        const isItem = level.includes('item') && !level.includes('sub') || (parts[1] === 0 && parts[2] === 0);
+        const isSubSub = level.includes('sub-sub') || (parts[2] > 0);
+        const isSub = !isItem && !isSubSub;
+        if (isItem) {
+          currentItem = createItem(name || `Item ${items.length + 1}`);
+          currentItem.subItems = [];
+          items.push(currentItem);
+          currentSub = null;
+        } else if (isSub) {
+          if (!currentItem) { currentItem = createItem('Item 1'); currentItem.subItems = []; items.push(currentItem); }
+          currentSub = createSubItem(name || `Sub-Item ${currentItem.subItems.length + 1}`);
+          Object.assign(currentSub, { qty, unit, laborUnitCost: labor, materialUnitCost: material, subSubItems: [] });
+          currentItem.subItems.push(currentSub);
+        } else if (isSubSub) {
+          if (!currentItem) { currentItem = createItem('Item 1'); currentItem.subItems = []; items.push(currentItem); }
+          if (!currentSub) { currentSub = createSubItem('Sub-Item 1'); currentSub.subSubItems = []; currentItem.subItems.push(currentSub); }
+          currentSub.subSubItems.push({ ...createSubSubItem(name || `Sub-Sub-Item ${currentSub.subSubItems.length + 1}`), qty, unit, laborUnitCost: labor, materialUnitCost: material });
+        }
+      });
+      items.forEach(item => { if (!item.subItems.length) item.subItems.push(createSubItem('Sub-Item 1')); });
+      project.boq = items.length ? items : [createItem('Item 1')];
+      project.schedule = []; project.inventory = []; project.tracking = [];
+      renderWorkspace();
+      alert('BOQ Excel imported.');
+    }
+    function importScheduleExcel(workbook) {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      deriveScheduleRows(project);
+      const rows = sheetRows(workbook);
+      const byWbs = new Map(project.schedule.map(row => [String(row.wbs), row]));
+      rows.forEach(r => {
+        const row = byWbs.get(String(r.WBS || ''));
+        if (!row || row.level === 'item') return;
+        if (r['Start Date']) row.startDate = String(r['Start Date']).slice(0, 10);
+        if (r['Finish Date']) row.finishDate = String(r['Finish Date']).slice(0, 10);
+        if (r['Actual Start'] !== undefined) row.actualStart = String(r['Actual Start'] || '').slice(0, 10);
+        if (r['Actual Finish'] !== undefined) row.actualFinish = String(r['Actual Finish'] || '').slice(0, 10);
+        if (r.Duration !== undefined) row.durationDays = Math.max(1, parseNumber(r.Duration) || 1);
+        if (r['% Accomplished'] !== undefined) row.percentAccomplished = parseNumber(r['% Accomplished']);
+        row.lastUpdated = currentStamp();
+      });
+      renderWorkspace();
+      alert('Project Schedule Excel imported.');
+    }
+    function importInventoryExcel(workbook) {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      buildInventoryFromBOQ(project);
+      const rows = sheetRows(workbook);
+      const editable = project.inventory.filter(r => r.type !== 'item');
+      rows.filter(r => String(r.Type || '').toLowerCase() !== 'item').forEach((r, i) => {
+        const row = editable[i];
+        if (!row) return;
+        if (r['Material / Equipment'] !== undefined && row.type === 'subsub') row.name = String(r['Material / Equipment'] || row.name);
+        if (r.Unit !== undefined) row.unit = String(r.Unit || '');
+        if (r['BOQ Qty'] !== undefined) row.boqQty = parseNumber(r['BOQ Qty']);
+        if (r['On Hand'] !== undefined) row.onHand = parseNumber(r['On Hand']);
+        if (r.Issued !== undefined) row.issued = parseNumber(r.Issued);
+        row.lastUpdated = currentStamp();
+      });
+      persistInventoryChildren(project);
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+      alert('Project Inventory Excel imported.');
+    }
+    function importTrackingExcel(workbook) {
+      const project = getCurrentProject();
+      if (!project) return alert('No project selected.');
+      buildTrackingFromBOQ(project);
+      const rows = sheetRows(workbook);
+      const editable = project.tracking.filter(r => r.type !== 'item');
+      rows.filter(r => String(r.Type || '').toLowerCase() !== 'item').forEach((r, i) => {
+        const row = editable[i];
+        if (!row) return;
+        if (r['Actual Labor'] !== undefined) row.actualLabor = parseNumber(r['Actual Labor']);
+        if (r['Actual Material'] !== undefined) row.actualMaterial = parseNumber(r['Actual Material']);
+        if (r.Ongoing !== undefined) row.ongoing = String(r.Ongoing).toLowerCase() === 'yes' || String(r.Ongoing).toLowerCase() === 'true';
+        row.lastUpdated = currentStamp();
+      });
+      renderWorkspace();
+      alert('Labor and Material Tracking Excel imported.');
+    }
+
+    function triggerLoadProjects() { document.getElementById('loadProjectsInput').click(); }
+    function handleLoadProjects(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          // Support multiple export formats:
+          // 1) Full export: { projects: [...] , currentProjectId, currentModule }
+          // 2) Single project export: { project: { ... } }
+          // 3) Plain array of projects: [ { ... }, ... ]
+          if (data && Array.isArray(data.projects)) {
+            projects = data.projects;
+            currentProjectId = data.currentProjectId || (projects[0] && projects[0].id) || null;
+            currentModule = data.currentModule || 'boq';
+          } else if (data && data.project) {
+            projects = [data.project];
+            currentProjectId = data.project.id || (projects[0] && projects[0].id) || null;
+            currentModule = data.project.currentModule || 'boq';
+          } else if (Array.isArray(data)) {
+            projects = data;
+            currentProjectId = (projects[0] && projects[0].id) || null;
+            currentModule = 'boq';
+          } else {
+            throw new Error('Invalid file format');
+          }
+          ensureStateShape();
+          updateHome();
+          if (currentProjectId) showProjectDashboard(currentProjectId); else showHome();
+        } catch (err) {
+          alert('Unable to load project file. Please use a valid exported JSON file.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function showHome() {
+      document.getElementById('homePageSection').classList.remove('hidden');
+      document.getElementById('projectDashboardSection').classList.add('hidden');
+      document.getElementById('navHomeBtn').classList.add('active');
+      document.getElementById('navProjectBtn').classList.remove('active');
+      updateHome();
+    }
+    function showProjectDashboard(projectId = currentProjectId) {
+      if (projectId) currentProjectId = projectId;
+      const project = getCurrentProject();
+      if (!project) { showHome(); return; }
+      document.getElementById('homePageSection').classList.add('hidden');
+      document.getElementById('projectDashboardSection').classList.remove('hidden');
+      document.getElementById('navHomeBtn').classList.remove('active');
+      document.getElementById('navProjectBtn').classList.add('active');
+      document.getElementById('currentProjectTitle').textContent = project.name;
+      const startLabel = project.startDate ? ` • Start ${project.startDate}` : '';
+      document.getElementById('currentProjectSubtitle').textContent = `${project.code} • ${project.location} • ${project.status}${startLabel}`;
+      populateProjectInfo(project);
+      updateProjectInfoVisibility();
+      renderProjectMiniList();
+      renderWorkspace();
+    }
+    function setProjectModule(module) {
+      currentModule = module;
+      ['boq', 'schedule', 'inventory', 'tracking'].forEach(key => {
+        document.getElementById(`module${capitalize(key)}Section`).classList.toggle('hidden', key !== module);
+        document.getElementById(`module${capitalize(key)}Btn`).classList.toggle('active', key === module);
+      });
+      updateHomeMetrics();
+    }
+    function openProjectModule(projectId, module) {
+      currentProjectId = projectId;
+      currentModule = module;
+      renderProjectMiniList();
+      showProjectDashboard(projectId);
+    }
+
+    function updateHomeMetrics() {
+      const totalCost = projects.reduce((sum, project) => sum + calcProjectTotals(project).totalGrand, 0);
+      const currentProject = getCurrentProject();
+      document.getElementById('homeMetricProjects').textContent = projects.length;
+      document.getElementById('homeMetricModule').textContent = currentModule === 'boq' ? 'BOQ' : currentModule === 'schedule' ? 'Schedule' : currentModule === 'inventory' ? 'Inventory' : 'Tracking';
+      document.getElementById('homeMetricCost').textContent = peso(totalCost);
+      document.getElementById('homeMetricSelected').textContent = currentProject ? currentProject.code : 'None';
+    }
+    function renderProjectMiniList() {
+      const wrap = document.getElementById('projectMiniList');
+      wrap.innerHTML = '';
+      projects.forEach(project => {
+        const totals = calcProjectTotals(project);
+        const el = document.createElement('div');
+        el.className = `project-mini-card${project.id === currentProjectId ? ' active' : ''}`;
+        el.onclick = () => {
+          currentProjectId = project.id;
+          showProjectDashboard(project.id);
+        };
+        el.innerHTML = `<strong>${escapeHtml(project.code)}</strong><span>${escapeHtml(project.name)}</span><span>${escapeHtml(project.status)} • ${peso(totals.totalGrand)}</span>`;
+        wrap.appendChild(el);
+      });
+    }
+    function renderProjectCards() {
+      const grid = document.getElementById('projectGrid'); grid.innerHTML = '';
+      projects.forEach(project => {
+        const totals = calcProjectTotals(project);
+        const card = document.createElement('div'); card.className = 'project-card';
+        card.innerHTML = `
+          <h3>${escapeHtml(project.name)}</h3>
+          <p>${escapeHtml(project.description)}</p>
+          <div class="pill-row"><span class="pill">${escapeHtml(project.code)}</span><span class="pill">${escapeHtml(project.location)}</span><span class="pill">${escapeHtml(project.status)}</span></div>
+          <div class="summary-list" style="margin-bottom:8px;">
+            <div class="summary-row"><span>Total Cost</span><strong>${peso(totals.totalGrand)}</strong></div>
+            <div class="summary-row"><span>Items</span><strong>${totals.totalItems}</strong></div>
+          </div>
+          <div class="module-buttons">
+            <button onclick="openProjectModule('${project.id}', 'boq')">Bill of Quantities</button>
+            <button onclick="openProjectModule('${project.id}', 'schedule')">Project Schedule</button>
+            <button onclick="openProjectModule('${project.id}', 'inventory')">Project Inventory</button>
+            <button onclick="openProjectModule('${project.id}', 'tracking')">Labor & Material Tracking</button>
+          </div>`;
+        grid.appendChild(card);
+      });
+    }
+    function updateHome() {
+      ensureStateShape();
+      if (!currentProjectId && projects.length) currentProjectId = projects[0].id;
+      renderProjectMiniList();
+      renderProjectCards();
+      updateHomeMetrics();
+    }
+
+    function updateItemName(itemId, value) { const item = getCurrentItems().find(i => i.id === itemId); if (!item) return; item.name = value; renderWorkspace(); }
+    function updateSubItem(itemId, subId, field, value) {
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      const sub = item.subItems.find(s => s.id === subId); if (!sub) return;
+      sub[field] = ['qty', 'laborUnitCost', 'materialUnitCost'].includes(field) ? parseNumber(value) : value;
+      renderWorkspace();
+    }
+    function updateSubSubItem(itemId, subId, childId, field, value) {
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      const sub = item.subItems.find(s => s.id === subId); if (!sub) return;
+      const child = sub.subSubItems.find(c => c.id === childId); if (!child) return;
+      child[field] = ['qty', 'laborUnitCost', 'materialUnitCost'].includes(field) ? parseNumber(value) : value;
+      renderWorkspace();
+    }
+    function toggleItem(itemId) { const item = getCurrentItems().find(i => i.id === itemId); if (!item) return; item.expanded = !item.expanded; renderWorkspace(); }
+    function toggleSubItem(itemId, subId) {
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      const sub = item.subItems.find(s => s.id === subId); if (!sub) return;
+      sub.expanded = !sub.expanded; renderWorkspace();
+    }
+    function addItem() { const project = getCurrentProject(); if (!project) return; project.boq.push(createItem(`Item ${project.boq.length + 1}`)); renderWorkspace(); }
+    function removeItem(itemId) {
+      if (!confirm('Delete this item and all its nested rows?')) return;
+      const project = getCurrentProject(); if (!project) return;
+      project.boq = project.boq.filter(i => i.id !== itemId); if (!project.boq.length) project.boq = [createItem('Item 1')]; renderWorkspace();
+    }
+    function addSubItem(itemId) {
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      item.expanded = true; item.subItems.push(createSubItem(`Sub-Item ${item.subItems.length + 1}`)); renderWorkspace();
+    }
+    function removeSubItem(itemId, subId) {
+      if (!confirm('Delete this sub-item and all its nested rows?')) return;
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      item.subItems = item.subItems.filter(s => s.id !== subId); if (!item.subItems.length) item.subItems.push(createSubItem('Sub-Item 1')); renderWorkspace();
+    }
+    function addSubSubItem(itemId, subId) {
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      const sub = item.subItems.find(s => s.id === subId); if (!sub) return;
+      item.expanded = true; sub.expanded = true; sub.subSubItems.push(createSubSubItem(`Sub-Sub-Item ${sub.subSubItems.length + 1}`)); renderWorkspace();
+    }
+    function removeSubSubItem(itemId, subId, childId) {
+      if (!confirm('Delete this sub-sub-item row?')) return;
+      const item = getCurrentItems().find(i => i.id === itemId); if (!item) return;
+      const sub = item.subItems.find(s => s.id === subId); if (!sub) return;
+      sub.subSubItems = sub.subSubItems.filter(c => c.id !== childId); renderWorkspace();
+    }
+
+    function addDays(dateStr, days) {
+      const d = new Date(dateStr + 'T00:00:00');
+      d.setDate(d.getDate() + Number(days || 0));
+      return d.toISOString().slice(0, 10);
+    }
+    function diffDays(startDate, finishDate) {
+      const a = new Date(startDate + 'T00:00:00');
+      const b = new Date(finishDate + 'T00:00:00');
+      const diff = Math.round((b - a) / 86400000) + 1;
+      return diff > 0 ? diff : 1;
+    }
+
+    function deriveScheduleRows(project) {
+      const rows = [];
+      const existingMap = new Map((project.schedule || []).map(r => [r.key, r]));
+      const baseStart = project.startDate || currentStamp();
+      let offset = 0;
+
+      project.boq.forEach((item, itemIndex) => {
+        const itemTotals = calcItem(item);
+        const itemKey = `item:${item.id}`;
+        const prevItem = existingMap.get(itemKey) || {};
+
+        let subOffset = offset;
+        const subRows = item.subItems.map((sub, subIndex) => {
+          const subTotals = calcSubItem(sub);
+          const subKey = `sub:${sub.id}`;
+          const prevSub = existingMap.get(subKey) || {};
+          const subDuration = prevSub.durationDays || Math.max(2, Math.round(subTotals.grandTotal / 80000) || 2);
+          const subStart = prevSub.startDate || addDays(baseStart, subOffset);
+          const subFinish = prevSub.finishDate || addDays(subStart, Math.max(subDuration - 1, 0));
+          subOffset += subDuration;
+          return {
+            key: subKey,
+            itemId: sub.id,
+            parentItemId: item.id,
+            wbs: `${itemIndex + 1}.${subIndex + 1}.0`,
+            level: 'sub',
+            name: sub.name || `Sub-Item ${subIndex + 1}`,
+            boqCost: subTotals.grandTotal,
+            startDate: subStart,
+            finishDate: subFinish,
+            actualStart: prevSub.actualStart || '',
+            actualFinish: prevSub.actualFinish || '',
+            durationDays: subDuration,
+            percentAccomplished: prevSub.percentAccomplished || 0,
+            lastUpdated: prevSub.lastUpdated || ''
+          };
+        });
+
+        const itemStart = subRows.length
+          ? subRows.reduce((earliest, row) => row.startDate < earliest ? row.startDate : earliest, subRows[0].startDate)
+          : (prevItem.startDate || addDays(baseStart, offset));
+        const itemFinish = subRows.length
+          ? subRows.reduce((latest, row) => row.finishDate > latest ? row.finishDate : latest, subRows[0].finishDate)
+          : (prevItem.finishDate || itemStart);
+        const itemDuration = diffDays(itemStart, itemFinish);
+
+        const totalSubCost = subRows.reduce((sum, r) => sum + r.boqCost, 0);
+        const rolledPercent = totalSubCost > 0
+          ? subRows.reduce((sum, r) => sum + (r.boqCost * Number(r.percentAccomplished || 0)), 0) / totalSubCost
+          : (prevItem.percentAccomplished || 0);
+
+        rows.push({
+          key: itemKey,
+          itemId: item.id,
+          parentItemId: null,
+          wbs: `${itemIndex + 1}.0.0`,
+          level: 'item',
+          name: item.name || `Item ${itemIndex + 1}`,
+          boqCost: itemTotals.grandTotal,
+          startDate: itemStart,
+          finishDate: itemFinish,
+          actualStart: prevItem.actualStart || '',
+          actualFinish: prevItem.actualFinish || '',
+          durationDays: itemDuration,
+          percentAccomplished: Number(rolledPercent || 0),
+          lastUpdated: prevItem.lastUpdated || ''
+        });
+
+        rows.push(...subRows);
+        offset += itemDuration;
+      });
+
+      project.schedule = rows;
+    }
+
+    function updateScheduleField(index, field, value) {
+      const project = getCurrentProject();
+      if (!project) return;
+      deriveScheduleRows(project);
+      const row = project.schedule[index];
+      if (!row) return;
+      if (row.level === 'item' && ['percentAccomplished', 'startDate', 'finishDate', 'durationDays'].includes(field)) return;
+
+      const prevValue = ['percentAccomplished', 'durationDays'].includes(field)
+        ? parseNumber(row[field])
+        : String(row[field] || '');
+      let newValue;
+
+      if (field === 'percentAccomplished') {
+        newValue = parseNumber(value);
+        row.percentAccomplished = newValue;
+      } else if (field === 'durationDays') {
+        newValue = Math.max(1, Number(value || 1));
+        row.durationDays = newValue;
+        row.finishDate = addDays(row.startDate, row.durationDays - 1);
+      } else if (field === 'startDate') {
+        newValue = String(value || row.startDate);
+        row.startDate = newValue;
+        row.finishDate = addDays(row.startDate, row.durationDays - 1);
+      } else if (field === 'finishDate') {
+        newValue = String(value || row.finishDate);
+        row.finishDate = newValue;
+        row.durationDays = diffDays(row.startDate, row.finishDate);
+      } else if (field === 'actualStart') {
+        newValue = String(value || '');
+        row.actualStart = newValue;
+      } else if (field === 'actualFinish') {
+        newValue = String(value || '');
+        row.actualFinish = newValue;
+      }
+
+      const normalizedPrev = ['percentAccomplished', 'durationDays'].includes(field) ? prevValue : String(prevValue);
+      const normalizedNew = ['percentAccomplished', 'durationDays'].includes(field) ? newValue : String(newValue);
+      if (normalizedPrev !== normalizedNew) {
+        row.lastUpdated = currentStamp();
+      }
+      renderWorkspace();
+    }
+
+
+    function getDateOnlyValue(dateStr) {
+      if (!dateStr) return null;
+      return new Date(dateStr + 'T00:00:00');
+    }
+
+    function getDelayDisplay(row, mode) {
+      const plannedStart = getDateOnlyValue(row.startDate);
+      const plannedFinish = getDateOnlyValue(row.finishDate);
+      const actualStart = getDateOnlyValue(row.actualStart);
+      const actualFinish = getDateOnlyValue(row.actualFinish);
+      const today = getDateOnlyValue(currentStamp());
+      let days = null;
+
+      if (mode === 'Start Delay') {
+        if (plannedStart && actualStart) days = Math.max(0, Math.round((actualStart - plannedStart) / 86400000));
+      } else if (mode === 'Delay to Date') {
+        if (plannedFinish) {
+          const referenceDate = actualFinish || today;
+          days = Math.max(0, Math.round((referenceDate - plannedFinish) / 86400000));
+        }
+      } else {
+        if (plannedFinish && actualFinish) days = Math.max(0, Math.round((actualFinish - plannedFinish) / 86400000));
+      }
+
+      if (days === null) return '—';
+      return days === 0 ? '' : `${days} day${days === 1 ? '' : 's'}`;
+    }
+
+    function updateScheduleDelayMode(value) {
+      const project = getCurrentProject();
+      if (!project) return;
+      project.scheduleDelayMode = value || 'Delay in Completion';
+      renderWorkspace();
+    }
+
+    function renderScheduleColumnToggles() {
+      const wrap = document.getElementById('scheduleColumnToggles');
+      if (!wrap) return;
+      const labels = {
+        boqCost: 'BOQ Cost',
+        startDate: 'Start Date',
+        finishDate: 'Finish Date',
+        actualStart: 'Actual Start',
+        actualFinish: 'Actual Finish',
+        durationDays: 'Duration',
+        percentAccomplished: '% Accomplished',
+        progressBar: 'Progress Bar',
+        earnedValue: 'Earned Value',
+        delay: 'Delay',
+        updated: 'Updated'
+      };
+      wrap.innerHTML = '';
+      Object.keys(labels).forEach(key => {
+        const label = document.createElement('label');
+        label.className = 'schedule-checkbox';
+        label.innerHTML = `<input type="checkbox" ${scheduleColumnVisibility[key] ? 'checked' : ''} onchange="toggleScheduleColumn('${key}', this.checked)"><span>${labels[key]}</span>`;
+        wrap.appendChild(label);
+      });
+    }
+
+    function toggleScheduleColumn(key, visible) {
+      scheduleColumnVisibility[key] = visible;
+      applyScheduleColumnVisibility();
+    }
+
+    function applyScheduleColumnVisibility() {
+      const section = document.getElementById('moduleScheduleSection');
+      if (!section) return;
+      Object.entries(scheduleColumnVisibility).forEach(([key, visible]) => {
+        section.querySelectorAll(`[data-col="${key}"]`).forEach(el => {
+          el.style.display = visible ? '' : 'none';
+        });
+      });
+    }
+
+    function updateSchedule(project) {
+      deriveScheduleRows(project);
+      renderScheduleColumnToggles();
+      const body = document.getElementById('scheduleBody');
+      body.innerHTML = '';
+
+      project.schedule.forEach((row, index) => {
+        const earned = row.boqCost * (Number(row.percentAccomplished || 0) / 100);
+        const delayDisplay = getDelayDisplay(row, project.scheduleDelayMode || 'Delay in Completion');
+        const isItem = row.level === 'item';
+        const ownerItem = isItem ? project.boq.find(i => i.id === row.itemId) : project.boq.find(i => i.id === row.parentItemId);
+        const ownerSub = !isItem ? project.boq.find(i => i.id === row.parentItemId)?.subItems.find(s => s.id === row.itemId) : null;
+        const showRow = isItem || (ownerItem && ownerItem.scheduleExpanded !== false);
+        if (!showRow) return;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.wbs}</td>
+          <td style="padding-left:${isItem ? '5px' : '18px'}; font-weight:${isItem ? '700' : (ownerSub && ownerSub.subSubItems && ownerSub.subSubItems.length ? '700' : '400')}; color:${isItem ? '#123a8f' : '#183153'};">
+            <div class="name-cell">
+              ${isItem ? `<button class="toggle-btn" onclick="toggleScheduleItem('${row.itemId}')" title="${ownerItem && ownerItem.scheduleExpanded === false ? 'Expand' : 'Collapse'}">${ownerItem && ownerItem.scheduleExpanded === false ? '▸' : '▾'}</button>` : '<span class="toggle-spacer"></span>'}
+              <span>${escapeHtml(row.name)}</span>
+            </div>
+          </td>
+          <td data-col="boqCost" class="cost-col">${peso(row.boqCost)}</td>
+          <td data-col="startDate"><input type="date" value="${row.startDate}" ${isItem ? 'readonly' : ''} onchange="updateScheduleField(${index}, 'startDate', this.value)"></td>
+          <td data-col="finishDate"><input type="date" value="${row.finishDate}" ${isItem ? 'readonly' : ''} onchange="updateScheduleField(${index}, 'finishDate', this.value)"></td>
+          <td data-col="actualStart"><input type="date" value="${row.actualStart || ''}" onchange="updateScheduleField(${index}, 'actualStart', this.value)"></td>
+          <td data-col="actualFinish"><input type="date" value="${row.actualFinish || ''}" onchange="updateScheduleField(${index}, 'actualFinish', this.value)"></td>
+          <td data-col="durationDays"><input type="number" min="1" step="1" value="${row.durationDays}" ${isItem ? 'readonly' : ''} onchange="updateScheduleField(${index}, 'durationDays', this.value)"></td>
+          <td data-col="percentAccomplished"><input type="text" value="${Number(row.percentAccomplished || 0).toFixed(2)} %" ${isItem ? 'readonly' : ''} onchange="updateScheduleField(${index}, 'percentAccomplished', this.value.replace('%','').trim())"></td>
+          <td data-col="progressBar"><div class="schedule-progress"><span style="width:${Math.max(0, Math.min(100, row.percentAccomplished))}%"></span></div></td>
+          <td data-col="earnedValue" class="cost-col">${peso(earned)}</td>
+          <td data-col="delay" class="delay-value-cell"><span class="delay-value-text">${delayDisplay}</span></td>
+          <td data-col="updated">${row.lastUpdated || ''}</td>`;
+        body.appendChild(tr);
+      });
+
+      const delayModeSelect = document.querySelector('#moduleScheduleSection th[data-col="delay"] select');
+      if (delayModeSelect) delayModeSelect.value = project.scheduleDelayMode || 'Delay in Completion';
+
+      applyScheduleColumnVisibility();
+
+      const totalCost = project.schedule.reduce((sum, row) => sum + row.boqCost, 0);
+      const earned = project.schedule.reduce((sum, row) => sum + row.boqCost * (Number(row.percentAccomplished || 0) / 100), 0);
+      const avg = project.schedule.length ? project.schedule.reduce((sum, row) => sum + Number(row.percentAccomplished || 0), 0) / project.schedule.length : 0;
+      document.getElementById('scheduleSummary').innerHTML = `
+        <div class="summary-row"><span>Planned BOQ Value</span><strong>${peso(totalCost)}</strong></div>
+        <div class="summary-row"><span>Earned Value</span><strong>${peso(earned)}</strong></div>
+        <div class="summary-row"><span>Average Accomplishment</span><strong>${avg.toFixed(2)} %</strong></div>
+        <div class="summary-row"><span>Activities</span><strong>${project.schedule.length}</strong></div>`;
+    }
+
+    function buildInventoryFromBOQ(project) {
+      const existingRows = Array.isArray(project.inventory) ? project.inventory : [];
+      const topMap = new Map(existingRows.filter(row => row.type !== 'subsub').map(row => [row.key, row]));
+      const childMap = new Map();
+
+      existingRows.forEach(row => {
+        if (row.type === 'subsub') {
+          if (!childMap.has(row.parentSubId)) childMap.set(row.parentSubId, []);
+          const arr = childMap.get(row.parentSubId);
+          if (!arr.some(child => child.key === row.key)) {
+            arr.push({ ...row });
+          }
+        }
+      });
+      existingRows.forEach(row => {
+        if (row.type === 'sub' && Array.isArray(row.children)) {
+          if (!childMap.has(row.itemId)) childMap.set(row.itemId, []);
+          const arr = childMap.get(row.itemId);
+          row.children.forEach(child => {
+            if (!arr.some(existing => existing.key === child.key)) arr.push({ ...child });
+          });
+        }
+      });
+
+      const rows = [];
+      project.boq.forEach((item, itemIndex) => {
+        const itemKey = `item:${item.id}`;
+        const itemPrev = topMap.get(itemKey) || {};
+        rows.push({
+          id: itemPrev.id || uid(), key: itemKey, type: 'item', itemId: item.id, parentItemId: null, parentSubId: null,
+          name: item.name || `Item ${itemIndex + 1}`, unit: '', boqQty: '', onHand: 0, issued: 0, inventoryExpanded: itemPrev.inventoryExpanded !== false, lastUpdated: itemPrev.lastUpdated || ''
+        });
+        item.subItems.forEach((sub, subIndex) => {
+          const subKey = `sub:${sub.id}`;
+          const prev = topMap.get(subKey) || {};
+          const children = (childMap.get(sub.id) || []).map(child => ({ ...child }));
+          rows.push({
+            id: prev.id || uid(), key: subKey, type: 'sub', itemId: sub.id, parentItemId: item.id, parentSubId: null,
+            name: sub.name || `Sub-Item ${subIndex + 1}`, unit: prev.unit || sub.unit || 'pcs', boqQty: prev.boqQty !== undefined ? prev.boqQty : Number(sub.qty || 0),
+            onHand: Number(prev.onHand || 0), issued: Number(prev.issued || 0), inventoryExpanded: prev.inventoryExpanded !== false,
+            children, lastUpdated: prev.lastUpdated || ''
+          });
+          children.forEach((child, childIndex) => {
+            rows.push({
+              id: child.id || uid(), key: child.key || `invchild:${sub.id}:${childIndex + 1}`, type: 'subsub', itemId: child.itemId || uid(), parentItemId: item.id,
+              parentSubId: sub.id, name: child.name || `Material ${childIndex + 1}`, unit: child.unit || 'pcs', boqQty: Number(child.boqQty || 0),
+              onHand: Number(child.onHand || 0), issued: Number(child.issued || 0), lastUpdated: child.lastUpdated || ''
+            });
+          });
+        });
+      });
+      project.inventory = rows;
+    }
+    function persistInventoryChildren(project) {
+      const childrenBySub = new Map();
+      project.inventory.forEach(row => {
+        if (row.type === 'subsub') {
+          if (!childrenBySub.has(row.parentSubId)) childrenBySub.set(row.parentSubId, []);
+          const arr = childrenBySub.get(row.parentSubId);
+          if (!arr.some(existing => existing.key === row.key)) arr.push({ ...row });
+        }
+      });
+      const rebuilt = [];
+      project.inventory.forEach(row => {
+        if (row.type === 'item') rebuilt.push({ ...row });
+        else if (row.type === 'sub') rebuilt.push({ ...row, children: childrenBySub.get(row.itemId) || [] });
+      });
+      project.inventory = rebuilt;
+    }
+    function addInventoryRow() {
+      const project = getCurrentProject();
+      if (!project) return;
+      const firstSub = project.boq.flatMap(item => item.subItems.map(sub => ({ item, sub })))[0];
+      if (!firstSub) return;
+      addInventorySubSubItem(firstSub.item.id, firstSub.sub.id);
+    }
+    function addInventorySubSubItem(parentItemId, parentSubId) {
+      const project = getCurrentProject();
+      if (!project) return;
+      persistInventoryChildren(project);
+      const subRow = project.inventory.find(r => r.type === 'sub' && r.parentItemId === parentItemId && r.itemId === parentSubId);
+      if (!subRow) return;
+      subRow.inventoryExpanded = true;
+      const nextIndex = (subRow.children || []).length + 1;
+      subRow.children = [...(subRow.children || []), {
+        id: uid(), key: `invchild:${parentSubId}:${uid()}`, itemId: uid(), name: `Material ${nextIndex}`,
+        unit: 'pcs', boqQty: 0, onHand: 0, issued: 0, lastUpdated: '', type: 'subsub', parentItemId, parentSubId
+      }];
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+    }
+    function toggleInventoryItem(itemId) {
+      const project = getCurrentProject();
+      if (!project) return;
+      persistInventoryChildren(project);
+      const row = project.inventory.find(r => r.type === 'item' && r.itemId === itemId);
+      if (!row) return;
+      row.inventoryExpanded = row.inventoryExpanded === false ? true : false;
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+    }
+
+    function toggleInventorySubItem(parentItemId, parentSubId) {
+      const project = getCurrentProject();
+      if (!project) return;
+      persistInventoryChildren(project);
+      const row = project.inventory.find(r => r.type === 'sub' && r.parentItemId === parentItemId && r.itemId === parentSubId);
+      if (!row) return;
+      row.inventoryExpanded = row.inventoryExpanded === false ? true : false;
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+    }
+    function removeInventorySubSubItem(index) {
+      if (!confirm('Delete this inventory material breakdown row?')) return;
+      const project = getCurrentProject();
+      if (!project) return;
+      const row = project.inventory[index];
+      if (!row || row.type !== 'subsub') return;
+      project.inventory.splice(index, 1);
+      persistInventoryChildren(project);
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+    }
+    function updateInventoryField(index, field, value) {
+      const project = getCurrentProject();
+      if (!project || !project.inventory[index]) return;
+      const row = project.inventory[index];
+      const isNumericField = ['boqQty', 'onHand', 'issued'].includes(field);
+      const newValue = isNumericField ? parseNumber(value) : value;
+      const currentValue = isNumericField ? parseNumber(row[field]) : String(row[field] ?? '');
+      const normalizedValue = isNumericField ? newValue : String(newValue ?? '');
+      row[field] = isNumericField ? newValue : normalizedValue;
+      if (currentValue !== normalizedValue) {
+        row.lastUpdated = currentStamp();
+      }
+      persistInventoryChildren(project);
+      buildInventoryFromBOQ(project);
+      renderWorkspace();
+    }
+    function updateInventory(project) {
+      buildInventoryFromBOQ(project);
+      const body = document.getElementById('inventoryBody'); body.innerHTML = '';
+      project.inventory.forEach((row, index) => {
+        const isItem = row.type === 'item';
+        const isSub = row.type === 'sub';
+        const isSubSub = row.type === 'subsub';
+        const ownerItem = isItem ? project.boq.find(i => i.id === row.itemId) : project.boq.find(i => i.id === row.parentItemId);
+        const ownerInventoryItem = isItem ? row : project.inventory.find(r => r.type === 'item' && r.itemId === row.parentItemId);
+        const ownerSub = isSub ? row : project.inventory.find(r => r.type === 'sub' && r.itemId === row.parentSubId);
+        const itemExpanded = !ownerInventoryItem || ownerInventoryItem.inventoryExpanded !== false;
+        const subExpanded = !ownerSub || ownerSub.inventoryExpanded !== false;
+        const showRow = isItem || (isSub && itemExpanded) || (isSubSub && itemExpanded && subExpanded);
+        if (!showRow) return;
+        const balance = Number(row.onHand || 0) - Number(row.issued || 0);
+        const tr = document.createElement('tr');
+        tr.className = isItem ? 'item-row' : isSub ? 'subitem-row inventory-sub-row' : 'subsub-row inventory-material-row';
+        if (isItem) {
+          tr.innerHTML = `
+            <td><div class="name-cell"><button class="toggle-btn" onclick="toggleInventoryItem('${row.itemId}')" title="${row.inventoryExpanded === false ? 'Expand' : 'Collapse'}">${row.inventoryExpanded === false ? '▸' : '▾'}</button><span class="level-item">${escapeHtml(row.name)}</span></div></td>
+            <td class="unit-col"></td><td class="cost-col"></td><td class="cost-col"></td><td class="cost-col"></td><td class="cost-col"></td><td>${row.lastUpdated || ''}</td><td></td>`;
+        } else if (isSub) {
+          const hasChildren = project.inventory.some(r => r.type === 'subsub' && r.parentSubId === row.itemId);
+          tr.innerHTML = `
+            <td><div class="name-cell" style="padding-left:18px;">${hasChildren ? `<button class="toggle-btn" onclick="toggleInventorySubItem('${row.parentItemId}', '${row.itemId}')" title="${row.inventoryExpanded === false ? 'Expand' : 'Collapse'}">${row.inventoryExpanded === false ? '▸' : '▾'}</button>` : '<span class="toggle-spacer"></span>'}<span>${escapeHtml(row.name)}</span></div></td>
+            <td class="unit-col"><input value="${escapeHtml(row.unit)}" onchange="updateInventoryField(${index}, 'unit', this.value)"></td>
+            <td><input type="number" step="any" value="${row.boqQty}" onchange="updateInventoryField(${index}, 'boqQty', this.value)"></td>
+            <td><input type="number" step="any" value="${row.onHand}" onchange="updateInventoryField(${index}, 'onHand', this.value)"></td>
+            <td><input type="number" step="any" value="${row.issued}" onchange="updateInventoryField(${index}, 'issued', this.value)"></td>
+            <td class="cost-col">${formatNumber2(balance)}</td>
+            <td>${row.lastUpdated || ''}</td>
+            <td><div class="row-actions"><button class="plain-add-btn" onclick="addInventorySubSubItem('${row.parentItemId}', '${row.itemId}')" title="Add material breakdown">+</button></div></td>`;
+        } else {
+          tr.innerHTML = `
+            <td style="padding-left:42px;"><input value="${escapeHtml(row.name)}" onchange="updateInventoryField(${index}, 'name', this.value)"></td>
+            <td class="unit-col"><input value="${escapeHtml(row.unit)}" onchange="updateInventoryField(${index}, 'unit', this.value)"></td>
+            <td><input type="number" step="any" value="${row.boqQty}" onchange="updateInventoryField(${index}, 'boqQty', this.value)"></td>
+            <td><input type="number" step="any" value="${row.onHand}" onchange="updateInventoryField(${index}, 'onHand', this.value)"></td>
+            <td><input type="number" step="any" value="${row.issued}" onchange="updateInventoryField(${index}, 'issued', this.value)"></td>
+            <td class="cost-col">${formatNumber2(balance)}</td>
+            <td>${row.lastUpdated || ''}</td>
+            <td><div class="row-actions"><button class="icon-btn mini-danger" onclick="removeInventorySubSubItem(${index})" title="Delete material breakdown">🗑</button></div></td>`;
+        }
+        body.appendChild(tr);
+      });
+      const subRows = project.inventory.filter(r => r.type === 'subsub');
+      const totalBoqQty = subRows.reduce((sum, row) => sum + Number(row.boqQty || 0), 0);
+      const totalOnHand = subRows.reduce((sum, row) => sum + Number(row.onHand || 0), 0);
+      const totalIssued = subRows.reduce((sum, row) => sum + Number(row.issued || 0), 0);
+      document.getElementById('inventorySummary').innerHTML = `
+        <div class="summary-row"><span>Total BOQ Qty</span><strong>${formatNumber2(totalBoqQty)}</strong></div>
+        <div class="summary-row"><span>Total On Hand</span><strong>${formatNumber2(totalOnHand)}</strong></div>
+        <div class="summary-row"><span>Total Issued</span><strong>${formatNumber2(totalIssued)}</strong></div>
+        <div class="summary-row"><span>Net Balance</span><strong>${formatNumber2(totalOnHand - totalIssued)}</strong></div>`;
+    }
+
+    function defaultLaborDetails(existing) {
+      const categories = ['Foreman', 'Leadman', 'Skilled Worker', 'Semi Skilled Worker', 'Laborer'];
+      const map = new Map((existing || []).map(row => [row.skillCategory, row]));
+      return categories.map(category => {
+        const prev = map.get(category) || {};
+        return {
+          skillCategory: category,
+          manpower: Number(prev.manpower || 0),
+          ratePerDay: Number(prev.ratePerDay || 0),
+          otHour: Number(prev.otHour || 0)
+        };
+      });
+    }
+    function defaultMaterialDetails(existing) {
+      return Array.isArray(existing) && existing.length
+        ? existing.map(row => ({ material: row.material || '', qty: Number(row.qty || 0), costPerUnit: Number(row.costPerUnit || 0) }))
+        : [{ material: '', qty: 0, costPerUnit: 0 }];
+    }
+    function laborOvertimePay(row) {
+      return Number(row.ratePerDay || 0) * 1.25 * Number(row.otHour || 0) / 8;
+    }
+    function laborRowTotal(row) {
+      return (Number(row.manpower || 0) * Number(row.ratePerDay || 0)) + laborOvertimePay(row);
+    }
+    function laborDetailsTotal(details) {
+      return (details || []).reduce((sum, row) => sum + laborRowTotal(row), 0);
+    }
+    function materialDetailsTotal(details) {
+      return (details || []).reduce((sum, row) => sum + (Number(row.qty || 0) * Number(row.costPerUnit || 0)), 0);
+    }
+    function buildTrackingRow(prev, base) {
+      const laborDetails = defaultLaborDetails(prev.actualLaborDetails);
+      const materialDetails = defaultMaterialDetails(prev.actualMaterialDetails);
+      const laborTotal = laborDetailsTotal(laborDetails);
+      const materialTotal = materialDetailsTotal(materialDetails);
+      return {
+        ...base,
+        id: prev.id || uid(),
+        actualLaborDetails: laborDetails,
+        actualMaterialDetails: materialDetails,
+        linkedActualLaborAmount: Number(prev.linkedActualLaborAmount || 0),
+        linkedActualMaterialAmount: Number(prev.linkedActualMaterialAmount || 0),
+        actualLabor: Number(prev.actualLabor || 0),
+        actualMaterial: Number(prev.actualMaterial || 0),
+        trackingExpanded: prev.trackingExpanded !== false,
+        ongoing: !!prev.ongoing,
+        lastUpdated: prev.lastUpdated || ''
+      };
+    }
+    function trackingRowHasChildren(project, row) {
+      if (!row) return false;
+      if (row.type === 'item') return project.tracking.some(child => child.parentItemId === row.itemId && child.type === 'sub');
+      if (row.type === 'sub') return project.tracking.some(child => child.parentSubId === row.itemId && child.type === 'subsub');
+      return false;
+    }
+    function buildTrackingFromBOQ(project) {
+      const existingMap = new Map((project.tracking || []).map(row => [row.key, row]));
+      const rows = [];
+      project.boq.forEach((item, itemIndex) => {
+        const itemTotals = calcItem(item);
+        const itemKey = `item:${item.id}`;
+        const itemPrev = existingMap.get(itemKey) || {};
+        rows.push(buildTrackingRow(itemPrev, {
+          key: itemKey, type: 'item', itemId: item.id, parentItemId: null, parentSubId: null,
+          name: item.name || `Item ${itemIndex + 1}`, boqLabor: itemTotals.totalLabor, boqMaterial: itemTotals.totalMaterial
+        }));
+        item.subItems.forEach((sub, subIndex) => {
+          const subTotals = calcSubItem(sub);
+          const subKey = `sub:${sub.id}`;
+          const prev = existingMap.get(subKey) || {};
+          rows.push(buildTrackingRow(prev, {
+            key: subKey, type: 'sub', itemId: sub.id, parentItemId: item.id, parentSubId: null,
+            name: sub.name || `Sub-Item ${subIndex + 1}`, boqLabor: subTotals.totalLabor, boqMaterial: subTotals.totalMaterial
+          }));
+          (sub.subSubItems || []).forEach((child, childIndex) => {
+            const childTotals = calcBaseCost(child);
+            const childKey = `subsub:${child.id}`;
+            const childPrev = existingMap.get(childKey) || {};
+            rows.push(buildTrackingRow(childPrev, {
+              key: childKey, type: 'subsub', itemId: child.id, parentItemId: item.id, parentSubId: sub.id,
+              name: child.name || `Sub-Sub-Item ${childIndex + 1}`, boqLabor: childTotals.totalLabor, boqMaterial: childTotals.totalMaterial
+            }));
+          });
+        });
+      });
+      project.tracking = rows;
+    }
+    function openActualCostSheet(rowKey, type) {
+      const project = getCurrentProject(); if (!project) return;
+      buildTrackingFromBOQ(project);
+      const row = project.tracking.find(r => r.key === rowKey);
+      if (!row || trackingRowHasChildren(project, row)) return;
+      activeActualCostSheet = { rowKey, type };
+      document.getElementById('actualCostSheet').classList.remove('hidden');
+      renderActualCostSheet();
+    }
+    function closeActualCostSheet() {
+      activeActualCostSheet = null;
+      document.getElementById('actualCostSheet').classList.add('hidden');
+    }
+    function renderActualCostSheet() {
+      const project = getCurrentProject();
+      if (!project || !activeActualCostSheet) return;
+      buildTrackingFromBOQ(project);
+      const row = project.tracking.find(r => r.key === activeActualCostSheet.rowKey);
+      if (!row) { closeActualCostSheet(); return; }
+      const isLabor = activeActualCostSheet.type === 'labor';
+      document.getElementById('actualCostSheetTitle').textContent = isLabor ? 'Labor Actual Cost Calculation' : 'Material Actual Cost Calculation';
+      document.getElementById('actualCostSheetSubtitle').textContent = row.name;
+      const head = document.getElementById('actualCostSheetHead');
+      const body = document.getElementById('actualCostSheetBody');
+      const actions = document.getElementById('actualCostSheetActions');
+      if (isLabor) {
+        head.innerHTML = `<tr><th>Skill Category</th><th>No. of Manpower</th><th>Rate per Day/8 Hours</th><th>OT Hour</th><th>Overtime Pay</th><th>Total Pay</th></tr>`;
+        body.innerHTML = row.actualLaborDetails.map((detail, i) => {
+          const overtimePay = laborOvertimePay(detail);
+          const total = laborRowTotal(detail);
+          return `<tr>
+            <td><input readonly value="${escapeHtml(detail.skillCategory)}"></td>
+            <td><input type="number" min="0" step="any" value="${detail.manpower}" onchange="updateLaborActualDetail('${row.key}', ${i}, 'manpower', this.value)"></td>
+            <td><input type="text" inputmode="decimal" value="${pesoInput(detail.ratePerDay)}" onchange="updateLaborActualDetail('${row.key}', ${i}, 'ratePerDay', this.value); this.value = pesoInput(this.value);"></td>
+            <td><input type="number" min="0" step="any" value="${detail.otHour}" onchange="updateLaborActualDetail('${row.key}', ${i}, 'otHour', this.value)"></td>
+            <td class="cost-col"><input readonly value="${peso(overtimePay)}"></td>
+            <td class="cost-col"><input readonly value="${peso(total)}"></td>
+          </tr>`;
+        }).join('');
+        actions.innerHTML = `<button class="btn-primary" onclick="linkActualCostToTracking('${row.key}', 'labor')">Add / Update Actual Labor Cost</button>`;
+        document.getElementById('actualCostSheetTotal').textContent = peso(laborDetailsTotal(row.actualLaborDetails));
+      } else {
+        head.innerHTML = `<tr><th>Materials</th><th>Qty</th><th>Cost per Unit</th><th>Total Cost</th><th style="width:64px;">Act</th></tr>`;
+        body.innerHTML = row.actualMaterialDetails.map((detail, i) => {
+          const total = Number(detail.qty || 0) * Number(detail.costPerUnit || 0);
+          return `<tr>
+            <td><input value="${escapeHtml(detail.material)}" onchange="updateMaterialActualDetail('${row.key}', ${i}, 'material', this.value)"></td>
+            <td><input type="number" min="0" step="any" value="${detail.qty}" onchange="updateMaterialActualDetail('${row.key}', ${i}, 'qty', this.value)"></td>
+            <td><input type="text" inputmode="decimal" value="${pesoInput(detail.costPerUnit)}" onchange="updateMaterialActualDetail('${row.key}', ${i}, 'costPerUnit', this.value); this.value = pesoInput(this.value);"></td>
+            <td class="cost-col"><input readonly value="${peso(total)}"></td>
+            <td><button class="icon-btn mini-danger" onclick="removeMaterialActualDetail('${row.key}', ${i})" title="Delete material row">🗑</button></td>
+          </tr>`;
+        }).join('');
+        actions.innerHTML = `<button class="btn-secondary" onclick="addMaterialActualDetail('${row.key}')">Add Material</button><button class="btn-primary" onclick="linkActualCostToTracking('${row.key}', 'material')">Add / Update Actual Material Cost</button>`;
+        document.getElementById('actualCostSheetTotal').textContent = peso(materialDetailsTotal(row.actualMaterialDetails));
+      }
+    }
+    function linkActualCostToTracking(rowKey, type) {
+      const row = findTrackingRowByKey(rowKey); if (!row) return;
+      const isLabor = type === 'labor';
+      const newAmount = isLabor ? laborDetailsTotal(row.actualLaborDetails) : materialDetailsTotal(row.actualMaterialDetails);
+      const linkedField = isLabor ? 'linkedActualLaborAmount' : 'linkedActualMaterialAmount';
+      const actualField = isLabor ? 'actualLabor' : 'actualMaterial';
+      const previousLinked = Number(row[linkedField] || 0);
+      if (previousLinked !== 0) {
+        const ok = confirm('The previously added cost will be undone and the new cost will be added. Continue?');
+        if (!ok) return;
+      }
+      row[actualField] = Number(row[actualField] || 0) - previousLinked + newAmount;
+      row[linkedField] = newAmount;
+      row.lastUpdated = currentStamp();
+      renderWorkspace();
+      renderActualCostSheet();
+    }
+    function findTrackingRowByKey(rowKey) {
+      const project = getCurrentProject(); if (!project) return null;
+      buildTrackingFromBOQ(project);
+      return project.tracking.find(row => row.key === rowKey) || null;
+    }
+    function updateLaborActualDetail(rowKey, detailIndex, field, value) {
+      const row = findTrackingRowByKey(rowKey); if (!row) return;
+      row.actualLaborDetails[detailIndex][field] = field === 'skillCategory' ? value : parseNumber(value);
+      row.lastUpdated = currentStamp();
+      renderWorkspace();
+      renderActualCostSheet();
+    }
+    function updateMaterialActualDetail(rowKey, detailIndex, field, value) {
+      const row = findTrackingRowByKey(rowKey); if (!row) return;
+      row.actualMaterialDetails[detailIndex][field] = field === 'material' ? value : parseNumber(value);
+      row.lastUpdated = currentStamp();
+      renderWorkspace();
+      renderActualCostSheet();
+    }
+    function addMaterialActualDetail(rowKey) {
+      const row = findTrackingRowByKey(rowKey); if (!row) return;
+      row.actualMaterialDetails.push({ material: '', qty: 0, costPerUnit: 0 });
+      row.lastUpdated = currentStamp();
+      renderWorkspace();
+      renderActualCostSheet();
+    }
+    function removeMaterialActualDetail(rowKey, detailIndex) {
+      const row = findTrackingRowByKey(rowKey); if (!row) return;
+      row.actualMaterialDetails.splice(detailIndex, 1);
+      if (!row.actualMaterialDetails.length) row.actualMaterialDetails.push({ material: '', qty: 0, costPerUnit: 0 });
+      row.lastUpdated = currentStamp();
+      renderWorkspace();
+      renderActualCostSheet();
+    }
+    function updateTrackingField(index, field, value) {
+      const project = getCurrentProject(); if (!project) return;
+      buildTrackingFromBOQ(project);
+      const row = project.tracking[index];
+      if (!row) return;
+      const prevValue = parseNumber(row[field]);
+      const newValue = parseNumber(value);
+      row[field] = newValue;
+      if (prevValue !== newValue) {
+        row.lastUpdated = currentStamp();
+      }
+      renderWorkspace();
+    }
+
+    function toggleTrackingOngoing(index, checked) {
+      const project = getCurrentProject(); if (!project) return;
+      buildTrackingFromBOQ(project);
+      const row = project.tracking[index];
+      if (!row || row.type !== 'sub') return;
+      const newValue = !!checked;
+      if (row.ongoing !== newValue) {
+        row.ongoing = newValue;
+        row.lastUpdated = currentStamp();
+      }
+      renderWorkspace();
+    }
+    function toggleTrackingSubItem(parentItemId, parentSubId) {
+      const project = getCurrentProject();
+      if (!project) return;
+      const row = project.tracking.find(r => r.type === 'sub' && r.parentItemId === parentItemId && r.itemId === parentSubId);
+      if (!row) return;
+      row.trackingExpanded = row.trackingExpanded === false ? true : false;
+      renderWorkspace();
+    }
+    function updateTracking(project) {
+      buildTrackingFromBOQ(project);
+      const laborBody = document.getElementById('laborTrackingBody');
+      const materialBody = document.getElementById('materialTrackingBody');
+      laborBody.innerHTML = '';
+      materialBody.innerHTML = '';
+      project.tracking.forEach((row, index) => {
+        const isItem = row.type === 'item';
+        const isSub = row.type === 'sub';
+        const isSubSub = row.type === 'subsub';
+        const ownerItem = isItem ? project.boq.find(i => i.id === row.itemId) : project.boq.find(i => i.id === row.parentItemId);
+        const ownerSub = isSub ? row : project.tracking.find(r => r.type === 'sub' && r.itemId === row.parentSubId);
+        const showRow = isItem || (isSub && ownerItem && ownerItem.scheduleExpanded !== false) || (isSubSub && ownerItem && ownerItem.scheduleExpanded !== false && ownerSub && ownerSub.trackingExpanded !== false);
+        if (!showRow) return;
+        const hasChildren = trackingRowHasChildren(project, row);
+        const canOpenActualCost = !hasChildren;
+        const workItemClass = `tracking-work-item${canOpenActualCost ? ' clickable' : ''}`;
+        const laborOpen = canOpenActualCost ? `ondblclick="openActualCostSheet('${row.key}', 'labor')" title="Double-click to open labor actual cost calculation"` : '';
+        const materialOpen = canOpenActualCost ? `ondblclick="openActualCostSheet('${row.key}', 'material')" title="Double-click to open material actual cost calculation"` : '';
+        const laborVariance = row.boqLabor - row.actualLabor;
+        const materialVariance = row.boqMaterial - row.actualMaterial;
+
+        const laborTr = document.createElement('tr');
+        laborTr.className = `${isItem ? 'item-row' : isSub ? 'subitem-row' : 'subsub-row'}${row.ongoing ? ' ongoing-row' : ''}`;
+        laborTr.innerHTML = isItem ? `
+          <td><div class="name-cell"><button class="toggle-btn" onclick="toggleScheduleItem('${row.itemId}')" title="${ownerItem && ownerItem.scheduleExpanded === false ? 'Expand' : 'Collapse'}">${ownerItem && ownerItem.scheduleExpanded === false ? '▸' : '▾'}</button><span class="level-item">${escapeHtml(row.name)}</span></div></td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col">${peso(row.actualLabor)}</td>
+          <td class="cost-col${varianceClass(laborVariance)}">${peso(laborVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>` : isSub ? `
+          <td class="${workItemClass}" ${laborOpen}><div class="name-cell" style="padding-left:18px;">${project.tracking.some(r => r.type === 'subsub' && r.parentSubId === row.itemId) ? `<button class="toggle-btn" onclick="toggleTrackingSubItem('${row.parentItemId}', '${row.itemId}')" title="${row.trackingExpanded === false ? 'Expand' : 'Collapse'}">${row.trackingExpanded === false ? '▸' : '▾'}</button>` : '<span class="toggle-spacer"></span>'}<label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;"><input class="tracking-check" type="checkbox" ${row.ongoing ? 'checked' : ''} onclick="toggleTrackingOngoing(${index}, this.checked)"><span style="font-weight:700;">${escapeHtml(row.name)}</span></label></div></td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col"><input type="text" inputmode="decimal" value="${peso(row.actualLabor)}" onchange="updateTrackingField(${index}, 'actualLabor', this.value); this.value = peso(this.value);"></td>
+          <td class="cost-col${varianceClass(laborVariance)}">${peso(laborVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>` : `
+          <td class="${workItemClass}" ${laborOpen} style="padding-left:42px; font-style:italic;">${escapeHtml(row.name)}</td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col">${peso(row.boqLabor)}</td>
+          <td class="cost-col"><input type="text" inputmode="decimal" value="${peso(row.actualLabor)}" onchange="updateTrackingField(${index}, 'actualLabor', this.value); this.value = peso(this.value);"></td>
+          <td class="cost-col${varianceClass(laborVariance)}">${peso(laborVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>`;
+        laborBody.appendChild(laborTr);
+
+        const materialTr = document.createElement('tr');
+        materialTr.className = `${isItem ? 'item-row' : isSub ? 'subitem-row' : 'subsub-row'}${row.ongoing ? ' ongoing-row' : ''}`;
+        materialTr.innerHTML = isItem ? `
+          <td class="${workItemClass}" ${materialOpen}><div class="name-cell"><button class="toggle-btn" onclick="toggleScheduleItem('${row.itemId}')" title="${ownerItem && ownerItem.scheduleExpanded === false ? 'Expand' : 'Collapse'}">${ownerItem && ownerItem.scheduleExpanded === false ? '▸' : '▾'}</button><span class="level-item">${escapeHtml(row.name)}</span></div></td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col">${peso(row.actualMaterial)}</td>
+          <td class="cost-col${varianceClass(materialVariance)}">${peso(materialVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>` : isSub ? `
+          <td class="${workItemClass}" ${materialOpen}><div class="name-cell" style="padding-left:18px;">${project.tracking.some(r => r.type === 'subsub' && r.parentSubId === row.itemId) ? `<button class="toggle-btn" onclick="toggleTrackingSubItem('${row.parentItemId}', '${row.itemId}')" title="${row.trackingExpanded === false ? 'Expand' : 'Collapse'}">${row.trackingExpanded === false ? '▸' : '▾'}</button>` : '<span class="toggle-spacer"></span>'}<span style="font-weight:700;">${escapeHtml(row.name)}</span></div></td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col"><input type="text" inputmode="decimal" value="${peso(row.actualMaterial)}" onchange="updateTrackingField(${index}, 'actualMaterial', this.value); this.value = peso(this.value);"></td>
+          <td class="cost-col${varianceClass(materialVariance)}">${peso(materialVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>` : `
+          <td class="${workItemClass}" ${materialOpen} style="padding-left:42px; font-style:italic;">${escapeHtml(row.name)}</td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col">${peso(row.boqMaterial)}</td>
+          <td class="cost-col"><input type="text" inputmode="decimal" value="${peso(row.actualMaterial)}" onchange="updateTrackingField(${index}, 'actualMaterial', this.value); this.value = peso(this.value);"></td>
+          <td class="cost-col${varianceClass(materialVariance)}">${peso(materialVariance)}</td>
+          <td>${row.lastUpdated || ''}</td>`;
+        materialBody.appendChild(materialTr);
+      });
+      const detailRows = project.tracking.filter(r => r.type !== 'item');
+      const boqLabor = detailRows.reduce((sum, row) => sum + row.boqLabor, 0);
+      const boqMaterial = detailRows.reduce((sum, row) => sum + row.boqMaterial, 0);
+      const actualLabor = detailRows.reduce((sum, row) => sum + Number(row.actualLabor || 0), 0);
+      const actualMaterial = detailRows.reduce((sum, row) => sum + Number(row.actualMaterial || 0), 0);
+      document.getElementById('trackingSummary').innerHTML = `
+        <div class="summary-row"><span>Labor Variance</span><strong class="${(boqLabor - actualLabor) < 0 ? 'negative-value' : ''}">${peso(boqLabor - actualLabor)}</strong></div>
+        <div class="summary-row"><span>Material Variance</span><strong class="${(boqMaterial - actualMaterial) < 0 ? 'negative-value' : ''}">${peso(boqMaterial - actualMaterial)}</strong></div>
+        <div class="summary-row"><span>Total Actual Labor</span><strong>${peso(actualLabor)}</strong></div>
+        <div class="summary-row"><span>Total Actual Material</span><strong>${peso(actualMaterial)}</strong></div>`;
+    }
+
+    function updateWorkspaceMetrics(project) {
+      const totals = calcProjectTotals(project);
+      document.getElementById('workspaceMetrics').innerHTML = `
+        <div class="metric-card"><div class="metric-label">Project Code</div><div class="metric-value">${escapeHtml(project.code)}</div><div class="metric-note">Current selection</div></div>
+        <div class="metric-card"><div class="metric-label">BOQ Grand Total</div><div class="metric-value">${peso(totals.totalGrand)}</div><div class="metric-note">Labor + material/equipment</div></div>
+        <div class="metric-card"><div class="metric-label">Items / Detail Rows</div><div class="metric-value">${totals.totalItems}</div><div class="metric-note">${totals.totalSubItems} sub-items • ${totals.totalSubSubItems} sub-sub-items</div></div>
+        <div class="metric-card"><div class="metric-label">Status</div><div class="metric-value">${escapeHtml(project.status)}</div><div class="metric-note">${escapeHtml(project.location)}</div></div>`;
+    }
+    function updateBOQSummary(project) {
+      const totals = calcProjectTotals(project);
+      document.getElementById('metricItems').textContent = totals.totalItems;
+      document.getElementById('metricSubItems').textContent = `${totals.totalSubItems} / ${totals.totalSubSubItems}`;
+      document.getElementById('sumLabor').textContent = peso(totals.totalLabor);
+      document.getElementById('sumMaterial').textContent = peso(totals.totalMaterial);
+      document.getElementById('sumGrand').textContent = peso(totals.totalGrand);
+      const itemTotalsEl = document.getElementById('itemTotals'); itemTotalsEl.innerHTML = '';
+      project.boq.forEach((item, itemIndex) => {
+        const itemTotals = calcItem(item); const card = document.createElement('div'); card.className = 'soft-card';
+        card.innerHTML = `<h4>${itemIndex + 1}. ${escapeHtml(item.name || 'Untitled Item')}</h4><div class="kpi-list"><div class="kpi-row"><span>Total Labor/Equip't</span><strong>${peso(itemTotals.totalLabor)}</strong></div><div class="kpi-row"><span>Total Mat'l</span><strong>${peso(itemTotals.totalMaterial)}</strong></div><div class="kpi-row"><span>Total Item Cost</span><strong>${peso(itemTotals.grandTotal)}</strong></div></div>`;
+        itemTotalsEl.appendChild(card);
+      });
+    }
+    function renderBOQ(project) {
+      const tbody = document.getElementById('boqBody'); tbody.innerHTML = '';
+      project.boq.forEach((item, itemIndex) => {
+        const itemTotals = calcItem(item); const itemRow = document.createElement('tr'); itemRow.className = 'item-row';
+        itemRow.innerHTML = `
+          <td class="level-item item-code-cell">${itemIndex + 1}.0.0</td>
+          <td colspan="2"><div class="name-cell"><button class="toggle-btn" onclick="toggleItem('${item.id}')" title="${item.expanded ? 'Collapse' : 'Expand'}">${item.expanded ? '▾' : '▸'}</button><div class="name-input-wrap level-item"><input value="${escapeHtml(item.name)}" placeholder="Enter item name" onchange="updateItemName('${item.id}', this.value)"></div></div></td>
+          <td class="unit-col"></td><td class="cost-col"></td><td class="cost-col"></td>
+          <td class="cost-col"><input readonly value="${peso(itemTotals.totalLabor)}"></td>
+          <td class="cost-col"><input readonly value="${peso(itemTotals.totalMaterial)}"></td>
+          <td class="cost-col"><input readonly value="${peso(itemTotals.grandTotal)}"></td>
+          <td><div class="row-actions"><button class="icon-btn mini-primary" onclick="addSubItem('${item.id}')" title="Add sub-item">＋</button><button class="icon-btn mini-danger" onclick="removeItem('${item.id}')" title="Delete item">🗑</button></div></td>`;
+        tbody.appendChild(itemRow);
+        if (!item.expanded) return;
+        item.subItems.forEach((sub, subIndex) => {
+          const subTotals = calcSubItem(sub); const hasChildren = sub.subSubItems.length > 0; const subRow = document.createElement('tr'); subRow.className = 'subitem-row';
+          subRow.innerHTML = `
+            <td class="item-code-cell">${itemIndex + 1}.${subIndex + 1}.0</td>
+            <td><div class="name-cell">${hasChildren ? `<button class="toggle-btn" onclick="toggleSubItem('${item.id}', '${sub.id}')" title="${sub.expanded ? 'Collapse' : 'Expand'}">${sub.expanded ? '▾' : '▸'}</button>` : '<span class="toggle-spacer"></span>'}<div class="name-input-wrap level-sub"><input value="${escapeHtml(sub.name)}" placeholder="Enter sub-item name" onchange="updateSubItem('${item.id}', '${sub.id}', 'name', this.value)"></div></div></td>
+            <td><input type="number" min="0" step="any" value="${sub.qty}" onchange="updateSubItem('${item.id}', '${sub.id}', 'qty', this.value)"></td>
+            <td class="unit-col"><input value="${escapeHtml(sub.unit)}" placeholder="unit" onchange="updateSubItem('${item.id}', '${sub.id}', 'unit', this.value)"></td>
+            <td class="cost-col"><input type="text" inputmode="decimal" value="${pesoInput(sub.laborUnitCost)}" onchange="updateSubItem('${item.id}', '${sub.id}', 'laborUnitCost', this.value); this.value = pesoInput(this.value);"></td>
+            <td class="cost-col"><input type="text" inputmode="decimal" value="${pesoInput(sub.materialUnitCost)}" onchange="updateSubItem('${item.id}', '${sub.id}', 'materialUnitCost', this.value); this.value = pesoInput(this.value);"></td>
+            <td class="cost-col"><input readonly value="${peso(subTotals.totalLabor)}"></td>
+            <td class="cost-col"><input readonly value="${peso(subTotals.totalMaterial)}"></td>
+            <td class="cost-col"><input readonly value="${peso(subTotals.grandTotal)}"></td>
+            <td><div class="row-actions"><button class="icon-btn mini-warn" onclick="addSubSubItem('${item.id}', '${sub.id}')" title="Add sub-sub-item">⊞</button><button class="icon-btn mini-danger" onclick="removeSubItem('${item.id}', '${sub.id}')" title="Delete sub-item">🗑</button></div></td>`;
+          tbody.appendChild(subRow);
+          if (!sub.expanded) return;
+          sub.subSubItems.forEach((child, childIndex) => {
+            const childTotals = calcBaseCost(child); const childRow = document.createElement('tr'); childRow.className = 'subsub-row';
+            childRow.innerHTML = `
+              <td class="item-code-cell">${itemIndex + 1}.${subIndex + 1}.${childIndex + 1}</td>
+              <td><div class="name-cell"><span class="toggle-spacer"></span><div class="name-input-wrap level-subsub"><input value="${escapeHtml(child.name)}" placeholder="Enter sub-sub-item name" onchange="updateSubSubItem('${item.id}', '${sub.id}', '${child.id}', 'name', this.value)"></div></div></td>
+              <td><input type="number" min="0" step="any" value="${child.qty}" onchange="updateSubSubItem('${item.id}', '${sub.id}', '${child.id}', 'qty', this.value)"></td>
+              <td class="unit-col"><input value="${escapeHtml(child.unit)}" placeholder="unit" onchange="updateSubSubItem('${item.id}', '${sub.id}', '${child.id}', 'unit', this.value)"></td>
+              <td class="cost-col"><input type="text" inputmode="decimal" value="${pesoInput(child.laborUnitCost)}" onchange="updateSubSubItem('${item.id}', '${sub.id}', '${child.id}', 'laborUnitCost', this.value); this.value = pesoInput(this.value);"></td>
+              <td class="cost-col"><input type="text" inputmode="decimal" value="${pesoInput(child.materialUnitCost)}" onchange="updateSubSubItem('${item.id}', '${sub.id}', '${child.id}', 'materialUnitCost', this.value); this.value = pesoInput(this.value);"></td>
+              <td class="cost-col"><input readonly value="${peso(childTotals.totalLabor)}"></td>
+              <td class="cost-col"><input readonly value="${peso(childTotals.totalMaterial)}"></td>
+              <td class="cost-col"><input readonly value="${peso(childTotals.grandTotal)}"></td>
+              <td><div class="row-actions"><button class="icon-btn mini-danger" onclick="removeSubSubItem('${item.id}', '${sub.id}', '${child.id}')" title="Delete sub-sub-item">🗑</button></div></td>`;
+            tbody.appendChild(childRow);
+          });
+        });
+      });
+      updateBOQSummary(project);
+    }
+
+    function renderWorkspace() {
+      ensureStateShape();
+      const project = getCurrentProject(); if (!project) return;
+      updateWorkspaceMetrics(project);
+      renderBOQ(project);
+      updateSchedule(project);
+      updateInventory(project);
+      updateTracking(project);
+      populateProjectInfo(project);
+      updateHome();
+      setBoqSummaryVisibility(boqSummaryVisible);
+      setProjectModule(currentModule);
+    }
+    function resetCurrentProjectBOQ() {
+      if (!confirm('All data will be deleted')) return;
+      const project = getCurrentProject(); if (!project) return;
+      project.boq = [createItem('Item 1')]; project.schedule = []; project.inventory = []; project.tracking = []; renderWorkspace();
+    }
+    function loadCurrentProjectSampleBOQ() {
+      const project = getCurrentProject(); if (!project) return;
+      project.boq = buildSampleBOQ(); project.schedule = []; project.inventory = []; project.tracking = []; renderWorkspace();
+    }
+    function buildSampleBOQ() {
+      return [
+        { id: uid(), name: 'GENERAL REQUIREMENTS', expanded: true, scheduleExpanded: true, subItems: [
+          { id: uid(), name: 'Mobilization', qty: 1, unit: 'lot', laborUnitCost: 25000, materialUnitCost: 15000, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Temporary Facilities', qty: 1, unit: 'lot', laborUnitCost: 18000, materialUnitCost: 22000, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Project Signboard', qty: 2, unit: 'pcs', laborUnitCost: 1800, materialUnitCost: 3200, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Permits and Clearances', qty: 1, unit: 'lot', laborUnitCost: 8000, materialUnitCost: 12000, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Safety and PPE Provision', qty: 1, unit: 'lot', laborUnitCost: 12000, materialUnitCost: 18000, expanded: true, subSubItems: [] }
+        ]},
+        { id: uid(), name: 'STRUCTURAL WORKS', expanded: true, scheduleExpanded: true, subItems: [
+          { id: uid(), name: 'Earthworks', qty: 1, unit: 'lot', laborUnitCost: 120000, materialUnitCost: 86000, expanded: true, subSubItems: [
+            { id: uid(), name: 'Excavation', qty: 180, unit: 'm³', laborUnitCost: 95, materialUnitCost: 45 },
+            { id: uid(), name: 'Backfilling', qty: 140, unit: 'm³', laborUnitCost: 70, materialUnitCost: 40 }
+          ]},
+          { id: uid(), name: 'Reinforced Concrete Works', qty: 1, unit: 'lot', laborUnitCost: 225000, materialUnitCost: 640000, expanded: true, subSubItems: [
+            { id: uid(), name: 'Footing Concrete', qty: 42, unit: 'm³', laborUnitCost: 780, materialUnitCost: 4950 },
+            { id: uid(), name: 'Column Concrete', qty: 24, unit: 'm³', laborUnitCost: 820, materialUnitCost: 5050 }
+          ]},
+          { id: uid(), name: 'Steel Works', qty: 1, unit: 'lot', laborUnitCost: 165000, materialUnitCost: 310000, expanded: true, subSubItems: [] }
+        ]},
+        { id: uid(), name: 'ARCHITECTURAL WORKS', expanded: true, scheduleExpanded: true, subItems: [
+          { id: uid(), name: 'Finishes', qty: 1, unit: 'lot', laborUnitCost: 98000, materialUnitCost: 172000, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Doors and Windows', qty: 1, unit: 'lot', laborUnitCost: 66000, materialUnitCost: 210000, expanded: true, subSubItems: [] },
+          { id: uid(), name: 'Roofing and Ceiling', qty: 1, unit: 'lot', laborUnitCost: 83000, materialUnitCost: 190000, expanded: true, subSubItems: [] }
+        ]},
+        { id: uid(), name: 'ELECTRICAL WORKS', expanded: true, scheduleExpanded: true, subItems: [
+          { id: uid(), name: 'Power and Lighting', qty: 1, unit: 'lot', laborUnitCost: 75000, materialUnitCost: 245000, expanded: true, subSubItems: [] }
+        ]},
+        { id: uid(), name: 'PLUMBING WORKS', expanded: true, scheduleExpanded: true, subItems: [
+          { id: uid(), name: 'Water Supply and Sanitary', qty: 1, unit: 'lot', laborUnitCost: 68000, materialUnitCost: 158000, expanded: true, subSubItems: [] }
+        ]}
+      ];
+    }
+    function loadSampleProjects() {
+      projects = [
+        createProject('VkBconnectPro Residences', 'PRJ-001', 'Sagada City', 'In Progress', 'Mid-rise residential development with site works, structural, architectural, MEPF, and fit-out packages.', 'ABC Development Corp.', '2026-04-20'),
+        createProject('North Tower Fit-Out', 'PRJ-002', 'Makati City', 'Planning', 'Office fit-out package with detailed architectural, electrical, and auxiliary systems.', 'North Tower Holdings', '2026-05-05'),
+        createProject('South Link Warehouse', 'PRJ-003', 'Laguna', 'Procurement', 'Warehouse shell, utilities, and external works monitoring dashboard.', 'South Link Logistics', '2026-05-18')
+      ];
+      projects.forEach(project => { project.boq = buildSampleBOQ(); });
+      currentProjectId = projects[0].id;
+      currentModule = 'boq';
+      updateHome();
+      showHome();
+    }
+
+    document.getElementById('loadProjectsInput').addEventListener('change', handleLoadProjects);
+    document.getElementById('excelImportInput').addEventListener('change', handleSectionExcelImport);
+    document.addEventListener('fullscreenchange', updateScreenFitButton);
+    document.body.classList.toggle('sidebar-hidden', !sidebarVisible);
+    setBoqSummaryVisibility(boqSummaryVisible);
+    updateViewControls();
+    updateScreenFitButton();
+    loadSampleProjects();
+
+    // Warn user on page refresh/navigation because data is stored in-memory/localStorage
+    window.addEventListener('beforeunload', function (e) {
+      const confirmationMessage = 'All data will be deleted';
+      (e || window.event).returnValue = confirmationMessage; // Gecko + IE
+      return confirmationMessage; // Webkit, Safari, Chrome
+    });
+  </script>
+</body>
+</html>

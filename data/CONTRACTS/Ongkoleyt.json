@@ -1,0 +1,2609 @@
+{
+  "meta": {
+    "schema": "vkb.design-build-cost-proposal",
+    "schemaVersion": 2,
+    "formType": "DesignBuildCostProposal",
+    "template": "DesignBuildCostProposal.html",
+    "folderKey": "CONTRACTS",
+    "savedAt": "2026-04-08T05:58:23.854Z",
+    "fieldCount": 162
+  },
+  "content": {
+    "fields": {
+      "proposal_fixed_project_proposal": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Project Proposal",
+        "style": "text-align: center;"
+      },
+      "proposal_project_name": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "2-Storey Commercial Building with Mezzanine",
+        "style": "height: 113px; font-size: 20pt;"
+      },
+      "proposal_project_suffix": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "",
+        "style": "height: 34px;"
+      },
+      "proposal_client_name": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Ms. Ivy Ong",
+        "style": "height: 29px; font-size: 20pt;"
+      },
+      "proposal_fixed_owner": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Owner",
+        "style": ""
+      },
+      "proposal_location": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Baguio City",
+        "style": "height: 25px;"
+      },
+      "proposal_fixed_design_and_build_proposal": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Design and Build Proposal",
+        "style": ""
+      },
+      "proposal_fixed_design_and_build_cost_proposal": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Design and Build Cost Proposal",
+        "style": ""
+      },
+      "proposal_header_project_full": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "2-Storey Commercial Building with Mezzanine",
+        "style": "height: 10px;"
+      },
+      "proposal_fixed_date": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "DATE",
+        "style": "font-weight: 700 !important; font-family: \"Times New Roman\", serif !important; position: relative !important; left: 0px !important; margin-left: 0px !important; padding: 0px !important; font-size: 0.95rem !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; background-color: transparent !important;"
+      },
+      "proposal_meta_date": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "April 11, 2026",
+        "style": "height: 18px; font-family: \"Times New Roman\", serif;"
+      },
+      "proposal_fixed_to": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "To",
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt; background-color: transparent !important;"
+      },
+      "proposal_meta_to_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Ms. Ivy Ong",
+        "style": "height: 18px; font-family: \"Times New Roman\", serif;"
+      },
+      "proposal_fixed_project": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Project",
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt; background-color: transparent !important;"
+      },
+      "proposal_meta_project_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "2-Storey Commercial Building with Mezzanine",
+        "style": "height: 18px; font-family: \"Times New Roman\", serif;"
+      },
+      "proposal_fixed_location": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Location",
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt;"
+      },
+      "proposal_meta_location_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Baguio City",
+        "style": "height: 18px; font-family: \"Times New Roman\", serif;"
+      },
+      "proposal_salutation_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Dear Sir/Ma'am:",
+        "style": "height: 23px;"
+      },
+      "proposal_intro_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "This is to submit our cost proposal for the above project amounting to:",
+        "style": "height: 23px;"
+      },
+      "proposal_amount_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "NINETY-NINE MILLION, EIGHT HUNDRED TWENTY-EIGHT THOUSAND, ONE HUNDRED SEVENTY-SEVEN AND 16/100 ONLY. (Php 99,828,177.16) (VAT EXCLUSIVE).",
+        "style": "height: 45px;"
+      },
+      "proposal_background_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "This project proposal was prepared based on the discussions with Ms. Ivy Ong. The scope of work and corresponding cost estimates are based on the information provided during the consultation and the plans given.",
+        "style": "height: 45px;"
+      },
+      "proposal_validity_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "This proposal is valid until May 15, 2026. Attached herewith is the  estimate summary of the project. Should you find any items for clarifications, please do not hesitate to contact us.",
+        "style": "height: 45px;"
+      },
+      "proposal_fixed_terms_and_conditions": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Terms and Conditions",
+        "style": "margin-bottom: 10.26px !important;"
+      },
+      "proposal_fixed_a_scope_of_work": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "A. Scope of Work",
+        "style": "margin-top: 0px !important; margin-bottom: 10.26px !important;"
+      },
+      "proposal_fixed_inclusions": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Inclusions",
+        "style": "margin-top: 0px !important;"
+      },
+      "proposal_inclusion_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Complete design and engineering",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "All labor, materials, equipment, and tools",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "All architectural, structural, civil, and MEPF works",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Testing, commissioning, and turnover",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_5_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_5": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Permit processing (excluding business permit)",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_6_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_inclusion_6": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Project management and QAQC",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_exclusions": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Exclusions",
+        "style": ""
+      },
+      "proposal_exclusion_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Genset supply (Owner to provide)",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Business permit",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Any scope not included in Estimate or General Specifications",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_exclusion_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Permit Processing Representation Expenses and Payment ",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_b_project_understanding": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "B. Project Understanding",
+        "style": "margin-bottom: 11.3664px !important;"
+      },
+      "proposal_understanding_intro": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Based on FCLDC's General Specifications, the project includes:",
+        "style": "height: 23px;"
+      },
+      "proposal_panel_title_1": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Ground floor",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_panel_1_item_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Cement floor finish, drywall partitions, 4\" CHB exterior wall",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Tempered bronze glass windows, slab soffit ceiling",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "sink, exhaust fan per unit",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_1_item_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Comfort rooms with HCG/American Standard fixtures",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_title_2": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "2nd floor",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_panel_2_item_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Cement floor finish, drywall partitions, 4\" CHB exterior wall",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 400; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_panel_2_item_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Tempered bronze glass windows, slab soffit ceiling",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "sink, exhaust fan per unit",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Comfort rooms with HCG/American Standard fixtures",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_project_understanding": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Project Understanding",
+        "style": ""
+      },
+      "proposal_main_subtitle_3": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "General scope and project charter",
+        "style": "height: 10px;"
+      },
+      "proposal_panel_2_item_5_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_2_item_5": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Wire mesh partitions",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_title_3": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Mezannine",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_panel_3_item_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Ceramic floor tiles",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Exterior wall - 4\" CHB wall",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Division or interior partition - dry wall ",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Common toilet",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_5_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_3_item_5": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Genset housing",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_title_4": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "MEPF",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_panel_4_item_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Split-type ACUs",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "FDAS per BFP",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Electrical panelboards and rough-ins",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_panel_4_item_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Plumbing and sanitary systems",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_c_project_charter": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C. Project Charter",
+        "style": "margin-bottom: 10.488px !important;"
+      },
+      "proposal_fixed_c_1_purpose": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C.1 Purpose",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_charter_purpose_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_purpose_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "To design and construct the 2-Storey Commercial Building with Mezzanine in full compliance with Owner's specifications, delivering a secure, efficient, and operationally ready facility within 10 months.",
+        "style": "height: 42px; text-align: justify;"
+      },
+      "proposal_fixed_c_2_objectives": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C.2 Objectives",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_charter_objective_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Deliver a complete design-build package",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Construct all buildings and compound works per owner's standards",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Install all MEPF systems and secure all permits",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_objective_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Turn over a fully functional facility with as-built documentation",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_c_3_scope": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C.3 Scope",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_charter_scope_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Architectural, structural, civil, electrical, mechanical, plumbing, and fire protection works",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Warehouse steel erection",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Compound development and ancillary structures",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_charter_scope_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Testing, commissioning, and turnover",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_c_4_constraints": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C.4 Constraints",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_constraint_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_constraint_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Compliance with owner's specifications",
+        "style": "height: 21px;"
+      },
+      "proposal_constraint_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_constraint_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "LGU, BFP and National Government Agency permitting timelines",
+        "style": "height: 21px;"
+      },
+      "proposal_constraint_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_constraint_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Weather conditions",
+        "style": "height: 21px;"
+      },
+      "proposal_fixed_c_5_assumptions": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "C.5 Assumptions",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_assumption_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Owner provides timely approvals",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_2_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_2": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Site access is granted upon award",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_3_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_3": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Existing soil condition (backfilled)",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_4_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "●",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_4": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "Ground Stability and Soil Condition Assumptions",
+        "style": "height: 21px;"
+      },
+      "proposal_assumption_note_1": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "",
+        "style": "height: 11px; font-family: \"Times New Roman\", serif; font-weight: 700; text-align: justify; font-size: 6pt; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;"
+      },
+      "proposal_assumption_note_2": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "<br>",
+        "style": "height: 11px; font-weight: 400; text-align: justify; font-size: 6pt; font-family: \"Times New Roman\", serif !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;"
+      },
+      "proposal_foundation_heading": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Ground Stability and Soil Condition Assumptions",
+        "style": "height: 21px; text-align: left; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;"
+      },
+      "proposal_main_subtitle_4": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "General scope and project charter",
+        "style": "height: 10px;"
+      },
+      "proposal_foundation_subitem_c_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "c.",
+        "style": "height: 21px;"
+      },
+      "proposal_foundation_subitem_c": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "The Contractor assumes that the natural ground conditions beneath the 2-Storey Commercial Building with Mezzanine are suitable for foundation construction up to a maximum depth of 3.0 meters from the existing surface elevation. The Contractor's pricing and structural design are based on the assumption that no foundation element will require excavation or installation deeper than 3.0 meters.",
+        "style": "height: 84px; text-align: justify;"
+      },
+      "proposal_fixed_d_duration": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "D. DURATION",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 10.26px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 0px !important; margin-left: 0px !important;"
+      },
+      "proposal_duration_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "300 working days upon awarding of the project and issuance of Notice to Proceed.",
+        "style": "height: 20px; font-family: \"Times New Roman\", serif; font-size: 11pt; font-weight: 400; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_fixed_e_billing": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "E. Billing",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 10.184px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 0px !important; margin-left: 0px !important;"
+      },
+      "proposal_billing_label_1": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Down Payment",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_billing_value_1": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "30% of Contract Cost (Php 29,948,453.148)",
+        "style": "height: 21px;"
+      },
+      "proposal_billing_label_2": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Monthly Progress Billing 70%",
+        "style": "height: 20px;"
+      },
+      "proposal_billing_value_2": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "",
+        "style": "height: 20px;"
+      },
+      "proposal_fixed_f_price_escalation_and_change_order": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "F. Price Escalation and Change Order",
+        "style": ""
+      },
+      "proposal_fixed_a_price_escalation_due_to_material_and_fuel_cost": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "a. Price Escalation Due to Material and Fuel Cost Increases",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_escalation_clause_1_marker": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "i.",
+        "style": "height: 21px;"
+      },
+      "proposal_escalation_clause_1": {
+        "kind": "textarea",
+        "inputType": "",
+        "checked": false,
+        "value": "If, during project execution, the market cost of construction materials, fuel, oil, logistics, or related services increases by more than five percent (5%) compared to the baseline prices used in the Contractor's approved bid amount of (Php 99,828,177.16), the Contractor shall be entitled to a price adjustment.",
+        "style": "height: 62px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 400; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_fixed_basis_of_escalation": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Basis of Escalation",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;"
+      },
+      "proposal_escalation_basis": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Escalation applies when official price indices from PSA, DOE, or recognized suppliers show increases and the increase materially affects the cost of delivering the works. The Contractor absorbs the first 5% increase. Any increase beyond 5% shall be charged to the Client.",
+        "style": "height: 59px; font-family: \"Times New Roman\", serif; font-size: 11pt; font-weight: 400; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_formula_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Computation: Escalation Amount = (Actual Cost Increase - 5%) x Affected Work Value",
+        "style": "height: 21px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 700; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_fixed_b_notification_and_documentation": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "b. Notification and Documentation",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_notification_documentation": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "The Contractor shall notify the Client within 15 days of identifying the increase and submit supplier quotations, PSA/DOE bulletins, and updated cost breakdowns. The Client shall evaluate and approve escalation claims within 15 days. Payment shall be made via Variation Order or Contract Price Adjustment.",
+        "style": "height: 62px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 400; line-height: 1.35; text-align: left; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_fixed_c_change_order": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "c. Change Order",
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;"
+      },
+      "proposal_change_order_text": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Any changes to the scope of work must be documented through a written Change Order approved by both the Owner and Contractor. The Change Order shall describe the modification and any adjustment to the contract price or project schedule. No work related to the change shall proceed without written approval.",
+        "style": "height: 68px; font-family: \"Times New Roman\", serif; font-size: 0.95rem; font-weight: 400; line-height: 1.5; text-align: justify; text-transform: none; letter-spacing: 0px; color: rgb(17, 17, 17);"
+      },
+      "proposal_fixed_approved_by": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Approved By:",
+        "style": "margin-top: 0px !important; margin-bottom: 54.72px !important;"
+      },
+      "proposal_approved_by_name": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "ENGR. FERNANDO C. LARANANG",
+        "style": "height: 22px;"
+      },
+      "proposal_approved_by_role": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "CEO",
+        "style": "height: 18px;"
+      },
+      "proposal_fixed_conformed_by": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Conformed By:",
+        "style": "margin-top: 0px !important;"
+      },
+      "proposal_conformed_by_role": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "PMFTC",
+        "style": "height: 22px;"
+      },
+      "proposal_conformed_by_name": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "OWNER",
+        "style": "height: 18px;"
+      },
+      "proposal_main_subtitle_1": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "General scope and project charter",
+        "style": "height: 10px;"
+      },
+      "proposal_main_subtitle_2": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "General scope and project charter",
+        "style": "height: 10px;"
+      },
+      "proposal_fixed_commercial_terms": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Commercial Terms",
+        "style": ""
+      },
+      "proposal_commercial_subtitle": {
+        "kind": "contenteditable",
+        "inputType": "",
+        "checked": false,
+        "value": "Duration, billing, escalation, and approval",
+        "style": "height: 10px;"
+      }
+    },
+    "blocks": {
+      "proposal_fixed_project_proposal": {
+        "style": "text-align: center;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_project_name": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_project_suffix": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_client_name": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_owner": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_location": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_design_and_build_proposal": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_design_and_build_cost_proposal": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_header_project_full": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_date": {
+        "style": "font-weight: 700 !important; font-family: \"Times New Roman\", serif !important; position: relative !important; left: 0px !important; margin-left: 0px !important; padding: 0px !important; font-size: 0.95rem !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "1",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "1"
+        }
+      },
+      "proposal_meta_date": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_to": {
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_meta_to_text": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_project": {
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_meta_project_text": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_location": {
+        "style": "font-family: \"Times New Roman\", serif; font-size: 11pt;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_meta_location_text": {
+        "style": "margin-bottom: 15.68px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_salutation_text": {
+        "style": "margin-bottom: 22.7328px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_intro_text": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_amount_text": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_background_text": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_validity_text": {
+        "style": "margin-bottom: 22.7328px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_terms_and_conditions": {
+        "style": "margin-bottom: 10.26px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_a_scope_of_work": {
+        "style": "margin-top: 0px !important; margin-bottom: 10.26px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_inclusions": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_4_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_4": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_5_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_5": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_6_marker": {
+        "style": "margin-bottom: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_inclusion_6": {
+        "style": "margin-bottom: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_exclusions": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_4_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_exclusion_4": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_b_project_understanding": {
+        "style": "margin-bottom: 11.3664px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_understanding_intro": {
+        "style": "margin-bottom: 11.3664px !important; margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_title_1": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_1_item_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_4_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_1_item_4": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_title_2": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_2_item_1_marker": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_2_item_1": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_2_item_2_marker": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_2": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_4_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_4": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_project_understanding": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_main_subtitle_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_5_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_2_item_5": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_title_3": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_3_item_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_3_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_3": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_4_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_4": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_5_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_3_item_5": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_title_4": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_panel_4_item_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_4_marker": {
+        "style": "margin-bottom: 20.976px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_panel_4_item_4": {
+        "style": "margin-bottom: 20.976px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_project_charter": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_1_purpose": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_charter_purpose_1_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_purpose_1": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_2_objectives": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_charter_objective_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_4_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_objective_4": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_3_scope": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_charter_scope_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_4_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_charter_scope_4": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_4_constraints": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_constraint_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_constraint_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_constraint_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_constraint_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_constraint_3_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_constraint_3": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_c_5_assumptions": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_assumption_1_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_2_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_3_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_3": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_4_marker": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_4": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_assumption_note_1": {
+        "style": "height: 11px; font-family: \"Times New Roman\", serif; font-weight: 700; text-align: justify; font-size: 6pt; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "3",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_assumption_note_2": {
+        "style": "height: 11px; font-weight: 400; text-align: justify; font-size: 6pt; font-family: \"Times New Roman\", serif !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "3",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_foundation_heading": {
+        "style": "height: 21px; text-align: left; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "3",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_main_subtitle_4": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_foundation_subitem_c_marker": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_foundation_subitem_c": {
+        "style": "margin-bottom: 10.488px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_d_duration": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 10.26px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 0px !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "1",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": "1"
+        }
+      },
+      "proposal_duration_text": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 20.368px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_fixed_e_billing": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 10.184px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 0px !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "1",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "0.5",
+          "dataSectionHeadingLevel": "1"
+        }
+      },
+      "proposal_billing_label_1": {
+        "style": "margin-top: 0px !important; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_billing_value_1": {
+        "style": "margin-top: 0px !important; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_billing_label_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_billing_value_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_f_price_escalation_and_change_order": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_a_price_escalation_due_to_material_and_fuel_cost": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_escalation_clause_1_marker": {
+        "style": "margin-bottom: 0.08in !important; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; padding: 0px !important; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_escalation_clause_1": {
+        "style": "margin-bottom: 0.08in !important; font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; padding: 0px !important; background-color: transparent !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "1",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_fixed_basis_of_escalation": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "3",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_escalation_basis": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 10mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "3",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "3"
+        }
+      },
+      "proposal_formula_text": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_fixed_b_notification_and_documentation": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_notification_documentation": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_fixed_c_change_order": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-align: left; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 0.08in !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "1",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_change_order_text": {
+        "style": "font-family: \"Times New Roman\", serif !important; font-size: 0.95rem !important; font-weight: 700 !important; line-height: 1.35 !important; text-transform: none !important; letter-spacing: 0px !important; color: rgb(17, 17, 17) !important; margin-top: 0px !important; margin-bottom: 36.48px !important; padding: 0px !important; background-color: transparent !important; position: relative !important; left: 5mm !important; margin-left: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "2",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "2",
+          "dataSectionHeadingLevel": "2"
+        }
+      },
+      "proposal_fixed_approved_by": {
+        "style": "margin-top: 0px !important; margin-bottom: 54.72px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "3",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_approved_by_name": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_approved_by_role": {
+        "style": "margin-bottom: 54.72px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "3",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_conformed_by": {
+        "style": "margin-top: 0px !important;",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_conformed_by_role": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_conformed_by_name": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_main_subtitle_1": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_main_subtitle_2": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_fixed_commercial_terms": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      },
+      "proposal_commercial_subtitle": {
+        "style": "",
+        "attrs": {
+          "dataIndentLevel": "",
+          "dataListLevel": "",
+          "dataBottomMarginLevel": "",
+          "dataSectionHeadingLevel": ""
+        }
+      }
+    }
+  }
+}
