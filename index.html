@@ -601,41 +601,69 @@
 
         .user-item {
             display: grid;
-            grid-template-columns: 1fr 1fr 150px;
-            gap: 10px;
+            grid-template-columns: minmax(130px, 1.2fr) minmax(90px, 0.55fr) minmax(96px, 0.65fr);
+            gap: 6px;
             align-items: center;
-            padding: 12px;
-            border: 1px solid #eee;
+            padding: 8px 9px;
+            border: 1px solid #dfe7f2;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
+            background: #ffffff;
+            box-sizing: border-box;
         }
 
         .user-item-info {
             display: grid;
-            gap: 4px;
+            gap: 2px;
+            min-width: 0;
         }
 
         .user-item-name {
-            font-weight: 600;
+            font-weight: 700;
             color: #333;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .user-item-role {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
+            white-space: nowrap;
+        }
+
+        .user-item-password {
+            font-size: 11px;
+            color: #4a4a4a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: Consolas, 'Courier New', monospace;
+        }
+
+        .user-item-permissions {
+            font-size: 12px;
+            color: #0d2f63;
+            font-weight: 700;
+            white-space: nowrap;
         }
 
         .user-item-actions {
             display: flex;
-            gap: 5px;
+            gap: 4px;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
         }
 
         .user-item-actions button {
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 4px 7px;
+            font-size: 11px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            line-height: 1.2;
+            white-space: nowrap;
         }
 
         .edit-user-btn {
@@ -646,6 +674,15 @@
         .delete-user-btn {
             background: #f44336;
             color: white;
+        }
+
+        @media (max-width: 760px) {
+            .user-item {
+                grid-template-columns: 1fr;
+            }
+            .user-item-actions {
+                justify-content: flex-start;
+            }
         }
 
         .close-admin {
@@ -1211,6 +1248,104 @@ body:hover .hollywood {
         }
 
 
+
+        /* Compact Manage Users section under Admin Control */
+        #usersTab h3 {
+            margin: 0 0 8px !important;
+            font-size: 16px !important;
+            line-height: 1.15 !important;
+        }
+
+        #usersTab h4 {
+            margin: 8px 0 6px !important;
+            font-size: 13px !important;
+            line-height: 1.15 !important;
+        }
+
+        #usersTab .admin-form {
+            gap: 7px !important;
+            margin-top: 6px !important;
+            padding: 9px 10px !important;
+            border: 1px solid #e2e8f2 !important;
+            border-radius: 8px !important;
+            background: #fbfdff !important;
+        }
+
+        #usersTab .form-row {
+            gap: 7px !important;
+        }
+
+        #usersTab input,
+        #usersTab select,
+        #usersTab button {
+            min-height: 30px !important;
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+            line-height: 1.15 !important;
+            box-sizing: border-box !important;
+        }
+
+        #usersTab small {
+            display: block !important;
+            margin-top: 0 !important;
+            font-size: 11px !important;
+            line-height: 1.25 !important;
+        }
+
+        #usersTab > h4 {
+            margin-top: 10px !important;
+            margin-bottom: 6px !important;
+        }
+
+        #usersList {
+            display: grid !important;
+            gap: 4px !important;
+            max-height: 300px !important;
+            overflow-y: auto !important;
+            padding-right: 4px !important;
+        }
+
+        #usersList .user-item {
+            grid-template-columns: minmax(110px, 1.25fr) 74px 104px !important;
+            gap: 5px !important;
+            padding: 5px 6px !important;
+            margin-bottom: 0 !important;
+            min-height: 38px !important;
+            border-radius: 4px !important;
+        }
+
+        #usersList .user-item-info {
+            gap: 0 !important;
+        }
+
+        #usersList .user-item-name {
+            font-size: 12px !important;
+            line-height: 1.15 !important;
+        }
+
+        #usersList .user-item-role,
+        #usersList .user-item-password,
+        #usersList .user-item-permissions {
+            font-size: 10.5px !important;
+            line-height: 1.15 !important;
+        }
+
+        #usersList .user-item-actions {
+            gap: 3px !important;
+        }
+
+        #usersList .user-item-actions button {
+            padding: 3px 6px !important;
+            min-height: 24px !important;
+            font-size: 10.5px !important;
+            border-radius: 3px !important;
+        }
+
+        @media (max-width: 760px) {
+            #usersList .user-item {
+                grid-template-columns: 1fr !important;
+            }
+        }
 </style>
 
 </head>
@@ -1223,7 +1358,7 @@ body:hover .hollywood {
         </div>
     </div>
     <!-- Login Modal -->
-    <div id="loginModal" class="login-modal hidden">
+    <div id="loginModal" class="login-modal">
         <div class="login-box">
             <h2>LOGIN</h2>
             <label for="loginUsername">Username</label>
@@ -1237,7 +1372,7 @@ body:hover .hollywood {
     </div>
 
     <!-- User Info Panel -->
-    <div id="userInfoPanel" class="user-info-panel">
+    <div id="userInfoPanel" class="user-info-panel hidden">
         <div class="user-name" id="displayUsername">admin</div>
         <div class="user-role" id="displayUserRole">ADMIN</div>
         <button id="adminPanelBtn" class="admin-btn">ADMIN</button>
@@ -1245,7 +1380,7 @@ body:hover .hollywood {
     </div>
 
     <!-- Admin Panel -->
-    <div id="adminModal" class="admin-modal">
+    <div id="adminModal" class="admin-modal hidden">
         <div class="admin-box">
             <button class="close-admin" id="closeAdminBtn">Close</button>
             <h2 style="clear: both;">Admin Control Panel</h2>
@@ -1281,10 +1416,11 @@ body:hover .hollywood {
                 <div id="usersList">
                         <div class="user-item">
                             <div class="user-item-info">
-                                <div class="user-item-name">admin</div>
+                                <div class="user-item-name" title="admin">admin</div>
                                 <div class="user-item-role">Role: admin</div>
+                                <div class="user-item-password" title="admin123">Password: admin123</div>
                             </div>
-                            <div>Permissions: 8/8</div>
+                            <div class="user-item-permissions">8/8 access</div>
                             <div class="user-item-actions">
                                 <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('admin')">Edit</button>
                                 <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('admin')">Delete</button>
@@ -1293,10 +1429,11 @@ body:hover .hollywood {
                     
                         <div class="user-item">
                             <div class="user-item-info">
-                                <div class="user-item-name">user</div>
+                                <div class="user-item-name" title="user">user</div>
                                 <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="user123">Password: user123</div>
                             </div>
-                            <div>Permissions: 0/8</div>
+                            <div class="user-item-permissions">0/8 access</div>
                             <div class="user-item-actions">
                                 <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('user')">Edit</button>
                                 <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('user')">Delete</button>
@@ -1305,13 +1442,183 @@ body:hover .hollywood {
                     
                         <div class="user-item">
                             <div class="user-item-info">
-                                <div class="user-item-name">virtron</div>
+                                <div class="user-item-name" title="virtron">virtron</div>
                                 <div class="user-item-role">Role: admin</div>
+                                <div class="user-item-password" title="101681">Password: 101681</div>
                             </div>
-                            <div>Permissions: 8/8</div>
+                            <div class="user-item-permissions">8/8 access</div>
                             <div class="user-item-actions">
                                 <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('virtron')">Edit</button>
                                 <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('virtron')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="mdc">mdc</div>
+                                <div class="user-item-role">Role: admin</div>
+                                <div class="user-item-password" title="michael">Password: michael</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('mdc')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('mdc')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="projengr">projengr</div>
+                                <div class="user-item-role">Role: admin</div>
+                                <div class="user-item-password" title="level1">Password: level1</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('projengr')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('projengr')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="jemmer">jemmer</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="qaqc1">Password: qaqc1</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('jemmer')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('jemmer')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="allysa">allysa</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="qaqc01">Password: qaqc01</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('allysa')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('allysa')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="julius">julius</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="juliusx">Password: juliusx</div>
+                            </div>
+                            <div class="user-item-permissions">7/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('julius')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('julius')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="marrie">marrie</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="marimar">Password: marimar</div>
+                            </div>
+                            <div class="user-item-permissions">7/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('marrie')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('marrie')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="jevic">jevic</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="pogi">Password: pogi</div>
+                            </div>
+                            <div class="user-item-permissions">7/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('jevic')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('jevic')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="fcl">fcl</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="ceo101">Password: ceo101</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('fcl')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('fcl')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="hr">hr</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="humanresources101">Password: humanresources101</div>
+                            </div>
+                            <div class="user-item-permissions">7/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('hr')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('hr')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="mz">mz</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="michaelfinance">Password: michaelfinance</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('mz')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('mz')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="jeffered">jeffered</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="theqs">Password: theqs</div>
+                            </div>
+                            <div class="user-item-permissions">0/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('jeffered')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('jeffered')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="marjorie">marjorie</div>
+                                <div class="user-item-role">Role: admin</div>
+                                <div class="user-item-password" title="marjoliv">Password: marjoliv</div>
+                            </div>
+                            <div class="user-item-permissions">8/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('marjorie')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('marjorie')">Delete</button>
+                            </div>
+                        </div>
+                    
+                        <div class="user-item">
+                            <div class="user-item-info">
+                                <div class="user-item-name" title="warehouse">warehouse</div>
+                                <div class="user-item-role">Role: user</div>
+                                <div class="user-item-password" title="donmiguel">Password: donmiguel</div>
+                            </div>
+                            <div class="user-item-permissions">4/8 access</div>
+                            <div class="user-item-actions">
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('warehouse')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('warehouse')">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -1322,7 +1629,7 @@ body:hover .hollywood {
                 <h3>Set User Permissions</h3>
                 <div class="admin-form">
                     <label for="permissionUserSelect">Select User</label>
-                    <select id="permissionUserSelect" style="width:100%;"><option value="">-- Select User --</option><option value="admin">admin</option><option value="user">user</option><option value="virtron">virtron</option></select>
+                    <select id="permissionUserSelect" style="width:100%;"><option value="">-- Select User --</option><option value="admin">admin</option><option value="user">user</option><option value="virtron">virtron</option><option value="mdc">mdc</option><option value="projengr">projengr</option><option value="jemmer">jemmer</option><option value="allysa">allysa</option><option value="julius">julius</option><option value="marrie">marrie</option><option value="jevic">jevic</option><option value="fcl">fcl</option><option value="hr">hr</option><option value="mz">mz</option><option value="jeffered">jeffered</option><option value="marjorie">marjorie</option><option value="warehouse">warehouse</option></select>
 
                     <h4 style="margin-top: 15px;">Sidebar Access Permissions</h4>
                     <div class="checkbox-group">
@@ -1373,13 +1680,13 @@ body:hover .hollywood {
                         <tr>
                             <td>admin</td>
                             <td class="record-login">LOGIN</td>
-                            <td>4/30/2026, 4:32:43 PM</td>
+                            <td>4/30/2026, 12:19:46 PM</td>
                         </tr>
                     
                         <tr>
                             <td>admin</td>
                             <td class="record-logout">LOGOUT</td>
-                            <td>4/30/2026, 4:05:53 PM</td>
+                            <td>4/30/2026, 12:19:11 PM</td>
                         </tr>
                     </tbody>
                 </table>
@@ -1455,7 +1762,7 @@ body:hover .hollywood {
         <img src="vkbconnectpro.png" alt="VKB Connect Pro Logo">
     </div>
 
-<script id="fcldcAuthSeed" type="application/json">{"users":[{"username":"admin","password":"admin123","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"user","password":"user123","role":"user","permissions":[]},{"username":"virtron","password":"101681","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]}]}</script>
+<script id="fcldcAuthSeed" type="application/json">{"users":[{"username":"admin","password":"admin123","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"user","password":"user123","role":"user","permissions":[]},{"username":"virtron","password":"101681","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"mdc","password":"michael","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"projengr","password":"level1","role":"admin","permissions":["qs","qaqc","inventory","project-progress","management","personnel-eval","contracts","settings"]},{"username":"jemmer","password":"qaqc1","role":"user","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"allysa","password":"qaqc01","role":"user","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"julius","password":"juliusx","role":"user","permissions":["contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"marrie","password":"marimar","role":"user","permissions":["contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"jevic","password":"pogi","role":"user","permissions":["contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"fcl","password":"ceo101","role":"user","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"hr","password":"humanresources101","role":"user","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","settings"]},{"username":"mz","password":"michaelfinance","role":"user","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"jeffered","password":"theqs","role":"user","permissions":[]},{"username":"marjorie","password":"marjoliv","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"warehouse","password":"donmiguel","role":"user","permissions":["qs","qaqc","inventory","project-progress"]}]}</script>
 
     <script>
         // ===== AUTHENTICATION SYSTEM =====
@@ -1478,7 +1785,19 @@ body:hover .hollywood {
 
             // Load or create system state
             loadSystemState() {
-                let state = this.readStorage(this.storageKey) || this.readSeedState();
+                // IMPORTANT FOR WEB/REPOSITORY USE:
+                // Browsers keep old users in localStorage after the page has been opened once.
+                // The exported repository HTML stores the latest users in #fcldcAuthSeed.
+                // Merge that seed into saved storage so newly added usernames/passwords work
+                // without changing the page structure or requiring a manual browser reset.
+                const savedState = this.readStorage(this.storageKey);
+                const seedState = this.readSeedState();
+                let state = savedState || seedState;
+
+                if (savedState && seedState) {
+                    state = this.mergeSeedUsers(savedState, seedState);
+                }
+
                 if (!state) {
                     state = {
                         users: [
@@ -1486,11 +1805,35 @@ body:hover .hollywood {
                             { username: 'user', password: 'user123', role: 'user', permissions: [] }
                         ]
                     };
-                    this.writeStorage(this.storageKey, state);
                 }
                 this.normalizeState(state);
                 this.writeStorage(this.storageKey, state);
                 this.state = state;
+                this.updateEmbeddedSeed();
+            },
+
+            mergeSeedUsers(savedState, seedState) {
+                const merged = { users: Array.isArray(savedState.users) ? [...savedState.users] : [] };
+                const byUsername = new Map(merged.users.map(user => [user.username, user]));
+
+                (seedState.users || []).forEach(seedUser => {
+                    if (!seedUser || !seedUser.username) return;
+                    const existing = byUsername.get(seedUser.username);
+                    if (!existing) {
+                        // Add repository/export users that are not yet in this browser.
+                        merged.users.push({
+                            username: seedUser.username,
+                            password: seedUser.password,
+                            role: seedUser.role,
+                            permissions: Array.isArray(seedUser.permissions) ? [...seedUser.permissions] : []
+                        });
+                    }
+                    // Do not overwrite existing local users here. Admin edits are saved in
+                    // localStorage first, then embedded into exported HTML by exportShareHtml().
+                    // Overwriting here was the reason permissions appeared not to save.
+                });
+
+                return merged;
             },
 
             readSeedState() {
@@ -1736,12 +2079,14 @@ body:hover .hollywood {
                 }
                 const user = this.state.users.find(u => u.username === username);
                 if (user) {
-                    user.permissions = permissions;
+                    user.permissions = Array.isArray(permissions) ? [...permissions] : [];
                     this.saveState();
                     if (this.currentUser.username === username) {
-                        this.currentUser.permissions = permissions;
+                        this.currentUser.permissions = [...user.permissions];
+                        this.writeStorage(this.savedUserKey, this.currentUser);
                         this.applyPermissions();
                     }
+                    this.refreshAdminPanel();
                     return true;
                 }
                 return false;
@@ -1752,26 +2097,33 @@ body:hover .hollywood {
                 // Update users list
                 const usersList = document.getElementById('usersList');
                 if (usersList) {
-                    usersList.innerHTML = this.state.users.map(user => `
+                    usersList.innerHTML = this.state.users.map(user => {
+                        const safeUsername = this.escapeHtml(user.username);
+                        const safeRole = this.escapeHtml(user.role);
+                        const safePassword = this.escapeHtml(user.password || '');
+                        const safeArg = String(user.username).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                        return `
                         <div class="user-item">
                             <div class="user-item-info">
-                                <div class="user-item-name">${user.username}</div>
-                                <div class="user-item-role">Role: ${user.role}</div>
+                                <div class="user-item-name" title="${safeUsername}">${safeUsername}</div>
+                                <div class="user-item-role">Role: ${safeRole}</div>
+                                <div class="user-item-password" title="${safePassword}">Password: ${safePassword}</div>
                             </div>
-                            <div>Permissions: ${user.permissions.length}/8</div>
+                            <div class="user-item-permissions">${user.permissions.length}/8 access</div>
                             <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('${user.username}')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('${user.username}')">Delete</button>
+                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('${safeArg}')">Edit</button>
+                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('${safeArg}')">Delete</button>
                             </div>
                         </div>
-                    `).join('');
+                    `;
+                    }).join('');
                 }
 
                 // Update permissions dropdown
                 const permissionUserSelect = document.getElementById('permissionUserSelect');
                 if (permissionUserSelect) {
                     permissionUserSelect.innerHTML = '<option value="">-- Select User --</option>' +
-                        this.state.users.map(user => `<option value="${user.username}">${user.username}</option>`).join('');
+                        this.state.users.map(user => `<option value="${this.escapeHtml(user.username)}">${this.escapeHtml(user.username)}</option>`).join('');
                 }
             },
 
@@ -1936,9 +2288,19 @@ body:hover .hollywood {
                 }
             },
 
+            // Keep the embedded seed synchronized with the current admin data for exports.
+            updateEmbeddedSeed() {
+                const seed = document.getElementById('fcldcAuthSeed');
+                if (seed) {
+                    seed.textContent = JSON.stringify(this.state);
+                }
+            },
+
             // Save system state
             saveState() {
+                this.normalizeState(this.state);
                 this.writeStorage(this.storageKey, this.state);
+                this.updateEmbeddedSeed();
             },
 
             downloadTextFile(filename, content, type = 'text/plain') {
@@ -1967,20 +2329,15 @@ body:hover .hollywood {
                     return;
                 }
 
-                // Preserve the current HTML structure. Do not export a cloned live DOM,
-                // because DOM serialization can move panels, rewrite attributes, and
-                // change layout/state. Only replace the embedded user/password seed.
-                const originalHtml = document.documentElement.outerHTML;
-                const updatedSeed = '<script id="fcldcAuthSeed" type="application/json">' +
-                    JSON.stringify(this.state).replace(/<\/script/gi, '<\\/script') +
-                    '</' + 'script>';
-
-                const seedPattern = /<script\s+id=["']fcldcAuthSeed["']\s+type=["']application\/json["']>[\s\S]*?<\/script>/i;
-                const shareHtml = seedPattern.test(originalHtml)
-                    ? originalHtml.replace(seedPattern, updatedSeed)
-                    : originalHtml.replace(/<body([^>]*)>/i, '<body$1>\n' + updatedSeed);
-
-                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + shareHtml, 'text/html');
+                const clone = document.documentElement.cloneNode(true);
+                const seed = clone.querySelector('#fcldcAuthSeed');
+                if (seed) {
+                    seed.textContent = JSON.stringify(this.state);
+                }
+                clone.querySelector('#loginModal')?.classList.remove('hidden');
+                clone.querySelector('#userInfoPanel')?.classList.add('hidden');
+                clone.querySelector('#adminModal')?.classList.add('hidden');
+                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
             },
 
             // Setup event listeners
@@ -2249,4 +2606,4 @@ body:hover .hollywood {
                     <a href="./QAQCFILES/qitp.html" target="_self">PROJECT QITP</a>
                     <a href="./QAQCFILES/StandardCodes.html" target="_self" class="is-disabled">STANDARD CODES</a>
                 </div>
-            </div><div id="eagle-drag-images" style="position: fixed; top: -100000px;"></div></body></html>
+            </div></body></html>
