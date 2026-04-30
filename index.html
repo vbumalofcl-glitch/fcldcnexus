@@ -320,9 +320,7 @@
             opacity: 1;
         }
 
-        .intro.is-blinking .intro-logo {
-            animation: intro-logo-blink 2.4s ease-in-out forwards;
-        }
+        /* Blinking animation removed: intro logo stays readable/static. */
 
         .section p {
             font-size: 18pt;
@@ -389,14 +387,7 @@
             }
         }
 
-        @keyframes intro-logo-blink {
-            0%, 10%, 30%, 50%, 70%, 100% {
-                opacity: 1;
-            }
-            20%, 40%, 60% {
-                opacity: 0.08;
-            }
-        }
+        /* Removed intro-logo-blink keyframes. */
 
         /* Login & User Management Styles */
         .user-info-panel {
@@ -1055,13 +1046,13 @@
     transition: transform 0.2s ease, text-shadow 0.2s ease;
 }
 
-/* mouse reactive glow */
+/* mouse reactive glow removed: keep polished blue text with no red hover glow */
 body:hover .hollywood {
     text-shadow:
         0 2px 6px rgba(0,0,0,0.7),
         0 10px 25px rgba(0,0,0,0.6),
-        0 0 30px rgba(0,120,255,0.9),
-        0 0 80px rgba(255,0,0,0.7);
+        0 0 26px rgba(0,95,255,0.82),
+        0 0 56px rgba(0,35,130,0.58);
 }
 
 /* per-line colors */
@@ -1077,8 +1068,8 @@ body:hover .hollywood {
     text-shadow:
         0 5px 10px rgba(0,0,0,0.8),
         0 15px 35px rgba(0,0,0,0.7),
-        0 0 40px rgba(255,0,0,1),
-        0 0 80px rgba(0,120,255,0.9);
+        0 0 40px rgba(0,90,255,0.9),
+        0 0 80px rgba(0,35,140,0.75);
 }
 
 /* hover animation */
@@ -1346,6 +1337,114 @@ body:hover .hollywood {
                 grid-template-columns: 1fr !important;
             }
         }
+
+
+        /* Animation repair: exported HTML can contain final visible classes.
+           These rules make the shine sweep visibly move again. */
+        .hollywood::before,
+        .cinematic-main::before {
+            background-size: 220% 100% !important;
+            background-position: -220% 0;
+        }
+
+        .hollywood::before,
+        .hollywood::after,
+        .cinematic-main::before,
+        .cinematic-main::after {
+            pointer-events: none;
+        }
+
+        /* Static dark polished blue glossy text - strong contrast for light blue background */
+        .hollywood,
+        .cinematic-main {
+            position: relative !important;
+            background: linear-gradient(
+                180deg,
+                #e8f6ff 0%,
+                #6fb8ff 14%,
+                #075cff 34%,
+                #00308f 58%,
+                #001a55 78%,
+                #00071f 100%
+            ) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            color: #00308f !important;
+            text-shadow:
+                0 1px 0 rgba(220,245,255,0.95),
+                0 2px 2px rgba(0,12,45,0.95),
+                0 5px 8px rgba(0,22,75,0.88),
+                0 0 10px rgba(45,130,255,0.92),
+                0 0 24px rgba(0,72,190,0.82),
+                0 0 48px rgba(0,30,105,0.62) !important;
+            -webkit-text-stroke: 0.55px rgba(0,13,55,0.92) !important;
+            filter: brightness(1.14) contrast(1.44) saturate(1.55) !important;
+            animation: none !important;
+            transition: none !important;
+        }
+
+        .cinematic-main {
+            -webkit-text-stroke: 0.85px rgba(0,10,50,0.98) !important;
+            text-shadow:
+                0 1px 0 rgba(230,248,255,1),
+                0 3px 3px rgba(0,12,45,0.98),
+                0 8px 14px rgba(0,24,85,0.94),
+                0 0 16px rgba(58,145,255,0.94),
+                0 0 38px rgba(0,80,210,0.86),
+                0 0 78px rgba(0,25,105,0.70) !important;
+        }
+
+        .hollywood::before,
+        .cinematic-main::before {
+            content: attr(data-text) !important;
+            position: absolute !important;
+            inset: 0 !important;
+            background: linear-gradient(
+                180deg,
+                rgba(245,252,255,0.96) 0%,
+                rgba(155,215,255,0.86) 18%,
+                rgba(255,255,255,0.34) 34%,
+                rgba(0,55,145,0.20) 58%,
+                rgba(60,155,255,0.44) 100%
+            ) !important;
+            background-size: 100% 100% !important;
+            background-position: 0 0 !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            opacity: 0.88 !important;
+            mix-blend-mode: screen !important;
+            animation: none !important;
+            pointer-events: none !important;
+        }
+
+        .hollywood::after,
+        .cinematic-main::after {
+            content: attr(data-text) !important;
+            position: absolute !important;
+            inset: 0 !important;
+            background: linear-gradient(180deg, rgba(48,142,255,0.94), rgba(0,25,105,0.78)) !important;
+            background-clip: text !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            filter: blur(7px) !important;
+            opacity: 0.68 !important;
+            animation: none !important;
+            pointer-events: none !important;
+        }
+
+        body:hover .hollywood,
+        body:hover .cinematic-main {
+            text-shadow:
+                0 1px 0 rgba(210,235,255,1),
+                0 2px 2px rgba(0,16,55,0.95),
+                0 5px 8px rgba(0,25,85,0.88),
+                0 0 14px rgba(70,150,255,0.90),
+                0 0 34px rgba(0,78,190,0.72),
+                0 0 60px rgba(0,26,110,0.58) !important;
+        }
+
 </style>
 
 </head>
@@ -1745,7 +1844,7 @@ body:hover .hollywood {
         </div>
 
         <div class="section">
-            <span class="title reveal-line hollywood is-visible" data-text="FULL MANAGEMENT CONTROL">FULL MANAGEMENT CONTROL</span>
+            <span class="title reveal-line hollywood cinematic-main is-visible" data-text="FULL MANAGEMENT CONTROL">FULL MANAGEMENT CONTROL</span>
 
             <p class="hollywood is-visible" data-text="“Access evaluation forms, QS files, QAQC records.”">“Access evaluation forms, QS files, QAQC records.”</p>
             <p class="hollywood is-visible" data-text="“construction inventory, project monitoring,”">“construction inventory, project monitoring,”</p>
@@ -2337,6 +2436,12 @@ body:hover .hollywood {
                 clone.querySelector('#loginModal')?.classList.remove('hidden');
                 clone.querySelector('#userInfoPanel')?.classList.add('hidden');
                 clone.querySelector('#adminModal')?.classList.add('hidden');
+
+                // Do not export the page after-animation state.
+                // The shared HTML must open from the beginning of the text animation.
+                clone.querySelectorAll('.is-visible').forEach(el => el.classList.remove('is-visible'));
+                clone.querySelectorAll('.intro.is-blinking').forEach(el => el.classList.remove('is-blinking'));
+
                 this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
             },
 
@@ -2448,6 +2553,29 @@ body:hover .hollywood {
             AuthSystem.init();
 
             const intro = document.querySelector(".intro");
+            const animationSessionKey = 'fcldc_intro_animation_has_run';
+            const sequentialLines = Array.from(document.querySelectorAll(".section .title, .section p, .closing"));
+            const hasRunOpeningAnimation = window.sessionStorage && window.sessionStorage.getItem(animationSessionKey) === 'yes';
+
+            // Exported/saved HTML can accidentally keep is-visible classes.
+            // Reset them only for the first opening animation. On later returns to index,
+            // keep the page readable and do not restart the animation.
+            if (hasRunOpeningAnimation) {
+                document.querySelectorAll(".intro-logo").forEach(el => {
+                    el.style.opacity = '1';
+                    el.style.animation = 'none';
+                });
+                sequentialLines.forEach(line => line.classList.add("is-visible"));
+                if (intro instanceof HTMLElement) intro.classList.remove("is-blinking");
+                return;
+            }
+
+            sequentialLines.forEach(line => line.classList.remove("is-visible"));
+            try {
+                window.sessionStorage.setItem(animationSessionKey, 'yes');
+            } catch (e) {
+                // If sessionStorage is blocked, still run normally for this opening.
+            }
 
             function setupSidebarSubSystem(toggleId, panelId) {
                 const toggle = document.getElementById(toggleId);
@@ -2517,21 +2645,30 @@ body:hover .hollywood {
             setupSidebarSubSystem("sb-qs", "qsPanel");
             setupSidebarSubSystem("sb-qaqc", "qaqcPanel");
 
-            if (!(intro instanceof HTMLElement)) return;
-
-            const introBlinkDurationMs = 2400;
-            const sequentialLines = Array.from(document.querySelectorAll(".section .title, .section p, .closing"));
             const revealDelayMs = 2000;
-            intro.classList.add("is-blinking");
 
-            window.setTimeout(function () {
+            // Animation repair for exported HTML:
+            // Exported files may already contain .is-visible after the page was saved,
+            // so the transition has no starting hidden state. Reset first, force reflow,
+            // then add .is-visible again in sequence.
+            // Blinking has been removed, so the intro logo stays visible/static.
+            sequentialLines.forEach(function (line) {
+                line.classList.remove("is-visible");
+            });
+
+            if (intro instanceof HTMLElement) {
                 intro.classList.remove("is-blinking");
-            }, introBlinkDurationMs);
+            }
 
-            sequentialLines.forEach(function (line, index) {
-                window.setTimeout(function () {
-                    line.classList.add("is-visible");
-                }, introBlinkDurationMs + (index * revealDelayMs));
+            window.requestAnimationFrame(function () {
+                // Force browser to apply the hidden state before starting animation.
+                document.body.offsetHeight;
+
+                sequentialLines.forEach(function (line, index) {
+                    window.setTimeout(function () {
+                        line.classList.add("is-visible");
+                    }, index * revealDelayMs);
+                });
             });
         });
     </script>
