@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FCLDC Integrated System</title>
@@ -1238,9 +1240,9 @@ body:hover .hollywood {
 
     <!-- User Info Panel -->
     <div id="userInfoPanel" class="user-info-panel hidden">
-        <div class="user-name" id="displayUsername">virtron</div>
-        <div class="user-role" id="displayUserRole">ADMIN</div>
-        <button id="adminPanelBtn" class="admin-btn">ADMIN</button>
+        <div class="user-name" id="displayUsername"></div>
+        <div class="user-role" id="displayUserRole"></div>
+        <button id="adminPanelBtn" class="admin-btn hidden">ADMIN</button>
         <button id="logoutBtn" class="logout-btn">Logout</button>
     </div>
 
@@ -1278,67 +1280,7 @@ body:hover .hollywood {
                     <small style="color:#555;">Use Export Share HTML after adding users, then share the downloaded HTML so the new users are included on other computers.</small>
                 </div>
                 <h4 style="margin-top: 20px;">Existing Users</h4>
-                <div id="usersList">
-                        <div class="user-item">
-                            <div class="user-item-info">
-                                <div class="user-item-name">admin</div>
-                                <div class="user-item-role">Role: admin</div>
-                            </div>
-                            <div>Permissions: 8/8</div>
-                            <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('admin')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('admin')">Delete</button>
-                            </div>
-                        </div>
-                    
-                        <div class="user-item">
-                            <div class="user-item-info">
-                                <div class="user-item-name">user</div>
-                                <div class="user-item-role">Role: user</div>
-                            </div>
-                            <div>Permissions: 0/8</div>
-                            <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('user')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('user')">Delete</button>
-                            </div>
-                        </div>
-                    
-                        <div class="user-item">
-                            <div class="user-item-info">
-                                <div class="user-item-name">virtron</div>
-                                <div class="user-item-role">Role: admin</div>
-                            </div>
-                            <div>Permissions: 8/8</div>
-                            <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('virtron')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('virtron')">Delete</button>
-                            </div>
-                        </div>
-                    
-                        <div class="user-item">
-                            <div class="user-item-info">
-                                <div class="user-item-name">sample</div>
-                                <div class="user-item-role">Role: user</div>
-                            </div>
-                            <div>Permissions: 2/8</div>
-                            <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('sample')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('sample')">Delete</button>
-                            </div>
-                        </div>
-                    
-                        <div class="user-item">
-                            <div class="user-item-info">
-                                <div class="user-item-name">michael</div>
-                                <div class="user-item-role">Role: admin</div>
-                            </div>
-                            <div>Permissions: 8/8</div>
-                            <div class="user-item-actions">
-                                <button class="edit-user-btn" onclick="AuthSystem.editUserPermissions('michael')">Edit</button>
-                                <button class="delete-user-btn" onclick="AuthSystem.deleteUserConfirm('michael')">Delete</button>
-                            </div>
-                        </div>
-                    </div>
+                <div id="usersList"></div>
             </div>
 
             <!-- Permissions Tab -->
@@ -1346,7 +1288,9 @@ body:hover .hollywood {
                 <h3>Set User Permissions</h3>
                 <div class="admin-form">
                     <label for="permissionUserSelect">Select User</label>
-                    <select id="permissionUserSelect" style="width:100%;"><option value="">-- Select User --</option><option value="admin">admin</option><option value="user">user</option><option value="virtron">virtron</option><option value="sample">sample</option><option value="michael">michael</option></select>
+                    <select id="permissionUserSelect" style="width:100%;">
+                        <option value="">-- Select User --</option>
+                    </select>
 
                     <h4 style="margin-top: 15px;">Sidebar Access Permissions</h4>
                     <div class="checkbox-group">
@@ -1354,7 +1298,7 @@ body:hover .hollywood {
                             <input type="checkbox" value="personnel-eval"> PERSONNEL EVALUATION
                         </label>
                         <label class="checkbox-item">
-                            <input type="checkbox" value="contracts"> CONTRACTS &amp; SPECIFICATIONS
+                            <input type="checkbox" value="contracts"> CONTRACTS & SPECIFICATIONS
                         </label>
                         <label class="checkbox-item">
                             <input type="checkbox" value="qs"> QS SYSTEM
@@ -1390,31 +1334,43 @@ body:hover .hollywood {
                         <tr>
                             <th>User</th>
                             <th>Action</th>
-                            <th>Date &amp; Time</th>
+                            <th>Date & Time</th>
                         </tr>
                     </thead>
                     <tbody id="loginRecordsBody"></tbody>
                 </table>
-                <p id="emptyLoginRecords" class="empty-records" style="display: block;">No records yet.</p>
+                <p id="emptyLoginRecords" class="empty-records">No records yet.</p>
             </aside>
         </div>
     </div>
 
     <button id="toggleSidebar">☰ MENU</button>
     <div class="sidebar">
-        <a href="./forms/PME.html" id="sb-personnel-eval" class="sidebar-link" style="opacity: 1; pointer-events: auto;">HUMAN RESOURCES</a>
-        <a href="./forms/designbuildcostproposal.html" id="sb-contracts" class="sidebar-link" style="opacity: 1; pointer-events: auto;">CONTRACTS &amp; SPECIFICATIONS</a>
+        <a href="./forms/PME.html" id="sb-personnel-eval" class="sidebar-link">HUMAN RESOURCES</a>
+        <a href="./forms/designbuildcostproposal.html" id="sb-contracts" class="sidebar-link">CONTRACTS & SPECIFICATIONS</a>
         <div class="qaqc-menu" id="sb-qs-container">
-            <button type="button" id="sb-qs" class="sidebar-link-button" style="opacity: 1; pointer-events: auto;">QS SYSTEM</button>
-            
+            <button type="button" id="sb-qs" class="sidebar-link-button">QS SYSTEM</button>
+            <div id="qsPanel" class="qaqc-panel" data-access="qs" aria-hidden="true">
+                <p class="qaqc-panel-title">QS FILES</p>
+                <div class="qaqc-panel-links">
+                    <a href="./qs/estimation.html" target="_self">PROJECT ESTIMATION</a>
+                    <a href="./qs/pipeline.html" target="_self">PROJECT PIPELINE</a>
+                </div>
+            </div>
         </div>
         <div class="qaqc-menu" id="sb-qaqc-container">
-            <button type="button" id="sb-qaqc" class="sidebar-link-button" style="opacity: 1; pointer-events: auto;">QAQC SYSTEM</button>
-            
+            <button type="button" id="sb-qaqc" class="sidebar-link-button">QAQC SYSTEM</button>
+            <div id="qaqcPanel" class="qaqc-panel" data-access="qaqc" aria-hidden="true">
+                <p class="qaqc-panel-title">QAQC FILES</p>
+                <div class="qaqc-panel-links">
+                    <a href="./QAQCFILES/qitp.html" target="_self">PROJECT QITP</a>
+                    <a href="./QAQCFILES/StandardCodes.html" target="_self" class="is-disabled">STANDARD CODES</a>
+                </div>
+            </div>
         </div>
-        <a href="./INVENTORY_FILES/Construction_Inventory.html" id="sb-inventory" class="sidebar-link" style="opacity: 1; pointer-events: auto;">CONSTRUCTION INVENTORY</a>
-        <a href="./projmonitoring/projmon.html" id="sb-project-progress" class="sidebar-link" style="opacity: 1; pointer-events: auto;">PROJECT PROGRESS AND MONITORING</a>
-        <a href="./ManagementReview.html" id="sb-management" class="sidebar-link" style="opacity: 1; pointer-events: auto;">MANAGEMENT REVIEW</a>
+        <a href="./INVENTORY_FILES/Construction_Inventory.html" id="sb-inventory" class="sidebar-link">CONSTRUCTION INVENTORY</a>
+        <a href="./projmonitoring/projmon.html" id="sb-project-progress" class="sidebar-link">PROJECT PROGRESS AND MONITORING</a>
+        <a href="./ManagementReview.html" id="sb-management" class="sidebar-link">MANAGEMENT REVIEW</a>
 
         <div class="sidebar-settings">
             <button type="button" class="sidebar-settings-toggle">SETTINGS</button>
@@ -1441,23 +1397,23 @@ body:hover .hollywood {
         </div>
 
         <div class="section">
-            <span class="title reveal-line hollywood cinematic-main is-visible" data-text="FCLDC INTEGRATED SYSTEM">FCLDC INTEGRATED SYSTEM</span>
+            <span class="title reveal-line hollywood cinematic-main" data-text="FCLDC INTEGRATED SYSTEM">FCLDC INTEGRATED SYSTEM</span>
 
-            <p class="hollywood is-visible" data-text="“Professional project controls,”">“Professional project controls,”</p>
-            <p class="hollywood is-visible" data-text="“quality, and”">“quality, and”</p>
-	    <p class="hollywood is-visible" data-text="“personnel dashboard.”">“personnel dashboard.”</p>
+            <p class="hollywood" data-text="“Professional project controls,”">“Professional project controls,”</p>
+            <p class="hollywood" data-text="“quality, and”">“quality, and”</p>
+	    <p class="hollywood" data-text="“personnel dashboard.”">“personnel dashboard.”</p>
 
         </div>
 
         <div class="section">
-            <span class="title reveal-line hollywood is-visible" data-text="FULL MANAGEMENT CONTROL">FULL MANAGEMENT CONTROL</span>
+            <span class="title reveal-line hollywood" data-text="FULL MANAGEMENT CONTROL">FULL MANAGEMENT CONTROL</span>
 
-            <p class="hollywood is-visible" data-text="“Access evaluation forms, QS files, QAQC records.”">“Access evaluation forms, QS files, QAQC records.”</p>
-            <p class="hollywood is-visible" data-text="“construction inventory, project monitoring,”">“construction inventory, project monitoring,”</p>
-            <p class="hollywood is-visible" data-text="“and management review in one clean workspace.”">“and management review in one clean workspace.”</p>
+            <p class="hollywood" data-text="“Access evaluation forms, QS files, QAQC records.”">“Access evaluation forms, QS files, QAQC records.”</p>
+            <p class="hollywood" data-text="“construction inventory, project monitoring,”">“construction inventory, project monitoring,”</p>
+            <p class="hollywood" data-text="“and management review in one clean workspace.”">“and management review in one clean workspace.”</p>
         </div>
 
-        <p class="closing reveal-line is-visible">
+        <p class="closing reveal-line">
             “© 2026 FCLDC Integrated Management Solutions. All rights reserved.”
         </p>
 
@@ -1467,7 +1423,7 @@ body:hover .hollywood {
         <img src="vkbconnectpro.png" alt="VKB Connect Pro Logo">
     </div>
 
-<script id="fcldcAuthSeed" type="application/json">{"users":[{"username":"admin","password":"admin123","role":"admin","permissions":["personnel-eval","contracts","qaqc","inventory","management","qs","project-progress","settings"]},{"username":"user","password":"user123","role":"user","permissions":["personnel-eval","contracts","qaqc","inventory","management"]},{"username":"virtron","password":"101681","role":"admin","permissions":["personnel-eval","contracts","qaqc","inventory","management","qs","project-progress","settings"]},{"username":"sample","password":"1","role":"user","permissions":["personnel-eval","qaqc"]},{"username":"michael","password":"michaelcorpuz","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]}]}</script>
+<script id="fcldcAuthSeed" type="application/json">{"users":[{"username":"admin","password":"admin123","role":"admin","permissions":["personnel-eval","contracts","qs","qaqc","inventory","project-progress","management","settings"]},{"username":"user","password":"user123","role":"user","permissions":[]}]}</script>
 
     <script>
         // ===== AUTHENTICATION SYSTEM =====
@@ -1979,15 +1935,20 @@ body:hover .hollywood {
                     return;
                 }
 
-                const clone = document.documentElement.cloneNode(true);
-                const seed = clone.querySelector('#fcldcAuthSeed');
-                if (seed) {
-                    seed.textContent = JSON.stringify(this.state);
-                }
-                clone.querySelector('#loginModal')?.classList.remove('hidden');
-                clone.querySelector('#userInfoPanel')?.classList.add('hidden');
-                clone.querySelector('#adminModal')?.classList.add('hidden');
-                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
+                // Preserve the current HTML structure. Do not export a cloned live DOM,
+                // because DOM serialization can move panels, rewrite attributes, and
+                // change layout/state. Only replace the embedded user/password seed.
+                const originalHtml = document.documentElement.outerHTML;
+                const updatedSeed = '<script id="fcldcAuthSeed" type="application/json">' +
+                    JSON.stringify(this.state).replace(/<\/script/gi, '<\\/script') +
+                    '</' + 'script>';
+
+                const seedPattern = /<script\s+id=["']fcldcAuthSeed["']\s+type=["']application\/json["']>[\s\S]*?<\/script>/i;
+                const shareHtml = seedPattern.test(originalHtml)
+                    ? originalHtml.replace(seedPattern, updatedSeed)
+                    : originalHtml.replace(/<body([^>]*)>/i, '<body$1>\n' + updatedSeed);
+
+                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + shareHtml, 'text/html');
             },
 
             // Setup event listeners
@@ -2243,17 +2204,5 @@ body:hover .hollywood {
         })();
         </script>
 
-
-<div id="qsPanel" class="qaqc-panel" data-access="qs" aria-hidden="true">
-                <p class="qaqc-panel-title">QS FILES</p>
-                <div class="qaqc-panel-links">
-                    <a href="./qs/estimation.html" target="_self">PROJECT ESTIMATION</a>
-                    <a href="./qs/pipeline.html" target="_self">PROJECT PIPELINE</a>
-                </div>
-            </div><div id="qaqcPanel" class="qaqc-panel" data-access="qaqc" aria-hidden="true">
-                <p class="qaqc-panel-title">QAQC FILES</p>
-                <div class="qaqc-panel-links">
-                    <a href="./QAQCFILES/qitp.html" target="_self">PROJECT QITP</a>
-                    <a href="./QAQCFILES/StandardCodes.html" target="_self" class="is-disabled">STANDARD CODES</a>
-                </div>
-            </div></body></html>
+</body>
+</html>
