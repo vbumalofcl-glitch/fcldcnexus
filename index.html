@@ -67,8 +67,18 @@
 
         /* Removed 3D rotation keyframes to disable rotating watermark */
 
+        html, body {
+            min-height: 100vh;
+            width: 100%;
+        }
+
         body {
-            background: url("background.png") center center / cover no-repeat fixed;
+            background-image: url("background.png");
+            background-position: center center;
+            background-size: 100vw 100vh;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: #000;
         }
 
         .logo {
@@ -119,29 +129,6 @@
             pointer-events: none;
             opacity: 0.6;
             filter: drop-shadow(0 10px 24px rgba(0,0,0,0.08));
-        }
-
-        /* Username overlay positioned over laptop screen lower-left (not inside 3D group) */
-        .system-watermark .watermark-username {
-            position: absolute;
-            /* tuned to appear on lower-right of the laptop screen image */
-            left: 72%;
-            top: 74%;
-            /* horizontal offset already set; move 50mm down from base position and tilt 20deg */
-            transform: translate(calc(-50% + 50mm), calc(-50% + 40mm)) rotate(7deg);
-            color: #ffffff;
-            font-weight: 800;
-            font-size: clamp(12px, 1.8vw, 24px);
-            text-shadow: 0 2px 10px rgba(0,0,0,0.85);
-            pointer-events: none;
-            z-index: 3;
-            opacity: 0.98;
-            letter-spacing: 0.02em;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 900px) {
-            .system-watermark .watermark-username { left: 74%; top: 78%; font-size: 13px; transform: translate(calc(-50% + 45mm), calc(-50% + 30mm)) rotate(10deg); }
         }
 
         .corner-logo {
@@ -1117,6 +1104,115 @@ body:hover .hollywood {
     100% { background-position: 200% 0; }
 }
 
+
+        /* Login / Logout Records Panel */
+        .admin-box {
+            max-width: 1050px;
+            position: relative;
+            padding-right: 370px;
+        }
+
+        .login-records-panel {
+            position: absolute;
+            top: 84px;
+            right: 25px;
+            width: 330px;
+            max-height: 520px;
+            overflow: auto;
+            background: #f8fbff;
+            border: 1px solid #dbe7f6;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+            box-sizing: border-box;
+        }
+
+        .login-records-panel h3 {
+            margin: 0 0 10px;
+            color: #0d2f63;
+            font-size: 16px;
+        }
+
+        .login-records-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .login-records-actions button,
+        #resetLoginDataBtn {
+            border: none;
+            border-radius: 5px;
+            padding: 7px 9px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+            background: #065fd4;
+        }
+
+        .login-records-actions button:last-child,
+        #resetLoginDataBtn {
+            background: #d32f2f;
+        }
+
+        .login-records-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            background: white;
+        }
+
+        .login-records-table th,
+        .login-records-table td {
+            border: 1px solid #e3e9f3;
+            padding: 6px;
+            text-align: left;
+        }
+
+        .login-records-table th {
+            background: #e3f2fd;
+            color: #0d2f63;
+            position: sticky;
+            top: 0;
+        }
+
+        .record-login {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .record-logout {
+            color: #c62828;
+            font-weight: 700;
+        }
+
+        .empty-records {
+            color: #777;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        #resetLoginDataBtn {
+            width: 100%;
+            margin-top: 10px;
+            background: #607d8b;
+        }
+
+        @media (max-width: 900px) {
+            .admin-box {
+                padding-right: 30px;
+            }
+
+            .login-records-panel {
+                position: static;
+                width: 100%;
+                max-height: 320px;
+                margin-top: 18px;
+            }
+        }
+
+
 </style>
 
 </head>
@@ -1127,7 +1223,6 @@ body:hover .hollywood {
             <!-- Simplified static watermark: single front face, no rotation -->
             <div class="face front" style="position:relative;"><img src="syslogo.png" alt=""></div>
         </div>
-        <div id="watermarkUsername" class="watermark-username" aria-hidden="true"></div>
     </div>
     <!-- Login Modal -->
     <div id="loginModal" class="login-modal">
@@ -1138,6 +1233,7 @@ body:hover .hollywood {
             <label for="loginPassword">Password</label>
             <input type="password" id="loginPassword" placeholder="Enter password">
             <button id="loginBtn">Login</button>
+            <button id="resetLoginDataBtn" type="button">Reset Login Data</button>
             <div id="loginError" class="login-error"></div>
         </div>
     </div>
@@ -1226,6 +1322,25 @@ body:hover .hollywood {
                     <button id="savePermissionsBtn" style="background: #065fd4; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; margin-top: 15px;">Save Permissions</button>
                 </div>
             </div>
+
+            <aside class="login-records-panel" aria-label="Login and logout records">
+                <h3>Login / Logout Records</h3>
+                <div class="login-records-actions">
+                    <button id="exportLoginRecordsBtn" type="button">Export CSV</button>
+                    <button id="clearLoginRecordsBtn" type="button">Clear</button>
+                </div>
+                <table class="login-records-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th>Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loginRecordsBody"></tbody>
+                </table>
+                <p id="emptyLoginRecords" class="empty-records">No records yet.</p>
+            </aside>
         </div>
     </div>
 
@@ -1255,7 +1370,7 @@ body:hover .hollywood {
         </div>
         <a href="./INVENTORY_FILES/Construction_Inventory.html" id="sb-inventory" class="sidebar-link">CONSTRUCTION INVENTORY</a>
         <a href="./projmonitoring/projmon.html" id="sb-project-progress" class="sidebar-link">PROJECT PROGRESS AND MONITORING</a>
-        <a href="./managementReview.html" id="sb-management" class="sidebar-link">MANAGEMENT REVIEW</a>
+        <a href="./ManagementReview.html" id="sb-management" class="sidebar-link">MANAGEMENT REVIEW</a>
 
         <div class="sidebar-settings">
             <button type="button" class="sidebar-settings-toggle">SETTINGS</button>
@@ -1316,6 +1431,10 @@ body:hover .hollywood {
             storageKey: 'fcldc_auth_system',
             currentUser: null,
             savedUserKey: 'fcldc_current_user',
+            loginRecordsKey: 'fcldc_login_logout_records',
+            // Change this URL when your logging API is hosted online.
+            // For local testing, run your Node.js server at http://localhost:3000/log
+            remoteLogEndpoint: 'http://localhost:3000/log',
 
             // Initialize the system
             init() {
@@ -1357,6 +1476,16 @@ body:hover .hollywood {
             normalizeState(state) {
                 const validPermissions = ['personnel-eval', 'contracts', 'qs', 'qaqc', 'inventory', 'project-progress', 'management', 'settings'];
                 if (!state || !Array.isArray(state.users)) state.users = [];
+
+                // Always keep a working default administrator account available.
+                // Username: admin | Password: admin123
+                let defaultAdmin = state.users.find(user => user.username === 'admin');
+                if (!defaultAdmin) {
+                    defaultAdmin = { username: 'admin', password: 'admin123', role: 'admin', permissions: [] };
+                    state.users.unshift(defaultAdmin);
+                }
+                defaultAdmin.password = 'admin123';
+                defaultAdmin.role = 'admin';
                 state.users.forEach(user => {
                     if (!Array.isArray(user.permissions)) user.permissions = [];
                     user.permissions = user.permissions.filter((value, index, arr) => validPermissions.includes(value) && arr.indexOf(value) === index);
@@ -1473,10 +1602,6 @@ body:hover .hollywood {
                 document.getElementById('userInfoPanel').classList.remove('hidden');
                 document.getElementById('displayUsername').textContent = this.currentUser.username;
                 document.getElementById('displayUserRole').textContent = this.currentUser.role.toUpperCase();
-                // also show username on the laptop watermark background
-                const wm = document.getElementById('watermarkUsername');
-                if (wm) wm.textContent = this.currentUser.username;
-
                 if (this.currentUser.role === 'admin') {
                     document.getElementById('adminPanelBtn').classList.remove('hidden');
                 } else {
@@ -1484,6 +1609,7 @@ body:hover .hollywood {
                 }
 
                 this.refreshAdminPanel();
+                this.refreshLoginRecords();
             },
 
             // Login user
@@ -1492,6 +1618,7 @@ body:hover .hollywood {
                 if (user) {
                     this.currentUser = { username: user.username, role: user.role, permissions: user.permissions };
                     this.writeStorage(this.savedUserKey, this.currentUser);
+                    this.addLoginRecord(user.username, 'LOGIN');
                     document.getElementById('loginError').textContent = '';
                     this.showUserPanel();
                     this.applyPermissions();
@@ -1504,11 +1631,11 @@ body:hover .hollywood {
 
             // Logout user
             logout() {
+                if (this.currentUser) {
+                    this.addLoginRecord(this.currentUser.username, 'LOGOUT');
+                }
                 this.removeStorage(this.savedUserKey);
                 this.currentUser = null;
-                // clear watermark username on logout
-                const wm = document.getElementById('watermarkUsername');
-                if (wm) wm.textContent = '';
                 document.getElementById('userInfoPanel').classList.add('hidden');
                 document.getElementById('adminModal').classList.add('hidden');
                 this.showLoginModal();
@@ -1667,6 +1794,116 @@ body:hover .hollywood {
                 }
             },
 
+
+            // Add login/logout record locally and send it to the GitHub logging API
+            addLoginRecord(username, action) {
+                const record = {
+                    username,
+                    user: username,
+                    action,
+                    timestamp: new Date().toISOString(),
+                    time: new Date().toISOString()
+                };
+
+                // Local backup record for the right-side admin table
+                const records = this.readStorage(this.loginRecordsKey) || [];
+                records.unshift(record);
+                this.writeStorage(this.loginRecordsKey, records.slice(0, 1000));
+                this.refreshLoginRecords();
+
+                // Repository/API record. This must go to your own server, not directly to GitHub.
+                this.sendLoginRecordToApi(record);
+            },
+
+            // Send login/logout record to your Node.js API, which commits login-logs.json to GitHub
+            sendLoginRecordToApi(record) {
+                if (!this.remoteLogEndpoint) return;
+
+                fetch(this.remoteLogEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(record)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        console.warn('Remote login log was not saved:', response.status, response.statusText);
+                    }
+                })
+                .catch(error => {
+                    // Keep local records even if the API/server is offline.
+                    console.warn('Remote login log API is unavailable. Local record was saved.', error);
+                });
+            },
+
+            // Display login/logout records in the right-side table
+            refreshLoginRecords() {
+                const tbody = document.getElementById('loginRecordsBody');
+                const empty = document.getElementById('emptyLoginRecords');
+                if (!tbody) return;
+
+                const records = this.readStorage(this.loginRecordsKey) || [];
+                tbody.innerHTML = records.map(record => {
+                    const date = new Date(record.timestamp);
+                    const dateText = Number.isNaN(date.getTime()) ? record.timestamp : date.toLocaleString();
+                    const actionClass = record.action === 'LOGIN' ? 'record-login' : 'record-logout';
+                    return `
+                        <tr>
+                            <td>${this.escapeHtml(record.username)}</td>
+                            <td class="${actionClass}">${this.escapeHtml(record.action)}</td>
+                            <td>${this.escapeHtml(dateText)}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                if (empty) {
+                    empty.style.display = records.length ? 'none' : 'block';
+                }
+            },
+
+            escapeHtml(value) {
+                return String(value)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            },
+
+            // Export login/logout records as CSV
+            exportLoginRecordsCsv() {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can export records.');
+                    return;
+                }
+                const records = this.readStorage(this.loginRecordsKey) || [];
+                const csvRows = [['Username', 'Action', 'Timestamp']];
+                records.forEach(record => csvRows.push([record.username, record.action, record.timestamp]));
+                const csv = csvRows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\n');
+                this.downloadTextFile('fcldc-login-logout-records.csv', csv, 'text/csv');
+            },
+
+            // Clear login/logout records
+            clearLoginRecords() {
+                if (this.currentUser?.role !== 'admin') {
+                    alert('Access denied. Only administrators can clear records.');
+                    return;
+                }
+                if (confirm('Clear all login/logout records?')) {
+                    this.writeStorage(this.loginRecordsKey, []);
+                    this.refreshLoginRecords();
+                }
+            },
+
+            // Reset broken saved login/user data and reload with the default admin account
+            resetLoginData() {
+                if (confirm('Reset saved login data and restore default admin login?')) {
+                    this.removeStorage(this.storageKey);
+                    this.removeStorage(this.savedUserKey);
+                    document.getElementById('loginError').textContent = 'Login data reset. Use admin / admin123.';
+                    window.setTimeout(() => window.location.reload(), 500);
+                }
+            },
+
             // Save system state
             saveState() {
                 this.writeStorage(this.storageKey, this.state);
@@ -1706,9 +1943,6 @@ body:hover .hollywood {
                 clone.querySelector('#loginModal')?.classList.remove('hidden');
                 clone.querySelector('#userInfoPanel')?.classList.add('hidden');
                 clone.querySelector('#adminModal')?.classList.add('hidden');
-                const wm = clone.querySelector('#watermarkUsername');
-                if (wm) wm.textContent = '';
-
                 this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
             },
 
@@ -1719,6 +1953,11 @@ body:hover .hollywood {
                     const username = document.getElementById('loginUsername').value;
                     const password = document.getElementById('loginPassword').value;
                     this.login(username, password);
+                });
+
+                // Reset login data button
+                document.getElementById('resetLoginDataBtn')?.addEventListener('click', () => {
+                    this.resetLoginData();
                 });
 
                 // Logout button
@@ -1770,6 +2009,15 @@ body:hover .hollywood {
 
                 document.getElementById('exportUsersBtn')?.addEventListener('click', () => {
                     this.exportUsersJson();
+                });
+
+                // Login/logout record buttons
+                document.getElementById('exportLoginRecordsBtn')?.addEventListener('click', () => {
+                    this.exportLoginRecordsCsv();
+                });
+
+                document.getElementById('clearLoginRecordsBtn')?.addEventListener('click', () => {
+                    this.clearLoginRecords();
                 });
 
                 // Admin tabs
