@@ -1446,7 +1446,19 @@ body:hover .hollywood {
 
             // Load or create system state
             loadSystemState() {
-                let state = this.readStorage(this.storageKey) || this.readSeedState();
+                // IMPORTANT FOR WEB/REPOSITORY USE:
+                // Browsers keep old users in localStorage after the page has been opened once.
+                // The exported repository HTML stores the latest users in #fcldcAuthSeed.
+                // Merge that seed into saved storage so newly added usernames/passwords work
+                // without changing the page structure or requiring a manual browser reset.
+                const savedState = this.readStorage(this.storageKey);
+                const seedState = this.readSeedState();
+                let state = savedState || seedState;
+
+                if (savedState && seedState) {
+                    state = this.mergeSeedUsers(savedState, seedState);
+                }
+
                 if (!state) {
                     state = {
                         users: [
@@ -1454,11 +1466,35 @@ body:hover .hollywood {
                             { username: 'user', password: 'user123', role: 'user', permissions: [] }
                         ]
                     };
-                    this.writeStorage(this.storageKey, state);
                 }
                 this.normalizeState(state);
                 this.writeStorage(this.storageKey, state);
                 this.state = state;
+            },
+
+            mergeSeedUsers(savedState, seedState) {
+                const merged = { users: Array.isArray(savedState.users) ? [...savedState.users] : [] };
+                const byUsername = new Map(merged.users.map(user => [user.username, user]));
+
+                (seedState.users || []).forEach(seedUser => {
+                    if (!seedUser || !seedUser.username) return;
+                    const existing = byUsername.get(seedUser.username);
+                    if (existing) {
+                        // Repository/export seed is the source of truth for credentials and permissions.
+                        existing.password = seedUser.password;
+                        existing.role = seedUser.role;
+                        existing.permissions = Array.isArray(seedUser.permissions) ? [...seedUser.permissions] : [];
+                    } else {
+                        merged.users.push({
+                            username: seedUser.username,
+                            password: seedUser.password,
+                            role: seedUser.role,
+                            permissions: Array.isArray(seedUser.permissions) ? [...seedUser.permissions] : []
+                        });
+                    }
+                });
+
+                return merged;
             },
 
             readSeedState() {
@@ -1935,20 +1971,15 @@ body:hover .hollywood {
                     return;
                 }
 
-                // Preserve the current HTML structure. Do not export a cloned live DOM,
-                // because DOM serialization can move panels, rewrite attributes, and
-                // change layout/state. Only replace the embedded user/password seed.
-                const originalHtml = document.documentElement.outerHTML;
-                const updatedSeed = '<script id="fcldcAuthSeed" type="application/json">' +
-                    JSON.stringify(this.state).replace(/<\/script/gi, '<\\/script') +
-                    '</' + 'script>';
-
-                const seedPattern = /<script\s+id=["']fcldcAuthSeed["']\s+type=["']application\/json["']>[\s\S]*?<\/script>/i;
-                const shareHtml = seedPattern.test(originalHtml)
-                    ? originalHtml.replace(seedPattern, updatedSeed)
-                    : originalHtml.replace(/<body([^>]*)>/i, '<body$1>\n' + updatedSeed);
-
-                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + shareHtml, 'text/html');
+                const clone = document.documentElement.cloneNode(true);
+                const seed = clone.querySelector('#fcldcAuthSeed');
+                if (seed) {
+                    seed.textContent = JSON.stringify(this.state);
+                }
+                clone.querySelector('#loginModal')?.classList.remove('hidden');
+                clone.querySelector('#userInfoPanel')?.classList.add('hidden');
+                clone.querySelector('#adminModal')?.classList.add('hidden');
+                this.downloadTextFile('FCLDC_Integrated_System_shared.html', '<!DOCTYPE html>\n' + clone.outerHTML, 'text/html');
             },
 
             // Setup event listeners
