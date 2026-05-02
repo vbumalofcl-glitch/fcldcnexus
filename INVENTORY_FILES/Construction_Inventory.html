@@ -258,6 +258,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                   <th>Warranty</th>
                   <th>Total Qty</th>
                   <th>Total Value</th>
+                  <th>Issued to</th>
                 </tr>
               </thead>
               <tbody id="masterlistBody"></tbody>
@@ -272,7 +273,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
             <div class="panel-header"><h3>Add or Update Warehouse Item</h3></div>
             <form id="warehouseForm" class="form-grid">
               <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
-              <input name="name" placeholder="Item Name" required />
+              <input name="name" placeholder="Item Name" list="masterItemNames" autocomplete="off" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit (pcs, set, m, box)" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
@@ -280,6 +281,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="quantity" type="number" step="0.01" placeholder="Warehouse Qty" required />
               <input name="minStock" type="number" step="0.01" placeholder="Min Stock Level (materials: minimum 10%)" />
+              <input name="issuedTo" placeholder="Issued to" />
               <button class="primary-btn" type="submit">Save Warehouse Item</button>
             </form>
           </section>
@@ -302,6 +304,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                     <th>Min</th>
                     <th>Purchase Date</th>
                     <th>Warranty</th>
+                    <th>Issued to</th>
                   </tr>
                 </thead>
                 <tbody id="warehouseBody"></tbody>
@@ -330,6 +333,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
               <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
+              <input name="issuedTo" type="hidden" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity Received" required />
               <select name="receiptType" required>
                 <option value="warehouse_transfer">From Main Warehouse</option>
@@ -362,6 +366,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                     <th>Unit Cost</th>
                     <th>Purchase Date</th>
                     <th>Warranty</th>
+                    <th>Issued to</th>
                   </tr>
                 </thead>
                 <tbody id="siteBody"></tbody>
@@ -386,6 +391,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
               <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
+              <input name="issuedTo" type="hidden" />
               <input name="remainingStock" type="number" step="0.01" placeholder="Remaining Stock on Site" required />
               <input name="remarks" placeholder="Remarks / Actual count / Location" />
               <button class="primary-btn" type="submit">Save Remaining Stock Update</button>
@@ -441,6 +447,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
               <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
+              <input name="issuedTo" type="hidden" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
               <button class="primary-btn" type="submit">Save Client Material</button>
             </form>
@@ -496,6 +503,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
               <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
+              <input name="issuedTo" type="hidden" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
               <input name="reference" placeholder="Reference / DR / Invoice / PO" />
               <button class="primary-btn" type="submit">Post Movement</button>
@@ -837,6 +845,7 @@ const InventoryApp = (() => {
       ...prepared,
       unitCost: Number(prepared.unitCost || 0),
       warrantyMonths: isWarrantyCategory(prepared.category) ? Number(prepared.warrantyMonths || 0) : 0,
+      issuedTo: String(prepared.issuedTo || prepared.issued_to || prepared.issued || prepared.assignedTo || prepared.assigned_to || "").trim(),
       quantity: Number(prepared.quantity || 0),
       minStock: isMaterialsCategory(prepared.category) ? Number(prepared.minStock || 0) : null
     };
@@ -960,6 +969,7 @@ const InventoryApp = (() => {
       unitCost: Number(rec.unitCost || 0),
       purchaseDate: rec.purchaseDate || "",
       warrantyMonths: Number(rec.warrantyMonths || 0),
+      issuedTo: issuedToLabel(rec),
       totalDelivered,
       remainingStock,
       totalUsed,
@@ -979,6 +989,7 @@ const InventoryApp = (() => {
       siteRow.unitCost = Number(rec.unitCost || siteRow.unitCost || 0);
       siteRow.purchaseDate = rec.purchaseDate || siteRow.purchaseDate || "";
       siteRow.warrantyMonths = Number(rec.warrantyMonths || siteRow.warrantyMonths || 0);
+      siteRow.issuedTo = issuedToLabel(rec) || issuedToLabel(siteRow);
     } else if (remainingStock > 0) {
       state.siteItems.push({
         site: rec.site,
@@ -989,6 +1000,7 @@ const InventoryApp = (() => {
         unitCost: Number(rec.unitCost || 0),
         purchaseDate: rec.purchaseDate || "",
         warrantyMonths: Number(rec.warrantyMonths || 0),
+        issuedTo: issuedToLabel(rec),
         quantity: remainingStock
       });
     }
@@ -1012,6 +1024,7 @@ const InventoryApp = (() => {
           unitCost: Number(m.unitCost || 0),
           purchaseDate: m.purchaseDate || "",
           warrantyMonths: Number(m.warrantyMonths || 0),
+          issuedTo: issuedToLabel(m),
           totalDelivered: 0,
           remainingStock: 0,
           totalUsed: 0,
@@ -1050,6 +1063,7 @@ const InventoryApp = (() => {
       existing.unitCost = Number(c.unitCost || existing.unitCost || 0);
       existing.purchaseDate = c.purchaseDate || existing.purchaseDate;
       existing.warrantyMonths = Number(c.warrantyMonths || existing.warrantyMonths || 0);
+      existing.issuedTo = issuedToLabel(c) || issuedToLabel(existing);
       existing.totalDelivered = Number(existing.totalDelivered || 0);
       existing.remainingStock = Number(c.remainingStock || 0);
       existing.totalUsed = Math.max(existing.totalDelivered - existing.remainingStock, 0);
@@ -1099,17 +1113,24 @@ const InventoryApp = (() => {
 
   function companyMasterlist() {
     const map = new Map();
+    function mergeIssuedTo(existing, incoming) {
+      const values = String(existing || "").split(",").map(x => x.trim()).filter(Boolean);
+      const next = String(incoming || "").split(",").map(x => x.trim()).filter(Boolean);
+      next.forEach(v => { if (!values.some(x => x.toLowerCase() === v.toLowerCase())) values.push(v); });
+      return values.join(", ");
+    }
     function add(rec) {
       const key = rec.code;
       const row = map.get(key) || {
         code: rec.code, name: rec.name, category: rec.category, unit: rec.unit,
         unitCost: Number(rec.unitCost || 0), purchaseDate: rec.purchaseDate || "",
-        warrantyMonths: Number(rec.warrantyMonths || 0), quantity: 0
+        warrantyMonths: Number(rec.warrantyMonths || 0), issuedTo: "", quantity: 0
       };
       row.quantity += Number(rec.quantity || 0);
       row.unitCost = Number(rec.unitCost || row.unitCost || 0);
       row.purchaseDate = rec.purchaseDate || row.purchaseDate;
       row.warrantyMonths = Number(rec.warrantyMonths || row.warrantyMonths || 0);
+      row.issuedTo = mergeIssuedTo(row.issuedTo, issuedToLabel(rec));
       map.set(key, row);
     }
     state.warehouseItems.forEach(add);
@@ -1316,6 +1337,10 @@ const InventoryApp = (() => {
     return categoryFilters[key] === "ALL" ? rows : rows.filter(x => x.category === categoryFilters[key]);
   }
 
+  function issuedToLabel(rec) {
+    return rec && (rec.issuedTo || rec.issued_to || rec.issued || rec.assignedTo || rec.assigned_to || "") || "";
+  }
+
   function renderMasterlist() {
     renderCategoryDropdown("masterCategoryFilters", "masterlist");
     const rows = applyCategoryFilter(companyMasterlist(), "masterlist");
@@ -1330,8 +1355,9 @@ const InventoryApp = (() => {
         <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
         <td>${number(x.quantity)}</td>
         <td>${money(Number(x.quantity || 0) * Number(x.unitCost || 0))}</td>
+        <td>${issuedToLabel(x)}</td>
       </tr>
-    `).join("") : emptyRow(9, "No masterlist records found for this category.");
+    `).join("") : emptyRow(10, "No masterlist records found for this category.");
   }
 
   function renderWarehouse() {
@@ -1349,8 +1375,9 @@ const InventoryApp = (() => {
         <td>${minStockLabel(x.minStock, x.category)}</td>
         <td>${x.purchaseDate || ""}</td>
         <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
+        <td>${issuedToLabel(x)}</td>
       </tr>
-    `).join("") : emptyRow(9, "No warehouse records found for this category.");
+    `).join("") : emptyRow(10, "No warehouse records found for this category.");
   }
 
   function renderSites() {
@@ -1382,8 +1409,9 @@ const InventoryApp = (() => {
         <td>${money(x.unitCost)}</td>
         <td>${x.purchaseDate || ""}</td>
         <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
+        <td>${issuedToLabel(x)}</td>
       </tr>
-    `).join("") : emptyRow(9, "No site records found for this filter.");
+    `).join("") : emptyRow(10, "No site records found for this filter.");
 
     document.querySelectorAll("[data-site-filter]").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -1509,12 +1537,13 @@ const InventoryApp = (() => {
     setFormField(form, "unitCost", item.unitCost || 0);
     setFormField(form, "purchaseDate", item.purchaseDate || "");
     setFormField(form, "warrantyMonths", isWarrantyCategory(item.category) ? Number(item.warrantyMonths || 0) : "");
+    setFormField(form, "issuedTo", issuedToLabel(item));
     refreshFormBusinessRules(form);
     return true;
   }
 
   function shouldUseMasterlistAutofill(form) {
-    return form && ["siteReceiptForm", "siteStockUpdateForm", "movementForm"].includes(form.id);
+    return form && ["warehouseForm", "siteReceiptForm", "siteStockUpdateForm", "movementForm"].includes(form.id);
   }
 
 
@@ -1624,7 +1653,7 @@ const InventoryApp = (() => {
         if (el) {
           const handler = () => {
             if (field === "name" && shouldUseMasterlistAutofill(form)) {
-              autofillItemFromMasterlist(form);
+              if (!autofillItemFromMasterlist(form)) refreshFormBusinessRules(form);
             } else {
               refreshFormBusinessRules(form);
             }
@@ -1665,6 +1694,7 @@ const InventoryApp = (() => {
             unitCost: data.unitCost,
             purchaseDate: data.purchaseDate,
             warrantyMonths: data.warrantyMonths,
+            issuedTo: data.issuedTo,
             quantity: data.quantity,
             siteAction: data.siteAction,
             reference: `Site Receipt - ${data.siteAction.replaceAll("_", " ")}`
@@ -1681,6 +1711,7 @@ const InventoryApp = (() => {
             unitCost: data.unitCost,
             purchaseDate: data.purchaseDate,
             warrantyMonths: data.warrantyMonths,
+            issuedTo: data.issuedTo,
             quantity: data.quantity,
             siteAction: data.siteAction,
             reference: `Direct Delivery - ${data.siteAction.replaceAll("_", " ")}`
@@ -2156,7 +2187,8 @@ const InventoryApp = (() => {
       { header: "Purchase Date", key: "purchaseDate", width: 16 },
       { header: "Warranty", value: x => warrantyLabel(x.warrantyMonths, x.category), width: 14 },
       { header: "Total Qty", key: "quantity", width: 14 },
-      { header: "Total Value", value: x => Number(x.quantity || 0) * Number(x.unitCost || 0), width: 16 }
+      { header: "Total Value", value: x => Number(x.quantity || 0) * Number(x.unitCost || 0), width: 16 },
+      { header: "Issued to", value: x => issuedToLabel(x), width: 22 }
     ],
     warehouse: [
       { header: "Item Code", key: "code", width: 16 },
@@ -2167,7 +2199,8 @@ const InventoryApp = (() => {
       { header: "Unit Cost", key: "unitCost", width: 14 },
       { header: "Minimum Stock", value: x => minStockLabel(x.minStock, x.category), width: 16 },
       { header: "Purchase Date", key: "purchaseDate", width: 16 },
-      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 }
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 },
+      { header: "Issued to", value: x => issuedToLabel(x), width: 22 }
     ],
     sites: [
       { header: "Site", key: "site", width: 22 },
@@ -2178,7 +2211,8 @@ const InventoryApp = (() => {
       { header: "Unit", key: "unit", width: 12 },
       { header: "Unit Cost", key: "unitCost", width: 14 },
       { header: "Purchase Date", key: "purchaseDate", width: 16 },
-      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 }
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 },
+      { header: "Issued to", value: x => issuedToLabel(x), width: 22 }
     ],
     monitoring: [
       { header: "Site", key: "site", width: 22 },
@@ -2306,7 +2340,8 @@ const InventoryApp = (() => {
           unitCost: numVal(rowVal(r, ["Unit Cost"])),
           minStock: numVal(rowVal(r, ["Minimum Stock", "Min"])),
           purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
-          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"]))
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"])),
+          issuedTo: rowVal(r, ["Issued to", "Issued To", "IssuedTo"])
         })).filter(x => x.name && x.category);
 
         const siteItems = readSheet(wb, "Project Sites").map(r => applyBusinessRules({
@@ -2318,7 +2353,8 @@ const InventoryApp = (() => {
           unit: rowVal(r, ["Unit"]),
           unitCost: numVal(rowVal(r, ["Unit Cost"])),
           purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
-          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"]))
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"])),
+          issuedTo: rowVal(r, ["Issued to", "Issued To", "IssuedTo"])
         })).filter(x => x.site && x.name && x.category);
 
         const clientItems = readSheet(wb, "Client Supplied").map(r => applyBusinessRules({
