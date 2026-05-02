@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
   <style>
 :root{
   --bg:#0b1020;
@@ -51,7 +52,8 @@ button,input,select,textarea{font:inherit}
 .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}
 .topbar h2{margin:0 0 4px;font-size:22px;line-height:1.1}
 .topbar p{margin:0;color:var(--muted);font-size:11px}
-.topbar-actions{display:flex;gap:8px;align-items:center}
+.topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.excel-upload-btn{width:auto;min-width:92px;margin:0;white-space:nowrap}
 input[type="search"]{width:280px;max-width:44vw}
 input,select,textarea{width:100%;background:#0f1730;border:1px solid var(--line);color:var(--text);padding:8px 10px;border-radius:9px;outline:none;font-size:12px;line-height:1.2}
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
@@ -98,17 +100,30 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
 .category-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
 .category-bar-meta{display:flex;justify-content:space-between;gap:8px;margin-top:4px;font-size:10px;color:var(--muted)}
 .empty-state{padding:12px;border:1px dashed rgba(255,255,255,.12);border-radius:10px;color:var(--muted);text-align:center;font-size:11px}
+.site-names-rows{grid-column:span 2;display:grid;gap:8px}
+.site-name-row{display:grid;grid-template-columns:80px minmax(0,1fr);gap:8px;align-items:center;background:#101932;border:1px solid rgba(255,255,255,.05);border-radius:10px;padding:8px}
+.site-name-row label{font-size:11px;color:var(--muted)}
+.site-name-controls{display:flex;align-items:center;gap:6px;min-width:0}
+.site-name-controls input{flex:1;min-width:0}
+.remove-site-btn{width:34px;height:34px;display:grid;place-items:center;flex:0 0 34px;padding:0;border-radius:9px;font-size:15px;line-height:1;background:rgba(255,123,145,.18);color:#ffd5dd}
+.remove-site-btn:hover{background:rgba(255,123,145,.28);transform:translateY(-1px)}
+.add-site-row-btn{grid-column:span 2}
 @media (max-width:1180px){
   .stats-grid,.panel-grid.two,.form-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:980px){
+  .site-name-row{grid-template-columns:72px minmax(0,1fr)}
   .app-shell{grid-template-columns:1fr}
   .sidebar{border-right:none;border-bottom:1px solid rgba(255,255,255,.06)}
   .topbar{flex-direction:column;align-items:flex-start}
   input[type="search"]{width:100%;max-width:none}
   .stats-grid,.panel-grid.two,.form-grid{grid-template-columns:1fr}
   .form-grid button,.form-grid textarea{grid-column:span 1}
+  .site-names-rows,.add-site-row-btn{grid-column:span 1}
+  .site-name-row{grid-template-columns:1fr}
+  .site-name-controls{width:100%}
 }
+
   </style>
 </head>
 <body>
@@ -158,6 +173,11 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
           <p id="pageSubtitle">Overview of company-owned, site, and client-supplied inventory</p>
         </div>
         <div class="topbar-actions">
+          <button class="secondary-btn" id="exportExcelBtn">Export Excel</button>
+          <label class="upload-btn excel-upload-btn">
+            <span>Import Excel</span>
+            <input type="file" id="importExcelInput" accept=".xlsx,.xls" hidden />
+          </label>
           <input type="search" id="globalSearch" placeholder="Search item, code, category, site..." />
           <button class="primary-btn" id="printBtn">Print</button>
         </div>
@@ -223,7 +243,6 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
             <h3>Masterlist Inventory</h3>
             <div class="panel-tools">
               <div class="filter-row" id="masterCategoryFilters"></div>
-              <button class="secondary-btn" onclick="InventoryApp.exportTableCSV('masterlistTable', 'masterlist_inventory.csv')">Export CSV</button>
             </div>
           </div>
           <div class="table-wrap">
@@ -252,15 +271,15 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
           <section class="panel">
             <div class="panel-header"><h3>Add or Update Warehouse Item</h3></div>
             <form id="warehouseForm" class="form-grid">
-              <input name="code" placeholder="Item Code" required />
+              <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
               <input name="name" placeholder="Item Name" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit (pcs, set, m, box)" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
-              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="quantity" type="number" step="0.01" placeholder="Warehouse Qty" required />
-              <input name="minStock" type="number" step="0.01" placeholder="Min Stock Level" value="0" required />
+              <input name="minStock" type="number" step="0.01" placeholder="Min Stock Level (materials: minimum 10%)" />
               <button class="primary-btn" type="submit">Save Warehouse Item</button>
             </form>
           </section>
@@ -304,13 +323,13 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                 <option value="staging_area">Staging Area</option>
                 <option value="borrowed_tools">Borrowed Tools</option>
               </select>
-              <input name="code" placeholder="Item Code" required />
+              <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
               <input name="name" placeholder="Item Name" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
-              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity Received" required />
               <select name="receiptType" required>
                 <option value="warehouse_transfer">From Main Warehouse</option>
@@ -360,13 +379,13 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
             <form id="siteStockUpdateForm" class="form-grid single-column-form">
               <select name="site" required></select>
               <input name="date" type="date" required />
-              <input name="code" placeholder="Item Code" required />
+              <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
               <input name="name" placeholder="Item Name" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
-              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="remainingStock" type="number" step="0.01" placeholder="Remaining Stock on Site" required />
               <input name="remarks" placeholder="Remarks / Actual count / Location" />
               <button class="primary-btn" type="submit">Save Remaining Stock Update</button>
@@ -415,13 +434,13 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
             <div class="panel-header"><h3>Add Client-Supplied Materials</h3></div>
             <form id="clientForm" class="form-grid">
               <select name="site" required></select>
-              <input name="code" placeholder="Item Code" required />
+              <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
               <input name="name" placeholder="Item Name" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
-              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
               <button class="primary-btn" type="submit">Save Client Material</button>
             </form>
@@ -464,17 +483,19 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                 <option value="warehouse_in">Warehouse Receiving</option>
                 <option value="warehouse_to_site">Warehouse to Site</option>
                 <option value="site_return">Site Return to Warehouse</option>
+                <option value="site_to_site">Site to Site Transfer</option>
                 <option value="site_direct_add">Direct Delivery to Site</option>
                 <option value="client_supplied_add">Client Supplied Delivery</option>
               </select>
-              <select name="site"></select>
-              <input name="code" placeholder="Item Code" required />
+              <select name="site" title="Source / Related Site"></select>
+              <select name="toSite" title="Destination Site for Site to Site Transfer"></select>
+              <input name="code" placeholder="Auto Item Code (e.g., HT-H-01)" required />
               <input name="name" placeholder="Item Name" required />
               <select name="category" required></select>
               <input name="unit" placeholder="Unit" required />
               <input name="unitCost" type="number" step="0.01" placeholder="Unit Cost" required />
               <input name="purchaseDate" type="date" required />
-              <input name="warrantyMonths" type="number" placeholder="Warranty (months)" required />
+              <input name="warrantyMonths" type="number" placeholder="Warranty (months / N/A by category)" />
               <input name="quantity" type="number" step="0.01" placeholder="Quantity" required />
               <input name="reference" placeholder="Reference / DR / Invoice / PO" />
               <button class="primary-btn" type="submit">Post Movement</button>
@@ -484,9 +505,6 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
           <section class="panel">
             <div class="panel-header">
               <h3>Movement Log</h3>
-              <div class="panel-tools">
-                <button class="secondary-btn" onclick="InventoryApp.exportTableCSV('movementTable', 'movement_log.csv')">Export CSV</button>
-              </div>
             </div>
             <div class="table-wrap">
               <table id="movementTable">
@@ -494,7 +512,8 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
                   <tr>
                     <th>Date</th>
                     <th>Type</th>
-                    <th>Site</th>
+                    <th>From</th>
+                    <th>To</th>
                     <th>Code</th>
                     <th>Item</th>
                     <th>Category</th>
@@ -516,7 +535,8 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
           <section class="panel">
             <div class="panel-header"><h3>Configuration</h3></div>
             <form id="settingsForm" class="form-grid">
-              <textarea name="siteNames" rows="8" placeholder="Enter one project site per line"></textarea>
+              <div id="settingsSiteRows" class="site-names-rows"></div>
+              <button class="secondary-btn add-site-row-btn" type="button" id="addSiteRowBtn">+ Add Project Site Row</button>
               <input name="siteAlertPercent" type="number" min="1" max="100" step="1" placeholder="Site low-stock alert percent" />
               <button class="primary-btn" type="submit">Save Site Names & Alert %</button>
             </form>
@@ -530,6 +550,8 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
               <p><strong>Client Supplied:</strong> tracked separately and not added into company-owned masterlist.</p>
               <p><strong>Site Alert %:</strong> triggers Low Stock Watch when a site balance falls at or below your chosen remaining percentage of total company stock.</p>
               <p><strong>Site Monitoring:</strong> records total delivered, remaining stock, total used, and last stock count per project until completion.</p>
+              <p><strong>Item Code Rule:</strong> generated as Category initials + Item initial + 01-99 sequence, e.g. Hand Tools + Hammer 5lbs = HT-H-01.</p>
+              <p><strong>Warranty & Minimum Stock:</strong> warranty applies only to equipment, electrical tools, and electronic tools. Minimum stock applies only to materials and is automatically enforced at 10% minimum.</p>
             </div>
           </section>
         </div>
@@ -560,6 +582,7 @@ tbody tr:hover{background:rgba(255,255,255,.03)}
 <script>
 const InventoryApp = (() => {
   const STORAGE_KEY = "construction_inventory_dashboard_v2";
+  const CLEAR_DATA_PASSWORD = "FCLDC2026";
   const categories = [
     "Hand Tools",
     "Heavy Equipment",
@@ -629,9 +652,93 @@ const InventoryApp = (() => {
     return new Intl.NumberFormat("en-PH", { maximumFractionDigits: 2 }).format(Number(v || 0));
   }
 
-  function warrantyLabel(months) {
+  function categoryCode(category) {
+    return String(category || "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map(word => word[0].toUpperCase())
+      .join("");
+  }
+
+  function itemInitial(name) {
+    const match = String(name || "").trim().match(/[A-Za-z0-9]/);
+    return match ? match[0].toUpperCase() : "X";
+  }
+
+  function isWarrantyCategory(category) {
+    const c = String(category || "").toLowerCase();
+    return c.includes("equipment") || c === "electrical tools" || c === "electronic tools";
+  }
+
+  function isMaterialsCategory(category) {
+    return String(category || "").toLowerCase().includes("materials");
+  }
+
+  function allInventoryRecords() {
+    return []
+      .concat(state.warehouseItems || [])
+      .concat(state.siteItems || [])
+      .concat(state.clientItems || [])
+      .concat(state.movements || [])
+      .concat(state.siteStockCounts || []);
+  }
+
+  function generateItemCode(category, name, currentCode) {
+    const cat = String(category || "").trim();
+    const item = String(name || "").trim();
+    if (!cat || !item) return currentCode || "";
+
+    const existing = allInventoryRecords().find(x =>
+      String(x.category || "").trim().toLowerCase() === cat.toLowerCase() &&
+      String(x.name || "").trim().toLowerCase() === item.toLowerCase() &&
+      String(x.code || "").trim()
+    );
+    if (existing) return existing.code;
+
+    const prefix = `${categoryCode(cat)}-${itemInitial(item)}-`;
+    const cleanCurrent = String(currentCode || "").trim().toUpperCase();
+    const currentNumber = Number(cleanCurrent.slice(prefix.length));
+    if (cleanCurrent.startsWith(prefix) && Number.isInteger(currentNumber) && currentNumber >= 1 && currentNumber <= 99) return cleanCurrent;
+    const usedNumbers = allInventoryRecords()
+      .map(x => String(x.code || ""))
+      .filter(code => code.startsWith(prefix))
+      .map(code => Number(code.slice(prefix.length)))
+      .filter(n => Number.isInteger(n) && n >= 1 && n <= 99);
+    const next = Math.min(99, (usedNumbers.length ? Math.max(...usedNumbers) : 0) + 1);
+    return `${prefix}${String(next).padStart(2, "0")}`;
+  }
+
+  function applyBusinessRules(rec) {
+    const out = { ...rec };
+    out.category = String(out.category || "").trim();
+    out.name = String(out.name || "").trim();
+    out.code = generateItemCode(out.category, out.name, out.code);
+
+    if (!isWarrantyCategory(out.category)) {
+      out.warrantyMonths = 0;
+    }
+
+    if (isMaterialsCategory(out.category)) {
+      const qty = Number(out.quantity || out.remainingStock || 0);
+      const minimumRequired = qty * 0.10;
+      const enteredMin = Number(out.minStock || 0);
+      out.minStock = Math.max(enteredMin, minimumRequired);
+    } else {
+      out.minStock = null;
+    }
+    return out;
+  }
+
+  function warrantyLabel(months, category) {
+    if (!isWarrantyCategory(category)) return "N/A";
     months = Number(months || 0);
     return months > 0 ? `${months} mo.` : "N/A";
+  }
+
+  function minStockLabel(value, category) {
+    if (!isMaterialsCategory(category)) return "N/A";
+    return number(value);
   }
 
   function setSelectOptions() {
@@ -645,7 +752,61 @@ const InventoryApp = (() => {
       sel.innerHTML = options.join("");
     });
 
-    document.querySelector('#settingsForm textarea[name="siteNames"]').value = state.settings.sites.join("\\n");
+    document.querySelectorAll('select[name="toSite"]').forEach(sel => {
+      const options = ['<option value="">Select Destination Site</option>']
+        .concat(state.settings.sites.map(s => `<option value="${s}">${s}</option>`));
+      sel.innerHTML = options.join("");
+    });
+
+    renderSettingsSiteRows();
+    const siteAlertInput = document.querySelector('#settingsForm input[name="siteAlertPercent"]');
+    if (siteAlertInput) siteAlertInput.value = Number(state.settings.siteAlertPercent || 20);
+  }
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function collectSettingsSites() {
+    return Array.from(document.querySelectorAll('input[name="siteNameRow"]'))
+      .map(input => input.value.trim())
+      .filter(Boolean);
+  }
+
+  function renderSettingsSiteRows() {
+    const rowsEl = document.getElementById("settingsSiteRows");
+    if (!rowsEl) return;
+    const sites = Array.isArray(state.settings.sites) && state.settings.sites.length ? state.settings.sites : clone(emptyState.settings.sites);
+    rowsEl.innerHTML = sites.map((site, index) => `
+      <div class="site-name-row">
+        <label>Project ${index + 1}</label>
+        <div class="site-name-controls">
+          <input type="text" name="siteNameRow" value="${escapeHtml(site)}" placeholder="Project Site ${index + 1}" />
+          <button class="remove-site-btn" type="button" data-remove-site-index="${index}" title="Remove project site" aria-label="Remove project site ${index + 1}">🗑️</button>
+        </div>
+      </div>
+    `).join("");
+
+    rowsEl.querySelectorAll("[data-remove-site-index]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const enteredPassword = prompt("Enter password to remove this project site:");
+        if (enteredPassword === null) return;
+        if (enteredPassword !== CLEAR_DATA_PASSWORD) {
+          alert("Incorrect password. Project site was not removed.");
+          return;
+        }
+        const currentSites = collectSettingsSites();
+        const index = Number(btn.dataset.removeSiteIndex);
+        currentSites.splice(index, 1);
+        state.settings.sites = currentSites.length ? currentSites : [""];
+        renderSettingsSiteRows();
+      });
+    });
   }
 
   function renderCategoryDropdown(containerId, filterKey) {
@@ -669,12 +830,13 @@ const InventoryApp = (() => {
   }
 
   function normalizeRecord(rec) {
+    const prepared = applyBusinessRules(rec);
     return {
-      ...rec,
-      unitCost: Number(rec.unitCost || 0),
-      warrantyMonths: Number(rec.warrantyMonths || 0),
-      quantity: Number(rec.quantity || 0),
-      minStock: Number(rec.minStock || 0)
+      ...prepared,
+      unitCost: Number(prepared.unitCost || 0),
+      warrantyMonths: isWarrantyCategory(prepared.category) ? Number(prepared.warrantyMonths || 0) : 0,
+      quantity: Number(prepared.quantity || 0),
+      minStock: isMaterialsCategory(prepared.category) ? Number(prepared.minStock || 0) : null
     };
   }
 
@@ -724,7 +886,7 @@ const InventoryApp = (() => {
       row.quantity += item.quantity;
       Object.assign(row, item, { quantity: row.quantity });
     } else {
-      state.warehouseItems.push({ ...item, minStock: Number(item.minStock || 0) });
+      state.warehouseItems.push({ ...item, minStock: isMaterialsCategory(item.category) ? Number(item.minStock || 0) : null });
     }
   }
 
@@ -746,6 +908,15 @@ const InventoryApp = (() => {
         srow.quantity -= Number(m.quantity);
         addWarehouseQuantity(m);
         break;
+      case "site_to_site":
+        if (!m.site) throw new Error("Source site is required for site-to-site transfer.");
+        if (!m.toSite) throw new Error("Destination site is required for site-to-site transfer.");
+        if (m.site === m.toSite) throw new Error("Source site and destination site must be different.");
+        const sourceSiteRow = state.siteItems.find(x => x.site === m.site && x.code === m.code);
+        if (!sourceSiteRow || Number(sourceSiteRow.quantity) < Number(m.quantity)) throw new Error(`Insufficient site stock for transfer.`);
+        sourceSiteRow.quantity -= Number(m.quantity);
+        addToSite({ ...m, site: m.toSite });
+        break;
       case "site_direct_add":
         if (!m.site) throw new Error("Site is required for direct delivery.");
         addToSite(m);
@@ -762,7 +933,11 @@ const InventoryApp = (() => {
 
   function getTotalDeliveredToSite(site, code) {
     return state.movements
-      .filter(m => m.site === site && m.code === code && (m.type === "warehouse_to_site" || m.type === "site_direct_add"))
+      .filter(m => {
+        if (m.code !== code) return false;
+        if (m.type === "site_to_site") return m.toSite === site;
+        return m.site === site && (m.type === "warehouse_to_site" || m.type === "site_direct_add");
+      })
       .reduce((s, m) => s + Number(m.quantity || 0), 0);
   }
 
@@ -821,12 +996,13 @@ const InventoryApp = (() => {
     const deliveryMap = new Map();
 
     state.movements
-      .filter(m => m.type === "warehouse_to_site" || m.type === "site_direct_add")
+      .filter(m => m.type === "warehouse_to_site" || m.type === "site_direct_add" || m.type === "site_to_site")
       .forEach(m => {
-        if (!m.site) return;
-        const key = `${m.site}||${m.code}`;
+        const destinationSite = m.type === "site_to_site" ? m.toSite : m.site;
+        if (!destinationSite) return;
+        const key = `${destinationSite}||${m.code}`;
         const row = deliveryMap.get(key) || {
-          site: m.site,
+          site: destinationSite,
           code: m.code,
           name: m.name,
           category: m.category,
@@ -1049,10 +1225,10 @@ const InventoryApp = (() => {
     `).join("") : emptyRow(6, "No movements recorded yet.");
 
     const warehouseLow = state.warehouseItems
-      .filter(x => Number(x.quantity || 0) <= Number(x.minStock || 0) && Number(x.quantity || 0) > 0)
+      .filter(x => isMaterialsCategory(x.category) && Number(x.quantity || 0) <= Number(x.minStock || 0) && Number(x.quantity || 0) > 0)
       .map(x => ({
         label: x.name,
-        meta: `${x.code} • Warehouse minimum ${number(x.minStock)} ${x.unit}`,
+        meta: `${x.code} • Warehouse minimum ${minStockLabel(x.minStock, x.category)} ${x.unit}`,
         qty: `${number(x.quantity)} ${x.unit}`,
         type: "warehouse"
       }));
@@ -1092,14 +1268,32 @@ const InventoryApp = (() => {
       warehouse_in:"Warehouse Receiving",
       warehouse_to_site:"Warehouse to Site",
       site_return:"Site Return",
+      site_to_site:"Site to Site Transfer",
       site_direct_add:"Direct Delivery to Site",
       client_supplied_add:"Client Supplied"
     })[type] || type;
   }
 
+  function normalizeMovementType(value) {
+    const raw = String(value || "").trim();
+    const byLabel = {
+      "Warehouse Receiving": "warehouse_in",
+      "Warehouse to Site": "warehouse_to_site",
+      "Site Return": "site_return",
+      "Site Return to Warehouse": "site_return",
+      "Site to Site Transfer": "site_to_site",
+      "Direct Delivery to Site": "site_direct_add",
+      "Client Supplied": "client_supplied_add",
+      "Client Supplied Delivery": "client_supplied_add"
+    };
+    return byLabel[raw] || raw;
+  }
+
+
   function movementFrom(m) {
     if (m.type === "warehouse_to_site") return "Main Warehouse";
     if (m.type === "site_return") return m.site;
+    if (m.type === "site_to_site") return m.site;
     if (m.type === "warehouse_in") return "Supplier";
     if (m.type === "site_direct_add") return "Supplier";
     if (m.type === "client_supplied_add") return "Client";
@@ -1109,6 +1303,7 @@ const InventoryApp = (() => {
   function movementTo(m) {
     if (m.type === "warehouse_to_site") return m.site;
     if (m.type === "site_return") return "Main Warehouse";
+    if (m.type === "site_to_site") return m.toSite || "-";
     if (m.type === "warehouse_in") return "Main Warehouse";
     if (m.type === "site_direct_add") return m.site;
     if (m.type === "client_supplied_add") return `${m.site} (Client Stock)`;
@@ -1130,7 +1325,7 @@ const InventoryApp = (() => {
         <td>${x.unit}</td>
         <td>${money(x.unitCost)}</td>
         <td>${x.purchaseDate || ""}</td>
-        <td>${warrantyLabel(x.warrantyMonths)}</td>
+        <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
         <td>${number(x.quantity)}</td>
         <td>${money(Number(x.quantity || 0) * Number(x.unitCost || 0))}</td>
       </tr>
@@ -1149,9 +1344,9 @@ const InventoryApp = (() => {
         <td>${number(x.quantity)}</td>
         <td>${x.unit}</td>
         <td>${money(x.unitCost)}</td>
-        <td>${number(x.minStock)}</td>
+        <td>${minStockLabel(x.minStock, x.category)}</td>
         <td>${x.purchaseDate || ""}</td>
-        <td>${warrantyLabel(x.warrantyMonths)}</td>
+        <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
       </tr>
     `).join("") : emptyRow(9, "No warehouse records found for this category.");
   }
@@ -1184,7 +1379,7 @@ const InventoryApp = (() => {
         <td>${x.unit}</td>
         <td>${money(x.unitCost)}</td>
         <td>${x.purchaseDate || ""}</td>
-        <td>${warrantyLabel(x.warrantyMonths)}</td>
+        <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
       </tr>
     `).join("") : emptyRow(9, "No site records found for this filter.");
 
@@ -1217,7 +1412,7 @@ const InventoryApp = (() => {
         <td>${x.unit}</td>
         <td>${money(x.unitCost)}</td>
         <td>${x.purchaseDate || ""}</td>
-        <td>${warrantyLabel(x.warrantyMonths)}</td>
+        <td>${warrantyLabel(x.warrantyMonths, x.category)}</td>
       </tr>
     `).join("") : emptyRow(9, "No client-supplied records found for this category.");
   }
@@ -1227,7 +1422,8 @@ const InventoryApp = (() => {
       <tr>
         <td>${m.date || ""}</td>
         <td>${prettyType(m.type)}</td>
-        <td>${m.site || "-"}</td>
+        <td>${movementFrom(m)}</td>
+        <td>${movementTo(m)}</td>
         <td>${m.code}</td>
         <td>${m.name}</td>
         <td>${m.category}</td>
@@ -1236,8 +1432,30 @@ const InventoryApp = (() => {
         <td>${money(m.unitCost)}</td>
         <td>${m.reference || ""}</td>
       </tr>
-    `).join("") : emptyRow(10, "No movement records yet.");
+    `).join("") : emptyRow(11, "No movement records yet.");
   }
+
+  function updateMovementSiteFields() {
+    const form = document.getElementById("movementForm");
+    if (!form || !form.elements.type) return;
+    const type = form.elements.type.value;
+    const siteSelect = form.elements.site;
+    const toSiteSelect = form.elements.toSite;
+    const siteRequiredTypes = ["warehouse_to_site", "site_return", "site_direct_add", "client_supplied_add", "site_to_site"];
+
+    if (siteSelect) {
+      siteSelect.required = siteRequiredTypes.includes(type);
+      siteSelect.title = type === "site_to_site" ? "Source Site" : "Related Site";
+    }
+
+    if (toSiteSelect) {
+      const needsDestination = type === "site_to_site";
+      toSiteSelect.required = needsDestination;
+      toSiteSelect.style.display = needsDestination ? "" : "none";
+      if (!needsDestination) toSiteSelect.value = "";
+    }
+  }
+
 
   function renderAll() {
     saveState();
@@ -1251,6 +1469,8 @@ const InventoryApp = (() => {
     renderClient();
     renderMovements();
     bindCategoryDropdowns();
+    bindBusinessRuleInputs();
+    updateMovementSiteFields();
   }
 
   function bindTabs() {
@@ -1297,6 +1517,54 @@ const InventoryApp = (() => {
           })();
         }
       });
+    });
+  }
+
+  function refreshFormBusinessRules(form) {
+    if (!form) return;
+    const category = form.elements.category ? form.elements.category.value : "";
+    const name = form.elements.name ? form.elements.name.value : "";
+    const codeInput = form.elements.code;
+    const warrantyInput = form.elements.warrantyMonths;
+    const minStockInput = form.elements.minStock;
+    const quantityInput = form.elements.quantity;
+
+    if (codeInput && category && name) {
+      codeInput.value = generateItemCode(category, name, codeInput.value);
+    }
+
+    if (warrantyInput) {
+      const applies = isWarrantyCategory(category);
+      warrantyInput.disabled = !applies;
+      warrantyInput.placeholder = applies ? "Warranty (months)" : "N/A - warranty not applicable";
+      if (!applies) warrantyInput.value = "";
+    }
+
+    if (minStockInput) {
+      const applies = isMaterialsCategory(category);
+      minStockInput.disabled = !applies;
+      minStockInput.placeholder = applies ? "Min Stock Level (minimum 10% of qty)" : "N/A - materials only";
+      if (applies && quantityInput) {
+        const minRequired = Number(quantityInput.value || 0) * 0.10;
+        minStockInput.min = minRequired.toFixed(2);
+        if (Number(minStockInput.value || 0) < minRequired) minStockInput.value = minRequired ? minRequired.toFixed(2) : "";
+      } else if (!applies) {
+        minStockInput.value = "";
+        minStockInput.removeAttribute("min");
+      }
+    }
+  }
+
+  function bindBusinessRuleInputs() {
+    document.querySelectorAll("form").forEach(form => {
+      ["category", "name", "quantity"].forEach(field => {
+        const el = form.elements[field];
+        if (el) {
+          el.oninput = () => refreshFormBusinessRules(form);
+          el.onchange = () => refreshFormBusinessRules(form);
+        }
+      });
+      refreshFormBusinessRules(form);
     });
   }
 
@@ -1403,6 +1671,9 @@ const InventoryApp = (() => {
       }
     });
 
+    const movementTypeSelect = document.querySelector('#movementForm select[name="type"]');
+    if (movementTypeSelect) movementTypeSelect.addEventListener("change", updateMovementSiteFields);
+
     document.getElementById("movementForm").addEventListener("submit", e => {
       e.preventDefault();
       const data = Object.fromEntries(new FormData(e.target).entries());
@@ -1419,17 +1690,30 @@ const InventoryApp = (() => {
 
     document.getElementById("settingsForm").addEventListener("submit", e => {
       e.preventDefault();
-      const text = e.target.siteNames.value;
-      const sites = text.split("\\n").map(x => x.trim()).filter(Boolean);
-      if (!sites.length) return alert("Please enter at least one site.");
+      const sites = collectSettingsSites();
+      if (!sites.length) return alert("Please enter at least one project site.");
       state.settings.sites = sites;
+      state.settings.siteAlertPercent = Number(e.target.siteAlertPercent.value || 20);
       if (!sites.includes(activeSiteFilter)) activeSiteFilter = "ALL";
       renderAll();
-      alert("Site names updated.");
+      alert("Site names and alert percentage updated.");
     });
+
+    const addSiteRowBtn = document.getElementById("addSiteRowBtn");
+    if (addSiteRowBtn) {
+      addSiteRowBtn.addEventListener("click", () => {
+        const sites = collectSettingsSites();
+        state.settings.sites = sites.length ? sites.concat("") : [""];
+        renderSettingsSiteRows();
+      });
+    }
 
     document.getElementById("exportDataBtn").addEventListener("click", exportJSON);
     document.getElementById("importDataInput").addEventListener("change", importJSON);
+    const exportExcelBtn = document.getElementById("exportExcelBtn");
+    if (exportExcelBtn) exportExcelBtn.addEventListener("click", () => exportExcel());
+    const importExcelInput = document.getElementById("importExcelInput");
+    if (importExcelInput) importExcelInput.addEventListener("change", importExcel);
     document.getElementById("exportToRecordsBtn").addEventListener("click", exportToRecords);
     const chooseBtn = document.getElementById('chooseRecordsFolderBtn');
     if (chooseBtn) chooseBtn.addEventListener('click', async () => {
@@ -1447,11 +1731,18 @@ const InventoryApp = (() => {
       }
     });
     document.getElementById("resetBtn").addEventListener("click", () => {
-      if (!confirm("Clear all saved inventory data?")) return;
+      const enteredPassword = prompt("Enter password to clear all saved inventory data:");
+      if (enteredPassword === null) return;
+      if (enteredPassword !== CLEAR_DATA_PASSWORD) {
+        alert("Incorrect password. Data was not cleared.");
+        return;
+      }
+      if (!confirm("Password accepted. Clear all saved inventory data?")) return;
       state = clone(emptyState);
       activeSiteFilter = "ALL";
       categoryFilters = { masterlist:"ALL", warehouse:"ALL", sites:"ALL", client:"ALL" };
       renderAll();
+      alert("All inventory data has been cleared.");
     });
     document.getElementById("printBtn").addEventListener("click", () => window.print());
 
@@ -1733,17 +2024,310 @@ const InventoryApp = (() => {
     e.target.value = "";
   }
 
-  function exportTableCSV(tableId, filename) {
-    const rows = Array.from(document.querySelectorAll(`#${tableId} tr`));
-    const csv = rows.map(row => Array.from(row.children)
-      .map(cell => `"${String(cell.innerText).replace(/"/g, '""')}"`)
-      .join(",")).join("\\n");
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(a.href);
+  function ensureXLSX() {
+    if (typeof XLSX === "undefined") {
+      alert("Excel tools are still loading or unavailable. Please check your internet connection and reload the page.");
+      return false;
+    }
+    return true;
+  }
+
+  function excelTimestamp() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    return `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  }
+
+  function excelCellValue(value) {
+    if (value === null || value === undefined) return "N/A";
+    if (typeof value === "number" && Number.isFinite(value)) return value;
+    return String(value);
+  }
+
+  function makeSheet(rows, columns) {
+    const data = rows.map(row => {
+      const out = {};
+      columns.forEach(col => out[col.header] = excelCellValue(typeof col.value === "function" ? col.value(row) : row[col.key]));
+      return out;
+    });
+    const ws = XLSX.utils.json_to_sheet(data.length ? data : [columns.reduce((o, c) => (o[c.header] = "", o), {})], { skipHeader: false });
+    ws["!cols"] = columns.map(col => ({ wch: col.width || Math.max(12, col.header.length + 2) }));
+    ws["!autofilter"] = { ref: XLSX.utils.encode_range(XLSX.utils.decode_range(ws["!ref"] || "A1:A1")) };
+    return ws;
+  }
+
+  function addSheet(wb, name, rows, columns) {
+    XLSX.utils.book_append_sheet(wb, makeSheet(rows, columns), name.slice(0, 31));
+  }
+
+  function dashboardExportRows() {
+    const t = totals();
+    return [
+      { metric: "Company-Owned SKUs", value: t.itemsTracked, note: "Distinct items in masterlist" },
+      { metric: "Warehouse Quantity", value: t.warehouseQty, note: "Current main warehouse balance" },
+      { metric: "Site Quantity", value: t.siteQty, note: "Current all project sites balance" },
+      { metric: "Client Supplied Quantity", value: t.clientQty, note: "Current client-supplied balance" },
+      { metric: "Company Inventory Value", value: t.totalValue, note: "Warehouse + site total value" }
+    ];
+  }
+
+  const excelColumns = {
+    dashboard: [
+      { header: "Metric", key: "metric", width: 28 },
+      { header: "Value", key: "value", width: 18 },
+      { header: "Note", key: "note", width: 46 }
+    ],
+    masterlist: [
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty", value: x => warrantyLabel(x.warrantyMonths, x.category), width: 14 },
+      { header: "Total Qty", key: "quantity", width: 14 },
+      { header: "Total Value", value: x => Number(x.quantity || 0) * Number(x.unitCost || 0), width: 16 }
+    ],
+    warehouse: [
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Quantity", key: "quantity", width: 14 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Minimum Stock", value: x => minStockLabel(x.minStock, x.category), width: 16 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 }
+    ],
+    sites: [
+      { header: "Site", key: "site", width: 22 },
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Quantity", key: "quantity", width: 14 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 }
+    ],
+    monitoring: [
+      { header: "Site", key: "site", width: 22 },
+      { header: "Count Date", key: "date", width: 16 },
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Total Delivered", key: "totalDelivered", width: 16 },
+      { header: "Remaining Stock", key: "remainingStock", width: 16 },
+      { header: "Total Used", key: "totalUsed", width: 14 },
+      { header: "Usage %", key: "usagePercent", width: 12 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 },
+      { header: "Remarks", key: "remarks", width: 36 }
+    ],
+    client: [
+      { header: "Site", key: "site", width: 22 },
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Quantity", key: "quantity", width: 14 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 }
+    ],
+    movements: [
+      { header: "Date", key: "date", width: 16 },
+      { header: "Type", value: x => prettyType(x.type), width: 24 },
+      { header: "From", value: x => movementFrom(x), width: 22 },
+      { header: "To", value: x => movementTo(x), width: 22 },
+      { header: "Source Site", key: "site", width: 22 },
+      { header: "Destination Site", key: "toSite", width: 22 },
+      { header: "Item Code", key: "code", width: 16 },
+      { header: "Item Name", key: "name", width: 28 },
+      { header: "Category", key: "category", width: 28 },
+      { header: "Quantity", key: "quantity", width: 14 },
+      { header: "Unit", key: "unit", width: 12 },
+      { header: "Unit Cost", key: "unitCost", width: 14 },
+      { header: "Purchase Date", key: "purchaseDate", width: 16 },
+      { header: "Warranty Months", value: x => isWarrantyCategory(x.category) ? Number(x.warrantyMonths || 0) : "N/A", width: 16 },
+      { header: "Reference", key: "reference", width: 32 }
+    ],
+    settings: [
+      { header: "Setting", key: "setting", width: 24 },
+      { header: "Value", key: "value", width: 48 }
+    ]
+  };
+
+  function exportExcel() {
+    if (!ensureXLSX()) return;
+    const wb = XLSX.utils.book_new();
+    addSheet(wb, "Dashboard", dashboardExportRows(), excelColumns.dashboard);
+    addSheet(wb, "Masterlist", companyMasterlist(), excelColumns.masterlist);
+    addSheet(wb, "Warehouse", state.warehouseItems || [], excelColumns.warehouse);
+    addSheet(wb, "Project Sites", state.siteItems || [], excelColumns.sites);
+    addSheet(wb, "Site Monitoring", getSiteMonitoringRows("ALL"), excelColumns.monitoring);
+    addSheet(wb, "Client Supplied", state.clientItems || [], excelColumns.client);
+    addSheet(wb, "Stock Movements", state.movements || [], excelColumns.movements);
+    addSheet(wb, "Settings", [
+      { setting: "Project Sites", value: (state.settings.sites || []).join("\n") },
+      { setting: "Site Alert Percent", value: Number(state.settings.siteAlertPercent || 20) }
+    ], excelColumns.settings);
+    XLSX.writeFile(wb, `construction_inventory_${excelTimestamp()}.xlsx`);
+  }
+
+  function readSheet(workbook, sheetName) {
+    const name = workbook.SheetNames.find(n => n.toLowerCase() === sheetName.toLowerCase());
+    if (!name) return [];
+    return XLSX.utils.sheet_to_json(workbook.Sheets[name], { defval: "" });
+  }
+
+  function rowVal(row, names) {
+    for (const name of names) {
+      if (Object.prototype.hasOwnProperty.call(row, name)) return row[name];
+    }
+    const lower = Object.fromEntries(Object.entries(row).map(([k, v]) => [String(k).trim().toLowerCase(), v]));
+    for (const name of names) {
+      const v = lower[String(name).trim().toLowerCase()];
+      if (v !== undefined) return v;
+    }
+    return "";
+  }
+
+  function numVal(v) {
+    if (v === "N/A" || v === null || v === undefined || v === "") return 0;
+    const n = Number(String(v).replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  function dateVal(v) {
+    if (!v) return "";
+    if (v instanceof Date) return v.toISOString().slice(0,10);
+    if (typeof v === "number") {
+      const d = XLSX.SSF.parse_date_code(v);
+      if (d) return `${d.y}-${String(d.m).padStart(2,"0")}-${String(d.d).padStart(2,"0")}`;
+    }
+    return String(v).slice(0,10);
+  }
+
+  function warrantyImportVal(v, category) {
+    return isWarrantyCategory(category) ? numVal(v) : 0;
+  }
+
+  function importExcel(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!ensureXLSX()) {
+      e.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const wb = XLSX.read(reader.result, { type: "array", cellDates: true });
+
+        const warehouse = readSheet(wb, "Warehouse").map(r => applyBusinessRules({
+          code: rowVal(r, ["Item Code", "Code"]),
+          name: rowVal(r, ["Item Name", "Item"]),
+          category: rowVal(r, ["Category"]),
+          quantity: numVal(rowVal(r, ["Quantity", "Qty"])),
+          unit: rowVal(r, ["Unit"]),
+          unitCost: numVal(rowVal(r, ["Unit Cost"])),
+          minStock: numVal(rowVal(r, ["Minimum Stock", "Min"])),
+          purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"]))
+        })).filter(x => x.name && x.category);
+
+        const siteItems = readSheet(wb, "Project Sites").map(r => applyBusinessRules({
+          site: rowVal(r, ["Site"]),
+          code: rowVal(r, ["Item Code", "Code"]),
+          name: rowVal(r, ["Item Name", "Item"]),
+          category: rowVal(r, ["Category"]),
+          quantity: numVal(rowVal(r, ["Quantity", "Qty"])),
+          unit: rowVal(r, ["Unit"]),
+          unitCost: numVal(rowVal(r, ["Unit Cost"])),
+          purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"]))
+        })).filter(x => x.site && x.name && x.category);
+
+        const clientItems = readSheet(wb, "Client Supplied").map(r => applyBusinessRules({
+          site: rowVal(r, ["Site"]),
+          code: rowVal(r, ["Item Code", "Code"]),
+          name: rowVal(r, ["Item Name", "Item"]),
+          category: rowVal(r, ["Category"]),
+          quantity: numVal(rowVal(r, ["Quantity", "Qty"])),
+          unit: rowVal(r, ["Unit"]),
+          unitCost: numVal(rowVal(r, ["Unit Cost"])),
+          purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"]))
+        })).filter(x => x.site && x.name && x.category);
+
+        const movements = readSheet(wb, "Stock Movements").map(r => applyBusinessRules({
+          date: dateVal(rowVal(r, ["Date"])),
+          type: normalizeMovementType(rowVal(r, ["Type"])),
+          site: rowVal(r, ["Source Site", "From", "Site"]),
+          toSite: rowVal(r, ["Destination Site", "To"]),
+          code: rowVal(r, ["Item Code", "Code"]),
+          name: rowVal(r, ["Item Name", "Item"]),
+          category: rowVal(r, ["Category"]),
+          quantity: numVal(rowVal(r, ["Quantity", "Qty"])),
+          unit: rowVal(r, ["Unit"]),
+          unitCost: numVal(rowVal(r, ["Unit Cost"])),
+          purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
+          warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), rowVal(r, ["Category"])),
+          reference: rowVal(r, ["Reference"])
+        })).filter(x => x.name && x.category);
+
+        const siteStockCounts = readSheet(wb, "Site Monitoring").map(r => {
+          const category = rowVal(r, ["Category"]);
+          return {
+            site: rowVal(r, ["Site"]),
+            date: dateVal(rowVal(r, ["Count Date", "Last Count Date", "Date"])),
+            code: rowVal(r, ["Item Code", "Code"]),
+            name: rowVal(r, ["Item Name", "Item"]),
+            category,
+            totalDelivered: numVal(rowVal(r, ["Total Delivered"])),
+            remainingStock: numVal(rowVal(r, ["Remaining Stock"])),
+            totalUsed: numVal(rowVal(r, ["Total Used"])),
+            usagePercent: numVal(rowVal(r, ["Usage %"])),
+            unit: rowVal(r, ["Unit"]),
+            unitCost: numVal(rowVal(r, ["Unit Cost"])),
+            purchaseDate: dateVal(rowVal(r, ["Purchase Date"])),
+            warrantyMonths: warrantyImportVal(rowVal(r, ["Warranty Months", "Warranty"]), category),
+            remarks: rowVal(r, ["Remarks"])
+          };
+        }).filter(x => x.site && x.name && x.category);
+
+        const settingsRows = readSheet(wb, "Settings");
+        let sites = state.settings.sites || clone(emptyState.settings.sites);
+        let siteAlertPercent = Number(state.settings.siteAlertPercent || 20);
+        settingsRows.forEach(r => {
+          const setting = String(rowVal(r, ["Setting"])).trim().toLowerCase();
+          const value = rowVal(r, ["Value"]);
+          if (setting === "project sites") sites = String(value).split(/\r?\n|,/).map(x => x.trim()).filter(Boolean);
+          if (setting === "site alert percent") siteAlertPercent = numVal(value) || 20;
+        });
+
+        state = {
+          settings: { sites: sites.length ? sites : clone(emptyState.settings.sites), siteAlertPercent },
+          warehouseItems: warehouse,
+          siteItems,
+          clientItems,
+          movements,
+          siteStockCounts
+        };
+        activeSiteFilter = "ALL";
+        categoryFilters = { masterlist:"ALL", warehouse:"ALL", sites:"ALL", client:"ALL" };
+        renderAll();
+        alert("Excel data imported successfully.");
+      } catch (err) {
+        console.error(err);
+        alert("Invalid or unsupported Excel file.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    e.target.value = "";
   }
 
   function initDates() {
@@ -1760,7 +2344,7 @@ const InventoryApp = (() => {
     renderAll();
   }
 
-  return { init, exportTableCSV };
+  return { init, exportExcel };
 })();
 
 window.addEventListener("DOMContentLoaded", InventoryApp.init);
