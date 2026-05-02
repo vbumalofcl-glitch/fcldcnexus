@@ -2580,14 +2580,13 @@ body:hover .hollywood {
                 });
                 sequentialLines.forEach(line => line.classList.add("is-visible"));
                 if (intro instanceof HTMLElement) intro.classList.remove("is-blinking");
-                return;
-            }
-
-            sequentialLines.forEach(line => line.classList.remove("is-visible"));
-            try {
-                window.sessionStorage.setItem(animationSessionKey, 'yes');
-            } catch (e) {
-                // If sessionStorage is blocked, still run normally for this opening.
+            } else {
+                sequentialLines.forEach(line => line.classList.remove("is-visible"));
+                try {
+                    window.sessionStorage.setItem(animationSessionKey, 'yes');
+                } catch (e) {
+                    // If sessionStorage is blocked, still run normally for this opening.
+                }
             }
 
             function setupSidebarSubSystem(toggleId, panelId) {
@@ -2620,17 +2619,33 @@ body:hover .hollywood {
                         left = Math.max(16, window.innerWidth - panelWidth - 16);
                     }
 
+                    // Temporarily make the panel measurable even while closed.
+                    const wasOpen = panel.classList.contains("is-open");
+                    if (!wasOpen) {
+                        panel.style.visibility = "hidden";
+                        panel.style.pointerEvents = "none";
+                        panel.classList.add("is-open");
+                    }
+
                     const maxTop = Math.max(16, window.innerHeight - panel.offsetHeight - 16);
                     top = Math.min(top, maxTop);
+
+                    if (!wasOpen) {
+                        panel.classList.remove("is-open");
+                        panel.style.visibility = "";
+                        panel.style.pointerEvents = "";
+                    }
 
                     panel.style.left = left + "px";
                     panel.style.top = top + "px";
                 }
 
                 toggle.addEventListener("click", function (event) {
+                    event.preventDefault();
                     event.stopPropagation();
-                    const willOpen = !panel.classList.contains("is-open");
 
+                    // Always show the matching subsystem every time its button is clicked.
+                    // The other subsystem is closed first so QS and QAQC do not overlap.
                     document.querySelectorAll(".qaqc-panel.is-open").forEach(openPanel => {
                         if (openPanel !== panel) {
                             openPanel.classList.remove("is-open");
@@ -2638,10 +2653,9 @@ body:hover .hollywood {
                         }
                     });
 
-                    if (willOpen) positionPanel();
-
-                    const isOpen = panel.classList.toggle("is-open");
-                    panel.setAttribute("aria-hidden", String(!isOpen));
+                    positionPanel();
+                    panel.classList.add("is-open");
+                    panel.setAttribute("aria-hidden", "false");
                 });
 
                 panel.addEventListener("click", function (event) {
@@ -2658,31 +2672,33 @@ body:hover .hollywood {
             setupSidebarSubSystem("sb-qs", "qsPanel");
             setupSidebarSubSystem("sb-qaqc", "qaqcPanel");
 
-            const revealDelayMs = 2000;
+            if (!hasRunOpeningAnimation) {
+                const revealDelayMs = 2000;
 
-            // Animation repair for exported HTML:
-            // Exported files may already contain .is-visible after the page was saved,
-            // so the transition has no starting hidden state. Reset first, force reflow,
-            // then add .is-visible again in sequence.
-            // Blinking has been removed, so the intro logo stays visible/static.
-            sequentialLines.forEach(function (line) {
-                line.classList.remove("is-visible");
-            });
-
-            if (intro instanceof HTMLElement) {
-                intro.classList.remove("is-blinking");
-            }
-
-            window.requestAnimationFrame(function () {
-                // Force browser to apply the hidden state before starting animation.
-                document.body.offsetHeight;
-
-                sequentialLines.forEach(function (line, index) {
-                    window.setTimeout(function () {
-                        line.classList.add("is-visible");
-                    }, index * revealDelayMs);
+                // Animation repair for exported HTML:
+                // Exported files may already contain .is-visible after the page was saved,
+                // so the transition has no starting hidden state. Reset first, force reflow,
+                // then add .is-visible again in sequence.
+                // Blinking has been removed, so the intro logo stays visible/static.
+                sequentialLines.forEach(function (line) {
+                    line.classList.remove("is-visible");
                 });
-            });
+
+                if (intro instanceof HTMLElement) {
+                    intro.classList.remove("is-blinking");
+                }
+
+                window.requestAnimationFrame(function () {
+                    // Force browser to apply the hidden state before starting animation.
+                    document.body.offsetHeight;
+
+                    sequentialLines.forEach(function (line, index) {
+                        window.setTimeout(function () {
+                            line.classList.add("is-visible");
+                        }, index * revealDelayMs);
+                    });
+                });
+            }
         });
     </script>
 
