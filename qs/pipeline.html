@@ -23,11 +23,14 @@
         body.dark-mode .subtitle, body.dark-mode .text-muted, body.dark-mode th, body.dark-mode .dashboard-card-label { color: #b8c7d9; }
 
         .view-switcher, .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-        .view-btn, .tab, .theme-toggle, .btn {
+        .view-btn, .tab, .theme-toggle, .home-btn, .btn {
             padding: 6px 12px; border: none; border-radius: 999px; cursor: pointer; font-size: 12px; font-weight: bold;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
         }
         .view-btn, .tab { background: linear-gradient(135deg, #e9eef5, #dfe7f1); color: #2c3e50; }
         .view-btn.active, .tab.active { background: linear-gradient(135deg, #3498db, #6c5ce7); color: #fff; }
+        .home-btn { background: linear-gradient(135deg, #27ae60, #2ecc71); color: #fff; }
+        .home-btn-icon { font-size: 14px; line-height: 1; }
         .theme-toggle { margin-left: auto; background: linear-gradient(135deg, #2c3e50, #4b6584); color: #fff; }
         body.dark-mode .view-btn { background: linear-gradient(135deg, #253544, #1e2c3a); color: #e6edf5; }
         body.dark-mode .view-btn.active { background: linear-gradient(135deg, #6c5ce7, #3498db); color: #fff; }
@@ -236,6 +239,7 @@
     <div class="subtitle">Dynamic pipeline with VO tracking, approval workflow, and cost integration.</div>
 
     <div class="view-switcher">
+        <a class="home-btn" href="index.html" aria-label="Go to home page"><span class="home-btn-icon" aria-hidden="true">⌂</span> Home</a>
         <button class="view-btn" id="tableViewBtn">Project Sheet</button>
         <button class="view-btn active" id="dashboardViewBtn">Dashboard Sheet</button>
         <button class="theme-toggle" id="themeToggleBtn">Dark Mode</button>
