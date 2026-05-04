@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Construction Manpower Registry</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f8; color: #1f2937; }
+    header { background: linear-gradient(135deg, #172554, #1f6feb); color: white; padding: 12px 20px; }
+    .wrap { max-width: 1380px; margin: 0 auto; padding: 0 20px; }
+    .header-wrap { max-width: 1380px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    h1 { margin: 0 0 2px; font-size: 24px; line-height: 1.1; }
+    h2 { margin: 0; font-size: 20px; }
+    h3 { margin: 12px 0 8px; }
+    .subtitle { margin: 0; color: #dbeafe; line-height: 1.2; max-width: 850px; font-size: 13px; }
+    .company-box { min-width: 280px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); border-radius: 14px; padding: 14px; }
+    .company-box label { color: #dbeafe; }
+    .company-box input { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.35); color: white; }
+    main { max-width: 100%; margin: 12px auto 40px; padding: 0 10px; }
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .tab-btn { border: 1px solid #d1d5db; background: white; color: #1f2937; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 700; }
+    .tab-btn.active, .tab-btn:hover { background: #1f6feb; color: white; border-color: #1f6feb; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 12px; align-items: start; }
+    @media (max-width: 1050px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: white; border-radius: 14px; box-shadow: 0 8px 22px rgba(15,23,42,.07); border: 1px solid #e5e7eb; margin-bottom: 12px; overflow: hidden; }
+    .card-head { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .card-body { padding: 12px; }
+    .form-toggle-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; font-size: 11px; border-radius: 999px; }
+    .form-toggle-btn .toggle-icon { font-size: 10px; line-height: 1; }
+    .collapsible-body.hidden { display: none !important; }
+    .grid.manpower-form-collapsed { grid-template-columns: 1fr; }
+    .grid.manpower-form-collapsed #addManpowerCard { max-width: 100%; margin-bottom: 0; }
+    .grid.manpower-form-collapsed #addManpowerCard .card-head { padding: 8px 12px; }
+    .grid.manpower-form-collapsed #manpowerRecordsCard { grid-column: 1 / -1; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .full { grid-column: 1 / -1; }
+    @media (max-width: 800px) { .form-grid { grid-template-columns: 1fr; } .full { grid-column: auto; } }
+    label { display: block; font-weight: 700; font-size: 12px; color: #374151; margin-bottom: 6px; }
+    input, select, textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 8px; padding: 7px 8px; font-size: 12px; background: white; color: #1f2937; outline: none; }
+    textarea { min-height: 54px; resize: vertical; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    button { border: 0; border-radius: 8px; padding: 7px 10px; font-weight: 700; cursor: pointer; font-size: 12px; }
+    .primary { background: #1f6feb; color: white; }
+    .secondary { background: #e5e7eb; color: #111827; }
+    .danger { background: #fee2e2; color: #dc2626; }
+    .success { background: #dcfce7; color: #16a34a; }
+    .toolbar { display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .search-wrap { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+    .search-wrap input, .search-wrap select { max-width: 220px; }
+    .table-wrap { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 10px; width: 100%; }
+    table { width: 100%; border-collapse: collapse; min-width: 900px; background: white; table-layout: auto; }
+    th, td { border-bottom: 1px solid #e5e7eb; padding: 6px 7px; text-align: left; vertical-align: top; font-size: 11px; line-height: 1.25; }
+    th { background: #f9fafb; color: #374151; }
+    .pill { display: inline-flex; padding: 3px 6px; border-radius: 999px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .regular { background: #dcfce7; color: #166534; }
+    .contractual { background: #fef3c7; color: #92400e; }
+    .consultant { background: #e0e7ff; color: #3730a3; }
+    .available { background: #dbeafe; color: #1d4ed8; }
+    .assigned { background: #ffedd5; color: #c2410c; }
+    .on-leave { background: #f3e8ff; color: #7e22ce; }
+    .inactive { background: #fee2e2; color: #991b1b; }
+    .mini-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .mini-btns button { padding: 5px 7px; font-size: 11px; }
+    .icon-btns { display: flex; gap: 2px; justify-content: center; align-items: center; flex-wrap: nowrap; }
+    .icon-btn { width: 22px; height: 22px; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; line-height: 1; border-radius: 6px; }
+    .action-cell { width: 82px; min-width: 82px; text-align: center; padding-left: 4px !important; padding-right: 4px !important; }
+    #projects th:last-child { width: 82px; min-width: 82px; text-align: center; white-space: nowrap; }
+    .stats { display: grid; grid-template-columns: repeat(5, minmax(145px, 1fr)); gap: 12px; margin-bottom: 14px; }
+    @media (max-width: 1000px) { .stats { grid-template-columns: repeat(3, minmax(145px, 1fr)); } }
+    @media (max-width: 700px) { .stats { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 92px;
+      background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+      border-radius: 18px;
+      padding: 14px 14px 13px;
+      box-shadow: 0 14px 34px rgba(15,23,42,.10);
+      border: 1px solid #dbe7f6;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(15,23,42,.14); }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: linear-gradient(180deg, #1f6feb, #60a5fa);
+    }
+    .stat-card::after {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: #eef6ff;
+      color: #1d4ed8;
+      font-size: 17px;
+      box-shadow: inset 0 0 0 1px rgba(29,78,216,.10);
+    }
+    .stat-card:nth-child(1)::after { content: '👥'; }
+    .stat-card:nth-child(2)::after { content: '✅'; background: #ecfdf5; color: #047857; }
+    .stat-card:nth-child(3)::after { content: '📋'; background: #fffbeb; color: #b45309; }
+    .stat-card:nth-child(4)::after { content: '💼'; background: #eef2ff; color: #4338ca; }
+    .stat-card:nth-child(5)::after { content: '₱'; background: #f0fdf4; color: #15803d; font-weight: 900; }
+    .stat-card span { color: #64748b; font-size: 10.5px; font-weight: 900; text-transform: uppercase; letter-spacing: .065em; padding-right: 38px; }
+    .stat-card strong { display: block; margin-top: 10px; font-size: 24px; color: #0f172a; letter-spacing: -.03em; }
+    .stat-card:nth-child(5) strong { font-size: 20px; }
+    .hint { color: #6b7280; font-size: 11px; line-height: 1.3; margin-top: 5px; }
+    .hidden { display: none !important; }
+    .project-link { background: none; border: 0; color: #1f6feb; padding: 0; font-weight: 800; text-align: left; text-decoration: underline; }
+    .project-manpower-box { display: grid; grid-template-columns: 1fr; gap: 8px; max-height: 420px; overflow: auto; border: 1px solid #d1d5db; border-radius: 12px; padding: 10px; background: #fafafa; }
+    .check-row { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: start; padding: 8px; border-radius: 10px; background: white; border: 1px solid #e5e7eb; }
+    .check-row input { width: auto; margin-top: 3px; }
+    .check-row small { color: #6b7280; display: block; margin-top: 2px; }
+    .modal { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,.55); }
+    .modal-card { position: relative; width: min(920px, 96vw); max-height: 90vh; overflow: auto; background: white; border-radius: 16px; box-shadow: 0 24px 80px rgba(15,23,42,.35); border: 1px solid #e5e7eb; }
+    @media print { header, .tabs, form, .toolbar, .no-print, .mini-btns, .modal { display: none !important; } main { max-width: none; margin: 0; padding: 0; } .panel { display: block !important; } .grid { display: block; } .card { box-shadow: none; border: none; } table { min-width: auto; } th, td { font-size: 10px; padding: 5px; } }
+  
+
+    /* Polished auto-fit table style for Manpower Records */
+    .manpower-records-wrap {
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+      background: white;
+    }
+    .manpower-records-table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      table-layout: auto;
+    }
+    .manpower-records-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: linear-gradient(135deg, #172554, #1f6feb);
+      color: white;
+      border-bottom: 0;
+      border-right: 1px solid rgba(255,255,255,.18);
+      padding: 8px 7px;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .manpower-records-table thead th:first-child { border-top-left-radius: 13px; }
+    .manpower-records-table thead th:last-child { border-top-right-radius: 13px; border-right: 0; }
+    .manpower-records-table tbody td {
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #edf2f7;
+      padding: 5px 7px;
+      font-size: 10.5px;
+      line-height: 1.15;
+      background: white;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+      width: auto;
+      max-width: 240px;
+    }
+    .manpower-records-table th {
+      width: auto;
+    }
+    .manpower-records-table td:nth-child(1),
+    .manpower-records-table td:nth-child(5),
+    .manpower-records-table td:nth-child(6),
+    .manpower-records-table td:nth-child(7),
+    .manpower-records-table td:nth-child(10) {
+      max-width: none;
+    }
+    .manpower-records-table td:nth-child(8),
+    .manpower-records-table td:nth-child(9),
+    .manpower-records-table td:nth-child(11),
+    .manpower-records-table td:nth-child(12) {
+      max-width: 220px;
+    }
+    .manpower-records-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    .manpower-records-table tbody tr:hover td { background: #eef6ff; }
+    .manpower-records-table tbody td:last-child { border-right: 0; }
+    .manpower-records-table tbody tr:last-child td { border-bottom: 0; }
+    .manpower-records-table td:nth-child(2) strong { color: #172554; font-size: 11px; }
+    .manpower-records-table td:nth-child(10),
+    .manpower-records-table th:nth-child(10) { white-space: nowrap; text-align: right; }
+    .manpower-records-table td:nth-child(11) {
+      color: #1d4ed8;
+      font-weight: 700;
+    }
+    .manpower-records-table .pill {
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,.06);
+      padding: 2px 5px;
+      font-size: 9.5px;
+    }
+    .manpower-records-table small { display: inline; color: #64748b; font-size: 10px; }
+    .manpower-records-table th:last-child,
+    .manpower-records-table td:last-child {
+      width: 82px;
+      min-width: 82px;
+      text-align: center;
+      padding-left: 4px;
+      padding-right: 4px;
+    }
+    .manpower-records-table .icon-btn,
+    .manpower-records-table .mini-btns button {
+      box-shadow: 0 1px 2px rgba(15,23,42,.12);
+    }
+    .manpower-records-table .icon-btn {
+      width: 21px;
+      height: 21px;
+      font-size: 10.5px;
+      border-radius: 6px;
+    }
+    .manpower-records-table .icon-btns { gap: 2px; }
+
+    #manpowerRecordsCard { overflow: visible; }
+    #manpowerRecordsCard .card-head { overflow: visible; position: relative; z-index: 30; }
+    #manpowerRecordsCard .card-body { position: relative; z-index: 1; }
+    .column-dropdown { position: relative; display: inline-flex; align-items: center; }
+    .column-toggle-btn { white-space: nowrap; }
+    .column-menu {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 6px);
+      z-index: 9999;
+      width: 260px;
+      max-height: min(70vh, 620px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 18px 45px rgba(15,23,42,.18);
+      padding: 8px;
+    }
+    .column-menu-title {
+      margin: 2px 4px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .column-option {
+      display: grid;
+      grid-template-columns: 18px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 6px 7px;
+      border-radius: 8px;
+      color: #1f2937;
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0;
+      cursor: pointer;
+    }
+    .column-option:hover { background: #f1f5f9; }
+    .column-option input { width: auto; margin: 0; }
+    .manpower-records-table .col-hidden { display: none !important; }
+    .assigned-records-table .col-hidden { display: none !important; }
+    #assignedSheetCard { overflow: visible; }
+    #assignedSheetCard .card-head, #assignedSheetCard .card-body { overflow: visible; position: relative; }
+
+    #dashboard .dashboard-summary-card {
+      border: 1px solid #dbe7f6;
+      border-radius: 18px;
+      box-shadow: 0 16px 38px rgba(15,23,42,.10);
+      overflow: hidden;
+    }
+    #dashboard .dashboard-summary-card .card-head {
+      background: linear-gradient(135deg, #f8fbff, #eef6ff);
+      border-bottom: 1px solid #dbe7f6;
+      padding: 13px 15px;
+    }
+    #dashboard .dashboard-summary-card h2 { color: #172554; letter-spacing: -.02em; }
+    #dashboard .dashboard-table-wrap {
+      overflow-x: auto;
+      border: 1px solid #cbd5e1;
+      border-radius: 15px;
+      box-shadow: 0 10px 24px rgba(15,23,42,.07);
+      background: white;
+    }
+    #dashboard .dashboard-summary-table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: auto;
+      background: white;
+    }
+    #dashboard .dashboard-summary-table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: linear-gradient(135deg, #172554, #1f6feb);
+      color: white;
+      border-bottom: 0;
+      border-right: 1px solid rgba(255,255,255,.18);
+      padding: 9px 8px;
+      font-size: 10px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    #dashboard .dashboard-summary-table thead th:first-child { border-top-left-radius: 14px; }
+    #dashboard .dashboard-summary-table thead th:last-child { border-top-right-radius: 14px; border-right: 0; }
+    #dashboard .dashboard-summary-table tbody td {
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #eef2f7;
+      padding: 8px 8px;
+      font-size: 11px;
+      line-height: 1.2;
+      vertical-align: middle;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 260px;
+      background: white;
+    }
+    #dashboard .dashboard-summary-table tbody tr:nth-child(even) td { background: #f8fafc; }
+    #dashboard .dashboard-summary-table tbody tr:hover td { background: #eef6ff; }
+    #dashboard .dashboard-summary-table tbody td:last-child { border-right: 0; }
+    #dashboard .dashboard-summary-table tbody tr:last-child td { border-bottom: 0; }
+    #dashboard .dashboard-summary-table td:first-child strong { color: #172554; font-size: 11.5px; }
+    #dashboard .dashboard-summary-table td:nth-child(8),
+    #dashboard .dashboard-summary-table th:nth-child(8) { text-align: right; max-width: none; }
+    #dashboard .dashboard-assigned-list { color: #334155; font-weight: 700; }
+    #dashboard .dashboard-skill-list { color: #475569; }
+    #dashboard .dashboard-status-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 74px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 9.5px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    #dashboard .dashboard-empty-row td { text-align: center; color: #64748b; padding: 18px 10px; }
+    #projects table { min-width: 100%; }
+    #projects th, #projects td { font-size: 10.5px; padding: 5px 6px; }
+    #assignedSheet .assigned-project-block {
+      margin-bottom: 18px;
+      background: #ffffff;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 22px rgba(15,23,42,.06);
+    }
+    #assignedSheet .assigned-project-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 11px 13px;
+      background: linear-gradient(135deg, #eef6ff, #ffffff);
+      border-bottom: 1px solid #dbe3ef;
+    }
+    #assignedSheet .assigned-project-head h3 {
+      margin: 0;
+      font-size: 15px;
+      color: #172554;
+      line-height: 1.2;
+    }
+    #assignedSheet .assigned-project-meta {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.3;
+      font-weight: 700;
+    }
+    #assignedSheet .assigned-count-pill {
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 86px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    #assignedSheet .table-wrap {
+      border: 0;
+      border-radius: 0;
+    }
+    #assignedSheet table {
+      min-width: 1200px;
+      width: max-content;
+      table-layout: auto;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    #assignedSheet th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: linear-gradient(135deg, #172554, #1f6feb);
+      color: #ffffff;
+      font-size: 10px;
+      padding: 7px 8px;
+      line-height: 1.15;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      border-bottom: 1px solid #1d4ed8;
+    }
+    #assignedSheet td {
+      font-size: 10.5px;
+      padding: 6px 8px;
+      line-height: 1.2;
+      white-space: nowrap;
+      max-width: 210px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    #assignedSheet tbody tr:nth-child(even) { background: #f8fafc; }
+    #assignedSheet tbody tr:hover { background: #eff6ff; }
+    #assignedSheet td:nth-child(4) {
+      font-weight: 800;
+      color: #111827;
+      min-width: 150px;
+    }
+    #assignedSheet td:nth-child(10),
+    #assignedSheet td:nth-child(11),
+    #assignedSheet td:nth-child(13) { max-width: 260px; }
+    #assignedSheet td:nth-child(12) { text-align: right; min-width: 115px; }
+    #assignedSheet .empty-assigned-row td {
+      color: #64748b;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-wrap">
+      <div>
+        <h1>MANPOWER REGISTRY</h1>
+        <p class="subtitle">FCLaranang DEVELOPMENT CORPORATION</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="tabs no-print">
+      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="manpower">Manpower Sheet</button>
+      <button class="tab-btn" data-tab="projects">Projects Sheet</button>
+      <button class="tab-btn" data-tab="assignedSheet">Assigned Manpower Sheet</button>
+      <button class="tab-btn" data-tab="reports">Reports / Export</button>
+    </div>
+
+    <section id="dashboard" class="panel active">
+      <div class="stats">
+        <div class="stat-card"><span>Total Manpower</span><strong id="statTotal">0</strong></div>
+        <div class="stat-card"><span>Regular</span><strong id="statRegular">0</strong></div>
+        <div class="stat-card"><span>Contractual</span><strong id="statContractual">0</strong></div>
+        <div class="stat-card"><span>Consultant</span><strong id="statConsultant">0</strong></div>
+        <div class="stat-card"><span>Total Monthly Salary</span><strong id="statSalary">PHP 0.00</strong></div>
+      </div>
+      <div class="card dashboard-summary-card">
+        <div class="card-head"><h2>Project Manpower Summary</h2><button class="secondary no-print" onclick="window.print()">Print Records</button></div>
+        <div class="card-body">
+          <div class="table-wrap dashboard-table-wrap">
+            <table class="dashboard-summary-table">
+              <thead><tr><th>Project Name</th><th>Location</th><th>Start Date</th><th>Target End Date</th><th>Assigned Manpower</th><th>Skills Available</th><th>Project Status</th><th>Total Monthly Salary</th></tr></thead>
+              <tbody id="dashboardProjectsBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="manpower" class="panel">
+      <div class="grid" id="manpowerGrid">
+        <div class="card" id="addManpowerCard">
+          <div class="card-head">
+            <h2 id="manpowerFormTitle">Add Manpower</h2>
+            <button id="toggleManpowerFormBtn" class="secondary no-print form-toggle-btn" type="button" onclick="toggleManpowerForm()"><span class="toggle-icon">▲</span><span>Hide Add Manpower</span></button>
+          </div>
+          <div class="card-body collapsible-body" id="addManpowerBody">
+            <form id="manpowerForm">
+              <input type="hidden" id="manpowerId" />
+              <div class="form-grid">
+                <div><label for="employeeNo">Employee / ID No.</label><input id="employeeNo" placeholder="e.g., MP-001" /></div>
+                <div><label for="firstName">First Name *</label><input id="firstName" required placeholder="Given name" /></div>
+                <div><label for="middleName">Middle Name</label><input id="middleName" placeholder="Middle name" /></div>
+                <div><label for="familyName">Family Name *</label><input id="familyName" required placeholder="Surname / last name" /></div>
+                <div><label for="position">Position / Trade</label><input id="position" placeholder="e.g., Mason, Foreman" /></div>
+                <div><label for="skills">Skills *</label><input id="skills" required placeholder="Carpentry, Masonry, Welding" /></div>
+                <div><label for="status">Employment Status *</label><select id="status" required><option value="Regular">Regular</option><option value="Contractual">Contractual</option><option value="Consultant">Consultant</option></select></div>
+                <div><label for="availability">Availability Status</label><select id="availability"><option value="Available">Available</option><option value="Assigned">Assigned</option><option value="On Leave">On Leave</option><option value="Inactive">Inactive</option></select></div>
+                <div><label for="cellphone">Cellphone No. *</label><input id="cellphone" required placeholder="09XX-XXX-XXXX" /></div>
+                <div><label for="birthDate">Birth Date</label><input id="birthDate" type="date" /></div>
+                <div><label for="dateHired">Date Hired</label><input id="dateHired" type="date" /></div>
+                <div><label for="sssTinPagibig">SSS / TIN / Pag-IBIG</label><input id="sssTinPagibig" placeholder="Government IDs" /></div>
+                <div><label for="salaryRate">Salary / Rate</label><input id="salaryRate" type="number" min="0" step="0.01" placeholder="0.00" /></div>
+                <div><label for="salaryType">Salary Type</label><select id="salaryType"><option value="Daily">Daily</option><option value="Weekly">Weekly</option><option value="Semi-Monthly">Semi-Monthly</option><option value="Monthly">Monthly</option><option value="Per Project">Per Project</option></select></div>
+                <div class="full"><label for="address">Complete Address *</label><textarea id="address" required placeholder="House no., street, barangay, city/province"></textarea></div>
+                <div><label for="emergencyContact">Emergency Contact Person *</label><input id="emergencyContact" required placeholder="Name of contact person" /></div>
+                <div><label for="emergencyRelation">Relationship</label><input id="emergencyRelation" placeholder="Spouse, parent, sibling" /></div>
+                <div><label for="emergencyPhone">Emergency Contact No. *</label><input id="emergencyPhone" required placeholder="Contact number" /></div>
+                <div><label for="medicalNotes">Medical / Safety Notes</label><input id="medicalNotes" placeholder="Allergies, restrictions, PPE size" /></div>
+                <div class="full"><label for="remarks">Remarks</label><textarea id="remarks" placeholder="Training certificates, license details, etc."></textarea></div>
+              </div>
+              <div class="actions"><button class="primary" type="submit">Save Manpower</button><button class="secondary" type="button" onclick="resetManpowerForm()">Clear</button></div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card" id="manpowerRecordsCard">
+          <div class="card-head"><h2>Manpower Records</h2><button class="success no-print" onclick="exportManpowerCSV()">Export CSV</button></div>
+          <div class="card-body">
+            <div class="toolbar no-print">
+              <div class="search-wrap">
+                <input id="manpowerSearch" placeholder="Search name, skill, position..." oninput="renderAll()" />
+                <select id="statusFilter" onchange="renderAll()"><option value="">All Employment Status</option><option value="Regular">Regular</option><option value="Contractual">Contractual</option><option value="Consultant">Consultant</option></select>
+                <select id="availabilityFilter" onchange="renderAll()"><option value="">All Availability</option><option value="Available">Available</option><option value="Assigned">Assigned</option><option value="On Leave">On Leave</option><option value="Inactive">Inactive</option></select>
+              </div>
+              <div class="column-dropdown">
+                <button class="secondary column-toggle-btn" type="button" onclick="toggleManpowerColumnMenu(event)">Columns ▾</button>
+                <div id="manpowerColumnMenu" class="column-menu hidden"></div>
+              </div>
+            </div>
+            <div class="table-wrap manpower-records-wrap">
+              <table class="manpower-records-table">
+                <thead><tr><th data-col="1">ID No.</th><th data-col="2">Name</th><th data-col="3">Position / Trade</th><th data-col="4">Skills</th><th data-col="5">Status</th><th data-col="6">Availability</th><th data-col="7">Cellphone</th><th data-col="8">Address</th><th data-col="9">Emergency Contact</th><th data-col="10">Salary / Rate</th><th data-col="11">Project Assigned</th><th data-col="12">Remarks</th><th data-col="13" class="no-print">Actions</th></tr></thead>
+                <tbody id="manpowerTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects" class="panel">
+      <div class="grid">
+        <div class="card">
+          <div class="card-head"><h2 id="projectFormTitle">Add Project</h2></div>
+          <div class="card-body">
+            <form id="projectForm">
+              <input type="hidden" id="projectId" />
+              <div class="form-grid">
+                <div class="full"><label for="projectName">Project Name *</label><input id="projectName" required placeholder="e.g., Two-Storey Residential Building" /></div>
+                <div class="full"><label for="projectLocation">Project Location</label><textarea id="projectLocation" placeholder="Project address / site location"></textarea></div>
+                <div><label for="projectManager">Project Manager / Engineer</label><input id="projectManager" placeholder="Name" /></div>
+                <div><label for="projectStatus">Project Status</label><select id="projectStatus"><option value="Planning">Planning</option><option value="Ongoing">Ongoing</option><option value="On Hold">On Hold</option><option value="Completed">Completed</option></select></div>
+                <div><label for="startDate">Start Date</label><input id="startDate" type="date" /></div>
+                <div><label for="targetEndDate">Target End Date</label><input id="targetEndDate" type="date" /></div>
+                <div class="full"><label for="projectRemarks">Project Remarks</label><textarea id="projectRemarks" placeholder="Scope, phase, notes, client reminders, etc."></textarea></div>
+              </div>
+              <div class="actions"><button class="primary" type="submit">Save Project</button><button class="secondary" type="button" onclick="resetProjectForm()">Clear</button></div>
+              <p class="hint">After saving a project, click Select Manpower to assign workers. Assigned records appear in the separate Assigned Manpower Sheet.</p>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Projects and Assigned Manpower</h2><button class="success no-print" onclick="exportProjectsCSV()">Export CSV</button></div>
+          <div class="card-body">
+            <div class="toolbar no-print">
+              <div class="search-wrap">
+                <input id="projectSearch" placeholder="Search project, location, manpower..." oninput="renderAll()" />
+                <select id="projectStatusFilter" onchange="renderAll()"><option value="">All Project Status</option><option value="Planning">Planning</option><option value="Ongoing">Ongoing</option><option value="On Hold">On Hold</option><option value="Completed">Completed</option></select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Project Name</th><th>Location</th><th>Project Manager</th><th>Start Date</th><th>Target End Date</th><th>Status</th><th>Total Assigned</th><th>Remarks</th><th class="no-print">Actions</th></tr></thead>
+                <tbody id="projectTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="assignedSheet" class="panel">
+      <div class="card" id="assignedSheetCard">
+        <div class="card-head">
+          <div><h2>Assigned Manpower Records per Project</h2><p class="hint" style="margin:6px 0 0;">This separate sheet shows complete manpower records grouped by project.</p></div>
+          <div class="actions no-print" style="margin-top:0;"><button class="secondary" onclick="window.print()">Print Assigned Sheet</button><button class="success" onclick="exportAssignedSheetCSV()">Export Assigned Sheet CSV</button></div>
+        </div>
+        <div class="card-body">
+          <div class="toolbar no-print">
+            <div class="search-wrap">
+              <select id="assignedProjectFilter" onchange="renderAll()"><option value="">All Projects</option></select>
+              <input id="assignedSheetSearch" placeholder="Search project, name, skill, position..." oninput="renderAll()" />
+            </div>
+            <div class="column-dropdown assigned-column-dropdown">
+              <button class="secondary column-toggle-btn" type="button" onclick="toggleAssignedColumnMenu(event)">Columns ▾</button>
+              <div id="assignedColumnMenu" class="column-menu hidden"></div>
+            </div>
+          </div>
+          <div id="assignedSheetContent"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reports" class="panel">
+      <div class="card">
+        <div class="card-head"><h2>Reports, Backup, Import, and Print</h2></div>
+        <div class="card-body">
+          <p class="hint">Data is stored locally in your browser. Export a JSON backup regularly if you will transfer records to another computer.</p>
+          <div class="actions">
+            <button class="primary" onclick="window.print()">Print All Sheets</button>
+            <button class="success" onclick="exportFormattedExcel()">Export Formatted Excel</button>
+            <button class="secondary" onclick="document.getElementById('excelImportFile').click()">Import Excel</button>
+            <button class="success" onclick="exportBackupJSON()">Download JSON Backup</button>
+            <button class="secondary" onclick="document.getElementById('importFile').click()">Import JSON Backup</button>
+            <input id="excelImportFile" class="hidden" type="file" accept=".xlsx,.xls" onchange="importFormattedExcel(event)" />
+            <button class="danger" onclick="clearAllData()">Clear All Data</button>
+            <input id="importFile" class="hidden" type="file" accept="application/json" onchange="importBackupJSON(event)" />
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="manpowerSelectorModal" class="modal hidden no-print">
+    <div class="modal-backdrop" onclick="closeManpowerSelector()"></div>
+    <div class="modal-card">
+      <div class="card-head">
+        <div><h2 id="selectorProjectTitle">Select Manpower</h2><p class="hint" style="margin:6px 0 0;">Tick workers to assign to the selected project.</p></div>
+        <button class="secondary" onclick="closeManpowerSelector()">Close</button>
+      </div>
+      <div class="card-body">
+        <div class="toolbar"><div class="search-wrap"><input id="selectorSearch" placeholder="Search name, skill, position..." oninput="renderSelectorOptions()" /><select id="selectorAvailabilityFilter" onchange="renderSelectorOptions()"><option value="">All Availability</option><option value="Available">Available</option><option value="Assigned">Assigned</option><option value="On Leave">On Leave</option><option value="Inactive">Inactive</option></select></div></div>
+        <div id="projectManpowerOptions" class="project-manpower-box"></div>
+        <div class="actions"><button class="primary" onclick="saveSelectedProjectManpower()">Save Assignment</button><button class="secondary" onclick="closeManpowerSelector()">Cancel</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="quickAssignModal" class="modal hidden no-print">
+    <div class="modal-backdrop" onclick="closeQuickAssignModal()"></div>
+    <div class="modal-card" style="width:min(560px, 96vw);">
+      <div class="card-head">
+        <div><h2 id="quickAssignTitle">Add to Assigned Manpower Sheet</h2><p class="hint" style="margin:6px 0 0;">Choose a project where this manpower record should be assigned.</p></div>
+        <button class="secondary" onclick="closeQuickAssignModal()">Close</button>
+      </div>
+      <div class="card-body">
+        <div class="form-grid">
+          <div class="full"><label for="quickAssignProject">Project *</label><select id="quickAssignProject"></select></div>
+        </div>
+        <div class="actions"><button class="primary" onclick="saveQuickAssignedManpower()">Add to Assigned Sheet</button><button class="secondary" onclick="closeQuickAssignModal()">Cancel</button></div>
+        <p class="hint">If there are no projects yet, create a project first in the Projects Sheet.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var STORAGE_KEY = 'constructionManpowerRegistry.fixed.v1';
+    var OLD_STORAGE_KEY = 'constructionManpowerRegistry.v1';
+    var state = { manpower: [], projects: [] };
+    var selectedProjectId = '';
+    var quickAssignManpowerId = '';
+    var peso = new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' });
+
+    function uid(prefix) { return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7); }
+    function getEl(id) { return document.getElementById(id); }
+    function getValue(id) { var el = getEl(id); return el ? el.value.trim() : ''; }
+    function setValue(id, value) { var el = getEl(id); if (el) el.value = value || ''; }
+    function normalizeText(value) { return String(value || '').toLowerCase(); }
+    function capitalizeWords(value) { return String(value || '').replace(/(^|[\s\-\/])([a-z])/g, function(match, prefix, letter) { return prefix + letter.toUpperCase(); }); }
+    function setupManpowerCapitalization() {
+      var form = getEl('manpowerForm');
+      if (!form) return;
+      Array.prototype.slice.call(form.querySelectorAll('input:not([type=hidden]):not([type=date]):not([type=number]), textarea')).forEach(function(field) {
+        field.setAttribute('autocapitalize', 'words');
+        field.addEventListener('input', function() {
+          var start = field.selectionStart;
+          var end = field.selectionEnd;
+          var capitalized = capitalizeWords(field.value);
+          if (field.value !== capitalized) {
+            field.value = capitalized;
+            if (typeof start === 'number' && typeof end === 'number') field.setSelectionRange(start, end);
+          }
+        });
+        field.addEventListener('blur', function() { field.value = capitalizeWords(field.value.trim()); });
+      });
+    }
+    function buildFullName(firstName, middleName, familyName) { return [firstName, middleName, familyName].map(function(part) { return String(part || '').trim(); }).filter(Boolean).join(' '); }
+    function splitLegacyFullName(fullName) {
+      var parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
+      if (parts.length <= 1) return { firstName: parts[0] || '', middleName: '', familyName: '' };
+      return { firstName: parts[0], middleName: parts.slice(1, -1).join(' '), familyName: parts[parts.length - 1] };
+    }
+    function statusClass(value) { return normalizeText(value).replace(/\s+/g, '-'); }
+    function escapeHtml(value) { return String(value || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
+    function csvEscape(value) { return '"' + String(value || '').replace(/"/g, '""') + '"'; }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState() {
+      var saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+      if (saved) {
+        try {
+          var parsed = JSON.parse(saved);
+          state.manpower = Array.isArray(parsed.manpower) ? parsed.manpower : [];
+          state.projects = Array.isArray(parsed.projects) ? parsed.projects : [];
+          state.manpower.forEach(function(person) {
+            if ((!person.firstName || !person.familyName) && person.fullName) {
+              var splitName = splitLegacyFullName(person.fullName);
+              person.firstName = person.firstName || splitName.firstName;
+              person.middleName = person.middleName || splitName.middleName;
+              person.familyName = person.familyName || splitName.familyName;
+            }
+            person.fullName = buildFullName(person.firstName, person.middleName, person.familyName) || person.fullName || '';
+          });
+        } catch (error) {
+          console.error('Failed to load saved data', error);
+        }
+      }
+      
+    }
+
+    function setupTabs() {
+      document.querySelectorAll('.tab-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+          document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+          document.querySelectorAll('.panel').forEach(function(panel) { panel.classList.remove('active'); });
+          button.classList.add('active');
+          getEl(button.dataset.tab).classList.add('active');
+        });
+      });
+    }
+
+    function openTab(tabName) {
+      var btn = document.querySelector('[data-tab="' + tabName + '"]');
+      if (btn) btn.click();
+    }
+
+    function salaryMonthlyEquivalent(person) {
+      var rate = Number(person.salaryRate || 0);
+      if (person.salaryType === 'Daily') return rate * 26;
+      if (person.salaryType === 'Weekly') return rate * 4.33;
+      if (person.salaryType === 'Semi-Monthly') return rate * 2;
+      if (person.salaryType === 'Monthly') return rate;
+      return 0;
+    }
+
+    function getAssignedPeople(project) {
+      var ids = new Set(project.assignedManpower || []);
+      return state.manpower.filter(function(person) { return ids.has(person.id); });
+    }
+
+    function updateManpowerAssignmentStatus() {
+      var assigned = new Set();
+      state.projects.forEach(function(project) {
+        (project.assignedManpower || []).forEach(function(id) { assigned.add(id); });
+      });
+      state.manpower.forEach(function(person) {
+        if (assigned.has(person.id) && person.availability !== 'Inactive' && person.availability !== 'On Leave') person.availability = 'Assigned';
+        if (!assigned.has(person.id) && person.availability === 'Assigned') person.availability = 'Available';
+      });
+    }
+
+    function toggleManpowerForm(forceShow) {
+      var body = getEl('addManpowerBody');
+      var button = getEl('toggleManpowerFormBtn');
+      var grid = getEl('manpowerGrid');
+      if (!body || !button) return;
+      var shouldHide = typeof forceShow === 'boolean' ? !forceShow : !body.classList.contains('hidden');
+      body.classList.toggle('hidden', shouldHide);
+      if (grid) grid.classList.toggle('manpower-form-collapsed', shouldHide);
+      button.innerHTML = shouldHide ? '<span class="toggle-icon">▼</span><span>Show Add Manpower</span>' : '<span class="toggle-icon">▲</span><span>Hide Add Manpower</span>';
+      button.setAttribute('aria-expanded', shouldHide ? 'false' : 'true');
+    }
+
+    function resetManpowerForm() {
+      getEl('manpowerForm').reset();
+      setValue('manpowerId', '');
+      setValue('status', 'Regular');
+      setValue('availability', 'Available');
+      setValue('salaryType', 'Daily');
+      getEl('manpowerFormTitle').textContent = 'Add Manpower';
+    }
+
+    function resetProjectForm() {
+      getEl('projectForm').reset();
+      setValue('projectId', '');
+      setValue('projectStatus', 'Planning');
+      getEl('projectFormTitle').textContent = 'Add Project';
+    }
+
+
+    var MANPOWER_COLUMN_PREF_KEY = 'manpowerRecords.hiddenColumns.v1';
+
+    function getManpowerColumnDefinitions() {
+      var headers = Array.prototype.slice.call(document.querySelectorAll('.manpower-records-table thead th'));
+      if (headers.length) {
+        return headers.map(function(header, index) {
+          var label = header.textContent.replace(/\s+/g, ' ').trim() || ('Column ' + (index + 1));
+          return { col: String(header.dataset.col || (index + 1)), label: label };
+        });
+      }
+      return [
+        { col: '1', label: 'ID No.' },
+        { col: '2', label: 'Name' },
+        { col: '3', label: 'Position / Trade' },
+        { col: '4', label: 'Skills' },
+        { col: '5', label: 'Status' },
+        { col: '6', label: 'Availability' },
+        { col: '7', label: 'Cellphone' },
+        { col: '8', label: 'Address' },
+        { col: '9', label: 'Emergency Contact' },
+        { col: '10', label: 'Salary / Rate' },
+        { col: '11', label: 'Project Assigned' },
+        { col: '12', label: 'Remarks' },
+        { col: '13', label: 'Actions' }
+      ];
+    }
+
+    function getHiddenManpowerColumns() {
+      try {
+        var saved = JSON.parse(localStorage.getItem(MANPOWER_COLUMN_PREF_KEY) || '[]');
+        return Array.isArray(saved) ? saved.map(String) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveHiddenManpowerColumns(hiddenColumns) {
+      localStorage.setItem(MANPOWER_COLUMN_PREF_KEY, JSON.stringify(hiddenColumns.map(String)));
+    }
+
+    function setupManpowerColumnControls() {
+      var menu = getEl('manpowerColumnMenu');
+      if (!menu) return;
+      var columns = getManpowerColumnDefinitions();
+      menu.innerHTML = '<div class="column-menu-title">Show / Hide Columns</div>' + columns.map(function(column) {
+        return '<label class="column-option"><input type="checkbox" data-manpower-column="' + escapeHtml(column.col) + '" checked onchange="updateManpowerColumnFromMenu()" /> <span>' + escapeHtml(column.label) + '</span></label>';
+      }).join('');
+      document.addEventListener('click', function(event) {
+        var dropdown = document.querySelector('.column-dropdown');
+        if (dropdown && !dropdown.contains(event.target)) menu.classList.add('hidden');
+      });
+      updateManpowerColumnVisibility();
+    }
+
+    function toggleManpowerColumnMenu(event) {
+      if (event) event.stopPropagation();
+      var menu = getEl('manpowerColumnMenu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function updateManpowerColumnFromMenu() {
+      var hiddenColumns = Array.prototype.slice.call(document.querySelectorAll('[data-manpower-column]')).filter(function(input) {
+        return !input.checked;
+      }).map(function(input) { return String(input.dataset.manpowerColumn); });
+      saveHiddenManpowerColumns(hiddenColumns);
+      updateManpowerColumnVisibility();
+    }
+
+    function updateManpowerColumnVisibility() {
+      var table = document.querySelector('.manpower-records-table');
+      if (!table) return;
+      var hiddenColumns = getHiddenManpowerColumns();
+      Array.prototype.slice.call(document.querySelectorAll('[data-manpower-column]')).forEach(function(input) {
+        input.checked = hiddenColumns.indexOf(String(input.dataset.manpowerColumn)) < 0;
+      });
+      Array.prototype.slice.call(table.querySelectorAll('th, td')).forEach(function(cell) {
+        var col = cell.dataset.col || String(cell.cellIndex + 1);
+        if (hiddenColumns.indexOf(col) >= 0) cell.classList.add('col-hidden');
+        else cell.classList.remove('col-hidden');
+      });
+    }
+
+    function getManpowerColumnCount() {
+      var table = document.querySelector('.manpower-records-table');
+      return table ? table.querySelectorAll('thead th').length : 13;
+    }
+
+
+    var ASSIGNED_COLUMN_PREF_KEY = 'assignedRecords.hiddenColumns.v1';
+
+    function getAssignedColumnDefinitions() {
+      return [
+        { col: '1', label: 'Project Name' },
+        { col: '2', label: 'Project Location' },
+        { col: '3', label: 'ID No.' },
+        { col: '4', label: 'Name' },
+        { col: '5', label: 'Position / Trade' },
+        { col: '6', label: 'Skills' },
+        { col: '7', label: 'Employment Status' },
+        { col: '8', label: 'Availability' },
+        { col: '9', label: 'Cellphone' },
+        { col: '10', label: 'Address' },
+        { col: '11', label: 'Emergency Contact' },
+        { col: '12', label: 'Salary / Rate' },
+        { col: '13', label: 'Remarks' }
+      ];
+    }
+
+    function getHiddenAssignedColumns() {
+      try {
+        var saved = JSON.parse(localStorage.getItem(ASSIGNED_COLUMN_PREF_KEY) || '[]');
+        return Array.isArray(saved) ? saved.map(String) : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveHiddenAssignedColumns(hiddenColumns) {
+      localStorage.setItem(ASSIGNED_COLUMN_PREF_KEY, JSON.stringify(hiddenColumns.map(String)));
+    }
+
+    function setupAssignedColumnControls() {
+      var menu = getEl('assignedColumnMenu');
+      if (!menu) return;
+      var columns = getAssignedColumnDefinitions();
+      menu.innerHTML = '<div class="column-menu-title">Show / Hide Assigned Columns</div>' + columns.map(function(column) {
+        return '<label class="column-option"><input type="checkbox" data-assigned-column="' + escapeHtml(column.col) + '" checked onchange="updateAssignedColumnFromMenu()" /> <span>' + escapeHtml(column.label) + '</span></label>';
+      }).join('');
+      document.addEventListener('click', function(event) {
+        var dropdown = document.querySelector('.assigned-column-dropdown');
+        if (dropdown && !dropdown.contains(event.target)) menu.classList.add('hidden');
+      });
+      updateAssignedColumnVisibility();
+    }
+
+    function toggleAssignedColumnMenu(event) {
+      if (event) event.stopPropagation();
+      var menu = getEl('assignedColumnMenu');
+      if (menu) menu.classList.toggle('hidden');
+    }
+
+    function updateAssignedColumnFromMenu() {
+      var hiddenColumns = Array.prototype.slice.call(document.querySelectorAll('[data-assigned-column]')).filter(function(input) {
+        return !input.checked;
+      }).map(function(input) { return String(input.dataset.assignedColumn); });
+      saveHiddenAssignedColumns(hiddenColumns);
+      updateAssignedColumnVisibility();
+    }
+
+    function updateAssignedColumnVisibility() {
+      var hiddenColumns = getHiddenAssignedColumns();
+      Array.prototype.slice.call(document.querySelectorAll('[data-assigned-column]')).forEach(function(input) {
+        input.checked = hiddenColumns.indexOf(String(input.dataset.assignedColumn)) < 0;
+      });
+      Array.prototype.slice.call(document.querySelectorAll('.assigned-records-table')).forEach(function(table) {
+        Array.prototype.slice.call(table.querySelectorAll('th, td')).forEach(function(cell) {
+          var col = cell.dataset.col || String(cell.cellIndex + 1);
+          if (hiddenColumns.indexOf(col) >= 0) cell.classList.add('col-hidden');
+          else cell.classList.remove('col-hidden');
+        });
+      });
+    }
+
+    function getAssignedColumnCount() {
+      return getAssignedColumnDefinitions().length;
+    }
+
+    function renderManpowerTable() {
+      var body = getEl('manpowerTableBody');
+      var search = normalizeText(getValue('manpowerSearch'));
+      var statusFilter = getValue('statusFilter');
+      var availabilityFilter = getValue('availabilityFilter');
+      var records = state.manpower.filter(function(person) {
+        var searchable = normalizeText([person.employeeNo, person.fullName, person.position, person.skills, person.cellphone, person.address].join(' '));
+        return (!search || searchable.indexOf(search) >= 0) && (!statusFilter || person.status === statusFilter) && (!availabilityFilter || person.availability === availabilityFilter);
+      });
+      if (!records.length) { body.innerHTML = '<tr><td colspan="' + getManpowerColumnCount() + '">No manpower records found.</td></tr>'; updateManpowerColumnVisibility(); return; }
+      body.innerHTML = records.map(function(person) {
+        var assignedProjects = state.projects.filter(function(project) {
+          return (project.assignedManpower || []).indexOf(person.id) >= 0;
+        }).map(function(project) { return project.projectName; });
+        return '<tr>' +
+          '<td data-col="1">' + escapeHtml(person.employeeNo) + '</td>' +
+          '<td data-col="2" title="' + escapeHtml([person.fullName, person.dateHired ? 'Hired: ' + person.dateHired : ''].filter(Boolean).join(' | ')) + '"><strong>' + escapeHtml(person.fullName) + '</strong>' + (person.dateHired ? ' <small>| Hired: ' + escapeHtml(person.dateHired) + '</small>' : '') + '</td>' +
+          '<td data-col="3" title="' + escapeHtml(person.position) + '">' + escapeHtml(person.position) + '</td>' +
+          '<td data-col="4" title="' + escapeHtml(person.skills) + '">' + escapeHtml(person.skills) + '</td>' +
+          '<td data-col="5"><span class="pill ' + statusClass(person.status) + '">' + escapeHtml(person.status) + '</span></td>' +
+          '<td data-col="6"><span class="pill ' + statusClass(person.availability) + '">' + escapeHtml(person.availability) + '</span></td>' +
+          '<td data-col="7">' + escapeHtml(person.cellphone) + '</td>' +
+          '<td data-col="8" title="' + escapeHtml(person.address) + '">' + escapeHtml(person.address) + '</td>' +
+          '<td data-col="9" title="' + escapeHtml([person.emergencyContact, person.emergencyRelation, person.emergencyPhone].filter(Boolean).join(' | ')) + '">' + escapeHtml(person.emergencyContact) + (person.emergencyRelation || person.emergencyPhone ? ' <small>| ' + escapeHtml([person.emergencyRelation, person.emergencyPhone].filter(Boolean).join(' ')) + '</small>' : '') + '</td>' +
+          '<td data-col="10">' + (person.salaryRate ? peso.format(Number(person.salaryRate)) : '') + (person.salaryType ? ' <small>| ' + escapeHtml(person.salaryType) + '</small>' : '') + '</td>' +
+          '<td data-col="11" title="' + escapeHtml(assignedProjects.join(', ') || 'Not assigned') + '">' + (assignedProjects.length ? assignedProjects.map(escapeHtml).join(', ') : '<span class="hint">Not assigned</span>') + '</td>' +
+          '<td data-col="12" title="' + escapeHtml(person.remarks || person.medicalNotes) + '">' + escapeHtml(person.remarks || person.medicalNotes) + '</td>' +
+          '<td data-col="13" class="no-print action-cell"><div class="icon-btns"><button class="success icon-btn" title="Add to Assigned Manpower Sheet" aria-label="Add to Assigned Manpower Sheet" onclick="openQuickAssignModal(\'' + person.id + '\')">➕</button><button class="secondary icon-btn" title="Edit Manpower" aria-label="Edit Manpower" onclick="editManpower(\'' + person.id + '\')">✏️</button><button class="danger icon-btn" title="Delete Manpower" aria-label="Delete Manpower" onclick="deleteManpower(\'' + person.id + '\')">🗑️</button></div></td>' +
+        '</tr>';
+      }).join('');
+      updateManpowerColumnVisibility();
+    }
+
+    function renderProjectTable() {
+      var body = getEl('projectTableBody');
+      var search = normalizeText(getValue('projectSearch'));
+      var statusFilter = getValue('projectStatusFilter');
+      var records = state.projects.filter(function(project) {
+        var assigned = getAssignedPeople(project);
+        var searchable = normalizeText([project.projectName, project.projectLocation, project.projectManager, project.projectStatus, assigned.map(function(p) { return p.fullName + ' ' + p.skills; }).join(' ')].join(' '));
+        return (!search || searchable.indexOf(search) >= 0) && (!statusFilter || project.projectStatus === statusFilter);
+      });
+      if (!records.length) { body.innerHTML = '<tr><td colspan="9">No project records found.</td></tr>'; return; }
+      body.innerHTML = records.map(function(project) {
+        var assigned = getAssignedPeople(project);
+        return '<tr>' +
+          '<td><button class="project-link" onclick="selectProject(\'' + project.id + '\')">' + escapeHtml(project.projectName) + '</button></td>' +
+          '<td>' + escapeHtml(project.projectLocation) + '</td>' +
+          '<td>' + escapeHtml(project.projectManager) + '</td>' +
+          '<td>' + escapeHtml(project.startDate) + '</td>' +
+          '<td>' + escapeHtml(project.targetEndDate) + '</td>' +
+          '<td><span class="pill available">' + escapeHtml(project.projectStatus) + '</span></td>' +
+          '<td>' + assigned.length + '</td>' +
+          '<td>' + escapeHtml(project.projectRemarks) + '</td>' +
+          '<td class="no-print action-cell"><div class="icon-btns"><button class="primary icon-btn" title="Select Manpower" aria-label="Select Manpower" onclick="selectProject(\'' + project.id + '\'); openManpowerSelector();">👷</button><button class="secondary icon-btn" title="Edit Project" aria-label="Edit Project" onclick="editProject(\'' + project.id + '\')">✏️</button><button class="danger icon-btn" title="Delete Project" aria-label="Delete Project" onclick="deleteProject(\'' + project.id + '\')">🗑️</button></div></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderAssignedProjectFilter() {
+      var filter = getEl('assignedProjectFilter');
+      if (!filter) return;
+      var previous = filter.value;
+      filter.innerHTML = '<option value="">All Projects</option>' + state.projects.map(function(project) {
+        return '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.projectName) + '</option>';
+      }).join('');
+      if (state.projects.some(function(p) { return p.id === previous; })) filter.value = previous;
+      else if (selectedProjectId && state.projects.some(function(p) { return p.id === selectedProjectId; })) filter.value = selectedProjectId;
+    }
+
+    function renderAssignedSheet() {
+      renderAssignedProjectFilter();
+      var container = getEl('assignedSheetContent');
+      var projectFilter = getValue('assignedProjectFilter');
+      var search = normalizeText(getValue('assignedSheetSearch'));
+      var projects = state.projects.filter(function(project) { return !projectFilter || project.id === projectFilter; });
+      if (!projects.length) { container.innerHTML = '<p class="hint">No projects found.</p>'; return; }
+      var html = projects.map(function(project) {
+        var assigned = getAssignedPeople(project).filter(function(person) {
+          var searchable = normalizeText([project.projectName, project.projectLocation, person.employeeNo, person.fullName, person.position, person.skills, person.status, person.cellphone, person.address].join(' '));
+          return !search || searchable.indexOf(search) >= 0;
+        });
+        if (!assigned.length && search) return '';
+        var rows = assigned.length ? assigned.map(function(person) {
+          return '<tr>' +
+            '<td data-col="1" title="' + escapeHtml(project.projectName) + '">' + escapeHtml(project.projectName) + '</td>' +
+            '<td data-col="2" title="' + escapeHtml(project.projectLocation) + '">' + escapeHtml(project.projectLocation) + '</td>' +
+            '<td data-col="3">' + escapeHtml(person.employeeNo) + '</td>' +
+            '<td data-col="4" title="' + escapeHtml(person.fullName) + '"><strong>' + escapeHtml(person.fullName) + '</strong></td>' +
+            '<td data-col="5" title="' + escapeHtml(person.position) + '">' + escapeHtml(person.position) + '</td>' +
+            '<td data-col="6" title="' + escapeHtml(person.skills) + '">' + escapeHtml(person.skills) + '</td>' +
+            '<td data-col="7"><span class="pill ' + statusClass(person.status) + '">' + escapeHtml(person.status) + '</span></td>' +
+            '<td data-col="8"><span class="pill ' + statusClass(person.availability) + '">' + escapeHtml(person.availability) + '</span></td>' +
+            '<td data-col="9">' + escapeHtml(person.cellphone) + '</td>' +
+            '<td data-col="10" title="' + escapeHtml(person.address) + '">' + escapeHtml(person.address) + '</td>' +
+            '<td data-col="11" title="' + escapeHtml([person.emergencyContact, person.emergencyRelation, person.emergencyPhone].filter(Boolean).join(' | ')) + '">' + escapeHtml(person.emergencyContact) + (person.emergencyRelation || person.emergencyPhone ? ' <small>| ' + escapeHtml([person.emergencyRelation, person.emergencyPhone].filter(Boolean).join(' ')) + '</small>' : '') + '</td>' +
+            '<td data-col="12">' + (person.salaryRate ? peso.format(Number(person.salaryRate)) : '') + (person.salaryType ? ' <small>| ' + escapeHtml(person.salaryType) + '</small>' : '') + '</td>' +
+            '<td data-col="13" title="' + escapeHtml(person.remarks || person.medicalNotes) + '">' + escapeHtml(person.remarks || person.medicalNotes) + '</td>' +
+          '</tr>';
+        }).join('') : '<tr class="empty-assigned-row"><td colspan="' + getAssignedColumnCount() + '">No manpower assigned to this project yet.</td></tr>';
+        return '<div class="assigned-project-block"><div class="assigned-project-head"><div><h3>' + escapeHtml(project.projectName) + '</h3><p class="assigned-project-meta">Location: ' + escapeHtml(project.projectLocation || 'N/A') + ' | Status: ' + escapeHtml(project.projectStatus || 'N/A') + '</p></div><span class="assigned-count-pill">Assigned: ' + assigned.length + '</span></div><div class="table-wrap"><table class="assigned-records-table"><thead><tr><th data-col="1">Project Name</th><th data-col="2">Project Location</th><th data-col="3">ID No.</th><th data-col="4">Name</th><th data-col="5">Position / Trade</th><th data-col="6">Skills</th><th data-col="7">Employment Status</th><th data-col="8">Availability</th><th data-col="9">Cellphone</th><th data-col="10">Address</th><th data-col="11">Emergency Contact</th><th data-col="12">Salary / Rate</th><th data-col="13">Remarks</th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+      }).filter(Boolean).join('');
+      container.innerHTML = html || '<p class="hint">No assigned manpower records matched your search.</p>';
+      updateAssignedColumnVisibility();
+    }
+
+    function renderDashboard() {
+      getEl('statTotal').textContent = state.manpower.length;
+      getEl('statRegular').textContent = state.manpower.filter(function(p) { return p.status === 'Regular'; }).length;
+      getEl('statContractual').textContent = state.manpower.filter(function(p) { return p.status === 'Contractual'; }).length;
+      getEl('statConsultant').textContent = state.manpower.filter(function(p) { return p.status === 'Consultant'; }).length;
+      var totalMonthly = state.manpower.reduce(function(sum, person) { return sum + salaryMonthlyEquivalent(person); }, 0);
+      getEl('statSalary').textContent = peso.format(totalMonthly);
+      var body = getEl('dashboardProjectsBody');
+      if (!state.projects.length) { body.innerHTML = '<tr class="dashboard-empty-row"><td colspan="8">No projects added yet.</td></tr>'; return; }
+      body.innerHTML = state.projects.map(function(project) {
+        var assigned = getAssignedPeople(project);
+        var skills = [];
+        assigned.forEach(function(person) {
+          String(person.skills || '').split(',').forEach(function(skill) {
+            skill = skill.trim();
+            if (skill && skills.indexOf(skill) < 0) skills.push(skill);
+          });
+        });
+        var projectMonthlySalary = assigned.reduce(function(sum, person) { return sum + salaryMonthlyEquivalent(person); }, 0);
+        var assignedNames = assigned.map(function(p) { return p.fullName; }).join(', ');
+        var skillNames = skills.join(', ');
+        return '<tr>' +
+          '<td title="' + escapeHtml(project.projectName) + '"><strong>' + escapeHtml(project.projectName) + '</strong></td>' +
+          '<td title="' + escapeHtml(project.projectLocation) + '">' + escapeHtml(project.projectLocation || 'N/A') + '</td>' +
+          '<td>' + escapeHtml(project.startDate || 'N/A') + '</td>' +
+          '<td>' + escapeHtml(project.targetEndDate || 'N/A') + '</td>' +
+          '<td class="dashboard-assigned-list" title="' + escapeHtml(assignedNames) + '">' + (escapeHtml(assignedNames) || 'No assigned manpower') + '</td>' +
+          '<td class="dashboard-skill-list" title="' + escapeHtml(skillNames) + '">' + (escapeHtml(skillNames) || 'N/A') + '</td>' +
+          '<td><span class="dashboard-status-pill">' + escapeHtml(project.projectStatus || 'N/A') + '</span></td>' +
+          '<td><strong>' + peso.format(projectMonthlySalary) + '</strong></td>' +
+        '</tr>';
+      }).join('');
+    }
+
+    function renderSelectorOptions() {
+      var project = state.projects.find(function(item) { return item.id === selectedProjectId; });
+      renderProjectManpowerOptions(project ? (project.assignedManpower || []) : []);
+    }
+
+    function renderProjectManpowerOptions(selected) {
+      var box = getEl('projectManpowerOptions');
+      if (!state.manpower.length) { box.innerHTML = '<p class="hint">No manpower records yet. Add workers in the Manpower Sheet first.</p>'; return; }
+      var search = normalizeText(getValue('selectorSearch'));
+      var availabilityFilter = getValue('selectorAvailabilityFilter');
+      var records = state.manpower.slice().sort(function(a, b) { return String(a.fullName).localeCompare(String(b.fullName)); }).filter(function(person) {
+        var searchable = normalizeText([person.fullName, person.position, person.skills, person.employeeNo].join(' '));
+        return (!search || searchable.indexOf(search) >= 0) && (!availabilityFilter || person.availability === availabilityFilter || selected.indexOf(person.id) >= 0);
+      });
+      if (!records.length) { box.innerHTML = '<p class="hint">No manpower matched your search/filter.</p>'; return; }
+      box.innerHTML = records.map(function(person) {
+        return '<label class="check-row"><input type="checkbox" name="assignedManpower" value="' + escapeHtml(person.id) + '" ' + (selected.indexOf(person.id) >= 0 ? 'checked' : '') + ' /><span><strong>' + escapeHtml(person.fullName) + '</strong> - ' + escapeHtml(person.position || 'No position') + '<small>Skills: ' + escapeHtml(person.skills || 'N/A') + ' | ' + escapeHtml(person.status || 'N/A') + ' | ' + escapeHtml(person.availability || 'N/A') + ' | Cell: ' + escapeHtml(person.cellphone || 'N/A') + '</small></span></label>';
+      }).join('');
+    }
+
+    function renderAll() {
+      updateManpowerAssignmentStatus();
+      renderManpowerTable();
+      renderProjectTable();
+      renderAssignedSheet();
+      renderDashboard();
+      saveState();
+    }
+
+    function selectProject(id) {
+      selectedProjectId = id;
+      openTab('assignedSheet');
+      renderAll();
+    }
+
+    function openManpowerSelector() {
+      var project = state.projects.find(function(item) { return item.id === selectedProjectId; });
+      if (!project) { alert('Please select a project first.'); return; }
+      getEl('selectorProjectTitle').textContent = 'Select Manpower for ' + project.projectName;
+      setValue('selectorSearch', '');
+      setValue('selectorAvailabilityFilter', '');
+      renderProjectManpowerOptions(project.assignedManpower || []);
+      getEl('manpowerSelectorModal').classList.remove('hidden');
+    }
+
+    function closeManpowerSelector() { getEl('manpowerSelectorModal').classList.add('hidden'); }
+
+    function openQuickAssignModal(manpowerId) {
+      var person = state.manpower.find(function(item) { return item.id === manpowerId; });
+      if (!person) return;
+      if (!state.projects.length) { alert('Please add a project first in the Projects Sheet before assigning manpower.'); openTab('projects'); return; }
+      quickAssignManpowerId = manpowerId;
+      getEl('quickAssignTitle').textContent = 'Add ' + (person.fullName || 'Manpower') + ' to Assigned Manpower Sheet';
+      var projectSelect = getEl('quickAssignProject');
+      projectSelect.innerHTML = state.projects.map(function(project) {
+        var assigned = project.assignedManpower || [];
+        return '<option value="' + escapeHtml(project.id) + '">' + escapeHtml(project.projectName) + (assigned.indexOf(manpowerId) >= 0 ? ' - already assigned' : '') + '</option>';
+      }).join('');
+      if (selectedProjectId && state.projects.some(function(project) { return project.id === selectedProjectId; })) projectSelect.value = selectedProjectId;
+      getEl('quickAssignModal').classList.remove('hidden');
+    }
+
+    function closeQuickAssignModal() {
+      getEl('quickAssignModal').classList.add('hidden');
+      quickAssignManpowerId = '';
+    }
+
+    function saveQuickAssignedManpower() {
+      var projectId = getValue('quickAssignProject');
+      var project = state.projects.find(function(item) { return item.id === projectId; });
+      if (!project || !quickAssignManpowerId) return;
+      project.assignedManpower = project.assignedManpower || [];
+      if (project.assignedManpower.indexOf(quickAssignManpowerId) < 0) project.assignedManpower.push(quickAssignManpowerId);
+      selectedProjectId = projectId;
+      updateManpowerAssignmentStatus();
+      saveState();
+      closeQuickAssignModal();
+      openTab('assignedSheet');
+      renderAll();
+    }
+
+    function saveSelectedProjectManpower() {
+      var index = state.projects.findIndex(function(item) { return item.id === selectedProjectId; });
+      if (index < 0) return;
+      state.projects[index].assignedManpower = Array.prototype.slice.call(document.querySelectorAll('[name="assignedManpower"]:checked')).map(function(input) { return input.value; });
+      updateManpowerAssignmentStatus();
+      saveState();
+      closeManpowerSelector();
+      openTab('assignedSheet');
+      renderAll();
+    }
+
+    function editManpower(id) {
+      var person = state.manpower.find(function(item) { return item.id === id; });
+      if (!person) return;
+      Object.keys(person).forEach(function(key) { if (getEl(key)) setValue(key, person[key]); });
+      if ((!person.firstName || !person.familyName) && person.fullName) { var splitName = splitLegacyFullName(person.fullName); setValue('firstName', person.firstName || splitName.firstName); setValue('middleName', person.middleName || splitName.middleName); setValue('familyName', person.familyName || splitName.familyName); }
+      setValue('manpowerId', person.id);
+      getEl('manpowerFormTitle').textContent = 'Edit Manpower';
+      toggleManpowerForm(true);
+      openTab('manpower');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteManpower(id) {
+      if (!confirm('Delete this manpower record? This will also remove the person from project assignments.')) return;
+      state.manpower = state.manpower.filter(function(item) { return item.id !== id; });
+      state.projects.forEach(function(project) {
+        project.assignedManpower = (project.assignedManpower || []).filter(function(personId) { return personId !== id; });
+      });
+      saveState();
+      renderAll();
+    }
+
+    function editProject(id) {
+      var project = state.projects.find(function(item) { return item.id === id; });
+      if (!project) return;
+      setValue('projectId', project.id);
+      setValue('projectName', project.projectName);
+      setValue('projectLocation', project.projectLocation);
+      setValue('projectManager', project.projectManager);
+      setValue('projectStatus', project.projectStatus);
+      setValue('startDate', project.startDate);
+      setValue('targetEndDate', project.targetEndDate);
+      setValue('projectRemarks', project.projectRemarks);
+      getEl('projectFormTitle').textContent = 'Edit Project';
+      openTab('projects');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function deleteProject(id) {
+      if (!confirm('Delete this project record?')) return;
+      state.projects = state.projects.filter(function(item) { return item.id !== id; });
+      if (selectedProjectId === id) selectedProjectId = '';
+      saveState();
+      renderAll();
+    }
+
+    function downloadFile(filename, content, type) {
+      var blob = new Blob([content], { type: type });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportManpowerCSV() {
+      var headers = ['Employee ID', 'First Name', 'Middle Name', 'Family Name', 'Full Name', 'Position', 'Skills', 'Employment Status', 'Availability', 'Cellphone', 'Birth Date', 'Date Hired', 'Government IDs', 'Salary Rate', 'Salary Type', 'Address', 'Emergency Contact', 'Relationship', 'Emergency Phone', 'Medical Notes', 'Remarks'];
+      var rows = state.manpower.map(function(p) { return [p.employeeNo, p.firstName, p.middleName, p.familyName, p.fullName, p.position, p.skills, p.status, p.availability, p.cellphone, p.birthDate, p.dateHired, p.sssTinPagibig, p.salaryRate, p.salaryType, p.address, p.emergencyContact, p.emergencyRelation, p.emergencyPhone, p.medicalNotes, p.remarks]; });
+      downloadFile('manpower-records.csv', [headers].concat(rows).map(function(row) { return row.map(csvEscape).join(','); }).join('\n'), 'text/csv;charset=utf-8;');
+    }
+
+    function exportProjectsCSV() {
+      var headers = ['Project Name', 'Location', 'Project Manager', 'Start Date', 'Target End Date', 'Project Status', 'Assigned Manpower', 'Assigned Skills', 'Total Assigned', 'Remarks'];
+      var rows = state.projects.map(function(project) {
+        var assigned = getAssignedPeople(project);
+        return [project.projectName, project.projectLocation, project.projectManager, project.startDate, project.targetEndDate, project.projectStatus, assigned.map(function(p) { return p.fullName; }).join('; '), assigned.map(function(p) { return p.fullName + ': ' + p.skills; }).join('; '), assigned.length, project.projectRemarks];
+      });
+      downloadFile('project-manpower-assignments.csv', [headers].concat(rows).map(function(row) { return row.map(csvEscape).join(','); }).join('\n'), 'text/csv;charset=utf-8;');
+    }
+
+    function exportAssignedSheetCSV() {
+      var headers = ['Project Name', 'Project Location', 'Project Status', 'Employee ID', 'Full Name', 'Position', 'Skills', 'Employment Status', 'Availability', 'Cellphone', 'Address', 'Emergency Contact', 'Relationship', 'Emergency Phone', 'Salary Rate', 'Salary Type', 'Medical Notes', 'Remarks'];
+      var rows = [];
+      state.projects.forEach(function(project) {
+        var assigned = getAssignedPeople(project);
+        if (!assigned.length) rows.push([project.projectName, project.projectLocation, project.projectStatus, '', 'No assigned manpower', '', '', '', '', '', '', '', '', '', '', '', '', '']);
+        assigned.forEach(function(person) { rows.push([project.projectName, project.projectLocation, project.projectStatus, person.employeeNo, person.fullName, person.position, person.skills, person.status, person.availability, person.cellphone, person.address, person.emergencyContact, person.emergencyRelation, person.emergencyPhone, person.salaryRate, person.salaryType, person.medicalNotes, person.remarks]); });
+      });
+      downloadFile('assigned-manpower-records-per-project.csv', [headers].concat(rows).map(function(row) { return row.map(csvEscape).join(','); }).join('\n'), 'text/csv;charset=utf-8;');
+    }
+
+    function exportBackupJSON() { saveState(); downloadFile('construction-manpower-backup.json', JSON.stringify(state, null, 2), 'application/json;charset=utf-8;'); }
+
+    function makeWorksheet(data, headerOrder) {
+      var worksheet = XLSX.utils.json_to_sheet(data, { header: headerOrder });
+      var range = XLSX.utils.decode_range(worksheet['!ref'] || 'A1:A1');
+      worksheet['!autofilter'] = { ref: worksheet['!ref'] };
+      worksheet['!freeze'] = { xSplit: 0, ySplit: 1 };
+      worksheet['!cols'] = headerOrder.map(function(header) {
+        var max = String(header).length;
+        data.forEach(function(row) {
+          max = Math.max(max, String(row[header] || '').length);
+        });
+        return { wch: Math.min(Math.max(max + 2, 12), 35) };
+      });
+      for (var col = range.s.c; col <= range.e.c; col++) {
+        var cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
+        if (worksheet[cellRef]) {
+          worksheet[cellRef].s = {
+            font: { bold: true, color: { rgb: 'FFFFFF' } },
+            fill: { fgColor: { rgb: '1F6FEB' } },
+            alignment: { horizontal: 'center', vertical: 'center', wrapText: true }
+          };
+        }
+      }
+      for (var row = range.s.r + 1; row <= range.e.r; row++) {
+        for (var c = range.s.c; c <= range.e.c; c++) {
+          var ref = XLSX.utils.encode_cell({ r: row, c: c });
+          if (worksheet[ref]) worksheet[ref].s = { alignment: { vertical: 'top', wrapText: true } };
+        }
+      }
+      return worksheet;
+    }
+
+    function exportFormattedExcel() {
+      if (typeof XLSX === 'undefined') {
+        alert('Excel library is not loaded. Please connect to the internet once, reload this file, then try again.');
+        return;
+      }
+      saveState();
+      var wb = XLSX.utils.book_new();
+
+      var manpowerHeaders = ['Employee ID', 'First Name', 'Middle Name', 'Family Name', 'Full Name', 'Position', 'Skills', 'Employment Status', 'Availability', 'Cellphone', 'Birth Date', 'Date Hired', 'Government IDs', 'Salary Rate', 'Salary Type', 'Address', 'Emergency Contact', 'Relationship', 'Emergency Phone', 'Medical Notes', 'Remarks'];
+      var manpowerRows = state.manpower.map(function(p) {
+        return {
+          'Employee ID': p.employeeNo || '',
+          'First Name': p.firstName || '',
+          'Middle Name': p.middleName || '',
+          'Family Name': p.familyName || '',
+          'Full Name': p.fullName || buildFullName(p.firstName, p.middleName, p.familyName),
+          'Position': p.position || '',
+          'Skills': p.skills || '',
+          'Employment Status': p.status || '',
+          'Availability': p.availability || '',
+          'Cellphone': p.cellphone || '',
+          'Birth Date': p.birthDate || '',
+          'Date Hired': p.dateHired || '',
+          'Government IDs': p.sssTinPagibig || '',
+          'Salary Rate': Number(p.salaryRate || 0),
+          'Salary Type': p.salaryType || '',
+          'Address': p.address || '',
+          'Emergency Contact': p.emergencyContact || '',
+          'Relationship': p.emergencyRelation || '',
+          'Emergency Phone': p.emergencyPhone || '',
+          'Medical Notes': p.medicalNotes || '',
+          'Remarks': p.remarks || ''
+        };
+      });
+      XLSX.utils.book_append_sheet(wb, makeWorksheet(manpowerRows, manpowerHeaders), 'Manpower Records');
+
+      var projectHeaders = ['Project Name', 'Location', 'Project Manager', 'Start Date', 'Target End Date', 'Project Status', 'Assigned Manpower', 'Assigned Skills', 'Total Assigned', 'Remarks'];
+      var projectRows = state.projects.map(function(project) {
+        var assigned = getAssignedPeople(project);
+        return {
+          'Project Name': project.projectName || '',
+          'Location': project.projectLocation || '',
+          'Project Manager': project.projectManager || '',
+          'Start Date': project.startDate || '',
+          'Target End Date': project.targetEndDate || '',
+          'Project Status': project.projectStatus || '',
+          'Assigned Manpower': assigned.map(function(p) { return p.fullName; }).join('; '),
+          'Assigned Skills': assigned.map(function(p) { return p.fullName + ': ' + p.skills; }).join('; '),
+          'Total Assigned': assigned.length,
+          'Remarks': project.projectRemarks || ''
+        };
+      });
+      XLSX.utils.book_append_sheet(wb, makeWorksheet(projectRows, projectHeaders), 'Projects');
+
+      var assignedHeaders = ['Project Name', 'Project Location', 'Project Status', 'Employee ID', 'Full Name', 'Position', 'Skills', 'Employment Status', 'Availability', 'Cellphone', 'Address', 'Emergency Contact', 'Relationship', 'Emergency Phone', 'Salary Rate', 'Salary Type', 'Medical Notes', 'Remarks'];
+      var assignedRows = [];
+      state.projects.forEach(function(project) {
+        var assigned = getAssignedPeople(project);
+        if (!assigned.length) {
+          assignedRows.push({ 'Project Name': project.projectName || '', 'Project Location': project.projectLocation || '', 'Project Status': project.projectStatus || '', 'Full Name': 'No assigned manpower' });
+        } else {
+          assigned.forEach(function(person) {
+            assignedRows.push({
+              'Project Name': project.projectName || '',
+              'Project Location': project.projectLocation || '',
+              'Project Status': project.projectStatus || '',
+              'Employee ID': person.employeeNo || '',
+              'Full Name': person.fullName || '',
+              'Position': person.position || '',
+              'Skills': person.skills || '',
+              'Employment Status': person.status || '',
+              'Availability': person.availability || '',
+              'Cellphone': person.cellphone || '',
+              'Address': person.address || '',
+              'Emergency Contact': person.emergencyContact || '',
+              'Relationship': person.emergencyRelation || '',
+              'Emergency Phone': person.emergencyPhone || '',
+              'Salary Rate': Number(person.salaryRate || 0),
+              'Salary Type': person.salaryType || '',
+              'Medical Notes': person.medicalNotes || '',
+              'Remarks': person.remarks || ''
+            });
+          });
+        }
+      });
+      XLSX.utils.book_append_sheet(wb, makeWorksheet(assignedRows, assignedHeaders), 'Assigned Per Project');
+
+      XLSX.writeFile(wb, 'construction-manpower-registry.xlsx', { cellStyles: true });
+    }
+
+    function importFormattedExcel(event) {
+      if (typeof XLSX === 'undefined') {
+        alert('Excel library is not loaded. Please connect to the internet once, reload this file, then try again.');
+        return;
+      }
+      var file = event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var data = new Uint8Array(e.target.result);
+          var wb = XLSX.read(data, { type: 'array' });
+          var manpowerSheet = wb.Sheets['Manpower Records'];
+          var projectsSheet = wb.Sheets['Projects'];
+          if (!manpowerSheet || !projectsSheet) {
+            alert('Invalid Excel file. Required sheets: Manpower Records and Projects.');
+            return;
+          }
+
+          var manpowerRows = XLSX.utils.sheet_to_json(manpowerSheet, { defval: '' });
+          var projectsRows = XLSX.utils.sheet_to_json(projectsSheet, { defval: '' });
+
+          var importedManpower = manpowerRows.map(function(row) {
+            return {
+              id: uid('mp'),
+              employeeNo: String(row['Employee ID'] || ''),
+              firstName: String(row['First Name'] || ''),
+              middleName: String(row['Middle Name'] || ''),
+              familyName: String(row['Family Name'] || ''),
+              fullName: buildFullName(row['First Name'], row['Middle Name'], row['Family Name']) || String(row['Full Name'] || ''),
+              position: String(row['Position'] || ''),
+              skills: String(row['Skills'] || ''),
+              status: String(row['Employment Status'] || 'Regular'),
+              availability: String(row['Availability'] || 'Available'),
+              cellphone: String(row['Cellphone'] || ''),
+              birthDate: String(row['Birth Date'] || ''),
+              dateHired: String(row['Date Hired'] || ''),
+              sssTinPagibig: String(row['Government IDs'] || ''),
+              salaryRate: String(row['Salary Rate'] || ''),
+              salaryType: String(row['Salary Type'] || 'Daily'),
+              address: String(row['Address'] || ''),
+              emergencyContact: String(row['Emergency Contact'] || ''),
+              emergencyRelation: String(row['Relationship'] || ''),
+              emergencyPhone: String(row['Emergency Phone'] || ''),
+              medicalNotes: String(row['Medical Notes'] || ''),
+              remarks: String(row['Remarks'] || '')
+            };
+          }).filter(function(person) { return person.fullName; });
+
+          var nameToId = {};
+          importedManpower.forEach(function(person) { nameToId[normalizeText(person.fullName)] = person.id; });
+
+          var importedProjects = projectsRows.map(function(row) {
+            var assignedNames = String(row['Assigned Manpower'] || '').split(';').map(function(name) { return name.trim(); }).filter(Boolean);
+            return {
+              id: uid('prj'),
+              projectName: String(row['Project Name'] || ''),
+              projectLocation: String(row['Location'] || ''),
+              projectManager: String(row['Project Manager'] || ''),
+              startDate: String(row['Start Date'] || ''),
+              targetEndDate: String(row['Target End Date'] || ''),
+              projectStatus: String(row['Project Status'] || 'Planning'),
+              assignedManpower: assignedNames.map(function(name) { return nameToId[normalizeText(name)]; }).filter(Boolean),
+              projectRemarks: String(row['Remarks'] || '')
+            };
+          }).filter(function(project) { return project.projectName; });
+
+          state = { manpower: importedManpower, projects: importedProjects };
+          updateManpowerAssignmentStatus();
+          saveState();
+          resetManpowerForm();
+          resetProjectForm();
+          renderAll();
+          alert('Excel imported successfully.');
+        } catch (error) {
+          console.error(error);
+          alert('Unable to import Excel file. Please check the workbook format.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+      event.target.value = '';
+    }
+
+    function importBackupJSON(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var imported = JSON.parse(reader.result);
+          if (!imported || !Array.isArray(imported.manpower) || !Array.isArray(imported.projects)) { alert('Invalid backup file.'); return; }
+          state = imported;
+          saveState();
+          resetManpowerForm();
+          resetProjectForm();
+          renderAll();
+          alert('Backup imported successfully.');
+        } catch (error) { alert('Unable to import file. Please check that it is a valid JSON backup.'); }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    function clearAllData() {
+      if (!confirm('This will permanently clear all local manpower and project records in this browser. Continue?')) return;
+      state = { manpower: [], projects: [] };
+      saveState();
+      resetManpowerForm();
+      resetProjectForm();
+      renderAll();
+    }
+
+    getEl('manpowerForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var id = getValue('manpowerId') || uid('mp');
+      var record = {
+        id: id,
+        employeeNo: getValue('employeeNo'), firstName: getValue('firstName'), middleName: getValue('middleName'), familyName: getValue('familyName'), fullName: buildFullName(getValue('firstName'), getValue('middleName'), getValue('familyName')), position: getValue('position'), skills: getValue('skills'),
+        status: getValue('status'), availability: getValue('availability'), cellphone: getValue('cellphone'), birthDate: getValue('birthDate'),
+        dateHired: getValue('dateHired'), sssTinPagibig: getValue('sssTinPagibig'), salaryRate: getValue('salaryRate'), salaryType: getValue('salaryType'),
+        address: getValue('address'), emergencyContact: getValue('emergencyContact'), emergencyRelation: getValue('emergencyRelation'), emergencyPhone: getValue('emergencyPhone'),
+        medicalNotes: getValue('medicalNotes'), remarks: getValue('remarks')
+      };
+      var index = state.manpower.findIndex(function(item) { return item.id === id; });
+      if (index >= 0) state.manpower[index] = record; else state.manpower.push(record);
+      saveState();
+      resetManpowerForm();
+      renderAll();
+    });
+
+    getEl('projectForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var id = getValue('projectId') || uid('prj');
+      var existing = state.projects.find(function(item) { return item.id === id; });
+      var record = {
+        id: id,
+        projectName: getValue('projectName'), projectLocation: getValue('projectLocation'), projectManager: getValue('projectManager'), projectStatus: getValue('projectStatus'),
+        startDate: getValue('startDate'), targetEndDate: getValue('targetEndDate'), assignedManpower: existing ? (existing.assignedManpower || []) : [], projectRemarks: getValue('projectRemarks')
+      };
+      var index = state.projects.findIndex(function(item) { return item.id === id; });
+      if (index >= 0) state.projects[index] = record; else state.projects.push(record);
+      saveState();
+      resetProjectForm();
+      renderAll();
+    });
+
+    loadState();
+    setupTabs();
+    setupManpowerCapitalization();
+    setupManpowerColumnControls();
+    setupAssignedColumnControls();
+    var toggleBtn = getEl('toggleManpowerFormBtn');
+    if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
+    renderAll();
+  </script>
+</body>
+</html>
