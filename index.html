@@ -219,7 +219,7 @@
             transform: translateX(-100vw);
             opacity: 0;
             pointer-events: none;
-            transition: opacity 2s ease, transform 2s ease, visibility 0s linear 2s;
+            transition: opacity 1s ease, transform 1s ease, visibility 0s linear 1s;
         }
 
         .qaqc-panel.is-open {
@@ -227,7 +227,7 @@
             opacity: 1;
             transform: translateX(0);
             pointer-events: auto;
-            transition: opacity 2s ease, transform 2s ease;
+            transition: opacity 1s ease, transform 1s ease;
         }
 
         .qaqc-panel-title {
@@ -734,19 +734,21 @@
             isolation: isolate;
         }
 
+        #humanResourcesPanel,
         #qsPanel,
         #qaqcPanel {
             z-index: 2400;
             transform: translateX(-100%);
             opacity: 0;
-            transition: opacity 2s ease, transform 2s ease, visibility 0s linear 2s;
+            transition: opacity 1s ease, transform 1s ease, visibility 0s linear 1s;
         }
 
+        #humanResourcesPanel.is-open,
         #qsPanel.is-open,
         #qaqcPanel.is-open {
             transform: translateX(0);
             opacity: 1;
-            transition: opacity 2s ease, transform 2s ease;
+            transition: opacity 1s ease, transform 1s ease;
         }
 
         /* Professional polished sidebar + compact subsystem styling */
@@ -1809,7 +1811,10 @@ body:hover .hollywood {
 
     <button id="toggleSidebar">☰ MENU</button>
     <div class="sidebar">
-        <a href="./forms/PME.html" id="sb-personnel-eval" class="sidebar-link" style="opacity: 1; pointer-events: auto;">HUMAN RESOURCES</a>
+        <div class="qaqc-menu" id="sb-personnel-eval-container">
+            <button type="button" id="sb-personnel-eval" class="sidebar-link-button" style="opacity: 1; pointer-events: auto;">HUMAN RESOURCES</button>
+            
+        </div>
         <a href="./forms/designbuildcostproposal.html" id="sb-contracts" class="sidebar-link" style="opacity: 1; pointer-events: auto;">CONTRACTS &amp; SPECIFICATIONS</a>
         <div class="qaqc-menu" id="sb-qs-container">
             <button type="button" id="sb-qs" class="sidebar-link-button" style="opacity: 1; pointer-events: auto;">QS SYSTEM</button>
@@ -2690,14 +2695,19 @@ body:hover .hollywood {
                     event.preventDefault();
                     event.stopPropagation();
 
-                    // Always show the matching subsystem every time its button is clicked.
-                    // The other subsystem is closed first so QS and QAQC do not overlap.
+                    const panelIsOpen = panel.classList.contains("is-open");
+
+                    // All sidebar subsections act as one group:
+                    // clicking the same sidebar button hides its subsection,
+                    // while clicking another hides the current subsection and shows the new one.
                     document.querySelectorAll(".qaqc-panel.is-open").forEach(openPanel => {
-                        if (openPanel !== panel) {
-                            openPanel.classList.remove("is-open");
-                            openPanel.setAttribute("aria-hidden", "true");
-                        }
+                        openPanel.classList.remove("is-open");
+                        openPanel.setAttribute("aria-hidden", "true");
                     });
+
+                    if (panelIsOpen) {
+                        return;
+                    }
 
                     positionPanel();
                     panel.classList.add("is-open");
@@ -2715,6 +2725,7 @@ body:hover .hollywood {
                 });
             }
 
+            setupSidebarSubSystem("sb-personnel-eval", "humanResourcesPanel");
             setupSidebarSubSystem("sb-qs", "qsPanel");
             setupSidebarSubSystem("sb-qaqc", "qaqcPanel");
 
@@ -2806,7 +2817,13 @@ body:hover .hollywood {
         </script>
 
 
-<div id="qsPanel" class="qaqc-panel" data-access="qs" aria-hidden="true">
+<div id="humanResourcesPanel" class="qaqc-panel" data-access="personnel-eval" aria-hidden="true">
+                <p class="qaqc-panel-title">HR FILES</p>
+                <div class="qaqc-panel-links">
+                    <a href="./forms/PME.html" target="_self">EVALUATION</a>
+                    <a href="./hr/manpower.html" target="_self">MANPOWER</a>
+                </div>
+            </div><div id="qsPanel" class="qaqc-panel" data-access="qs" aria-hidden="true">
                 <p class="qaqc-panel-title">QS FILES</p>
                 <div class="qaqc-panel-links">
                     <a href="./qs/estimation.html" target="_self">PROJECT ESTIMATION</a>
