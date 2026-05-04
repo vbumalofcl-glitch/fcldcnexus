@@ -1883,9 +1883,9 @@ body:hover .hollywood {
             currentUser: null,
             savedUserKey: 'fcldc_current_user',
             loginRecordsKey: 'fcldc_login_logout_records',
-            // Change this URL when your logging API is hosted online.
-            // For local testing, run your Node.js server at http://localhost:3000/log
-            remoteLogEndpoint: 'http://localhost:3000/log',
+            // Netlify Function endpoint for shared online login/logout logs.
+            // File needed in your site: netlify/functions/login-log.js
+            remoteLogEndpoint: '/.netlify/functions/login-log',
 
             // Initialize the system
             init() {
@@ -2097,6 +2097,7 @@ body:hover .hollywood {
 
                 this.refreshAdminPanel();
                 this.refreshLoginRecords();
+                this.loadLoginRecordsFromApi();
             },
 
             // Login user
@@ -2311,7 +2312,7 @@ body:hover .hollywood {
                 this.sendLoginRecordToApi(record);
             },
 
-            // Send login/logout record to your Node.js API, which commits login-logs.json to GitHub
+            // Send login/logout record to the Netlify Function.
             sendLoginRecordToApi(record) {
                 if (!this.remoteLogEndpoint) return;
 
@@ -2324,10 +2325,42 @@ body:hover .hollywood {
                     if (!response.ok) {
                         console.warn('Remote login log was not saved:', response.status, response.statusText);
                     }
+                    return response.ok ? response.json().catch(() => null) : null;
+                })
+                .then(data => {
+                    if (data && Array.isArray(data.records)) {
+                        this.writeStorage(this.loginRecordsKey, data.records);
+                        this.refreshLoginRecords();
+                    }
                 })
                 .catch(error => {
                     // Keep local records even if the API/server is offline.
                     console.warn('Remote login log API is unavailable. Local record was saved.', error);
+                });
+            },
+
+            // Load shared login/logout records from the Netlify Function.
+            loadLoginRecordsFromApi() {
+                if (!this.remoteLogEndpoint) return;
+
+                fetch(this.remoteLogEndpoint, {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store'
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error(response.status + ' ' + response.statusText);
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && Array.isArray(data.records)) {
+                        this.writeStorage(this.loginRecordsKey, data.records);
+                        this.refreshLoginRecords();
+                    }
+                })
+                .catch(error => {
+                    // Local records remain visible when the function is not deployed yet.
+                    console.warn('Unable to load remote login/logout records. Showing local records only.', error);
                 });
             },
 
@@ -2387,6 +2420,18 @@ body:hover .hollywood {
                 if (confirm('Clear all login/logout records?')) {
                     this.writeStorage(this.loginRecordsKey, []);
                     this.refreshLoginRecords();
+
+                    if (this.remoteLogEndpoint) {
+                        fetch(this.remoteLogEndpoint, { method: 'DELETE' })
+                            .then(response => {
+                                if (!response.ok) {
+                                    console.warn('Remote login records were not cleared:', response.status, response.statusText);
+                                }
+                            })
+                            .catch(error => {
+                                console.warn('Unable to clear remote login/logout records. Local records were cleared only.', error);
+                            });
+                    }
                 }
             },
 
@@ -2481,6 +2526,7 @@ body:hover .hollywood {
                 document.getElementById('adminPanelBtn').addEventListener('click', () => {
                     if (this.currentUser && this.currentUser.role === 'admin') {
                         document.getElementById('adminModal').classList.remove('hidden');
+                        this.loadLoginRecordsFromApi();
                     } else {
                         alert('Access denied. Only administrators can access this panel.');
                     }
