@@ -10,7 +10,7 @@
     body { margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f4f6f8; color: #1f2937; }
     header { background: linear-gradient(135deg, #172554, #1f6feb); color: white; padding: 12px 20px; }
     .wrap { max-width: 1380px; margin: 0 auto; padding: 0 20px; }
-    .header-wrap { max-width: 1380px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .header-wrap { width: 100%; max-width: none; margin: 0; display: flex; justify-content: flex-start; align-items: center; gap: 12px; flex-wrap: wrap; text-align: left; }
     h1 { margin: 0 0 2px; font-size: 24px; line-height: 1.1; }
     h2 { margin: 0; font-size: 20px; }
     h3 { margin: 12px 0 8px; }
@@ -20,6 +20,9 @@
     .company-box input { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.35); color: white; }
     main { max-width: 100%; margin: 12px auto 40px; padding: 0 10px; }
     .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .home-btn { display: inline-flex; align-items: center; gap: 6px; border: 1px solid #1f6feb; background: #1f6feb; color: white; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 800; box-shadow: 0 6px 14px rgba(31,111,235,.18); }
+    .home-btn:hover { background: #172554; border-color: #172554; }
+    .home-btn .home-icon { font-size: 14px; line-height: 1; }
     .tab-btn { border: 1px solid #d1d5db; background: white; color: #1f2937; padding: 8px 12px; border-radius: 999px; cursor: pointer; font-weight: 700; }
     .tab-btn.active, .tab-btn:hover { background: #1f6feb; color: white; border-color: #1f6feb; }
     .panel { display: none; }
@@ -465,6 +468,7 @@
 
   <main>
     <div class="tabs no-print">
+      <button class="home-btn" type="button" onclick="openTab('dashboard')" aria-label="Go to Dashboard"><span class="home-icon">🏠</span><span>Home</span></button>
       <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
       <button class="tab-btn" data-tab="manpower">Manpower Sheet</button>
       <button class="tab-btn" data-tab="projects">Projects Sheet</button>
