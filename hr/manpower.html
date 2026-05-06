@@ -454,6 +454,48 @@
       padding: 12px;
       background: #f8fafc;
     }
+
+    #dashboard .dashboard-clickable-summary {
+      cursor: pointer;
+      text-align: center;
+      font-weight: 900;
+      color: #172554;
+      background: #f8fbff;
+    }
+    #dashboard .dashboard-clickable-summary:hover {
+      background: #dbeafe !important;
+      color: #1d4ed8;
+      text-decoration: underline;
+    }
+    .summary-popup-table {
+      min-width: 100%;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      table-layout: auto;
+    }
+    .summary-popup-table th {
+      background: linear-gradient(135deg, #172554, #1f6feb);
+      color: white;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      padding: 9px 10px;
+      border-bottom: 0;
+    }
+    .summary-popup-table td {
+      padding: 9px 10px;
+      font-size: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .summary-popup-table td:last-child,
+    .summary-popup-table th:last-child { text-align: right; }
+    .summary-popup-table tr:last-child td { border-bottom: 0; }
+    .summary-popup-total-row td {
+      font-weight: 900;
+      background: #f8fafc;
+      color: #172554;
+    }
   </style>
 </head>
 <body>
@@ -672,6 +714,18 @@
         <div class="actions"><button class="primary" onclick="saveQuickAssignedManpower()">Add to Assigned Sheet</button><button class="secondary" onclick="closeQuickAssignModal()">Cancel</button></div>
         <p class="hint">If there are no projects yet, create a project first in the Projects Sheet.</p>
       </div>
+    </div>
+  </div>
+
+
+  <div id="dashboardSummaryModal" class="modal hidden no-print">
+    <div class="modal-backdrop" onclick="closeDashboardSummaryModal()"></div>
+    <div class="modal-card" style="width:min(640px, 96vw);">
+      <div class="card-head">
+        <div><h2 id="dashboardSummaryTitle">Summary</h2><p id="dashboardSummaryHint" class="hint" style="margin:6px 0 0;">Double-click dashboard totals to view details.</p></div>
+        <button class="secondary" onclick="closeDashboardSummaryModal()">Close</button>
+      </div>
+      <div class="card-body" id="dashboardSummaryContent"></div>
     </div>
   </div>
 
@@ -1086,6 +1140,71 @@
       updateAssignedColumnVisibility();
     }
 
+    function buildSkillSummary(assigned) {
+      var skillCounts = {};
+      assigned.forEach(function(person) {
+        var seenForPerson = [];
+        String(person.skills || '').split(',').forEach(function(skill) {
+          skill = skill.trim();
+          if (!skill) return;
+          var key = normalizeText(skill);
+          if (seenForPerson.indexOf(key) >= 0) return;
+          seenForPerson.push(key);
+          if (!skillCounts[key]) skillCounts[key] = { skill: skill, count: 0 };
+          skillCounts[key].count += 1;
+        });
+      });
+      return Object.keys(skillCounts).map(function(key) { return skillCounts[key]; }).sort(function(a, b) {
+        return b.count - a.count || String(a.skill).localeCompare(String(b.skill));
+      });
+    }
+
+    function getProjectById(projectId) {
+      return state.projects.find(function(project) { return project.id === projectId; });
+    }
+
+    function showDashboardSummary(projectId, type) {
+      var project = getProjectById(projectId);
+      if (!project) return;
+      var assigned = getAssignedPeople(project);
+      var title = getEl('dashboardSummaryTitle');
+      var hint = getEl('dashboardSummaryHint');
+      var content = getEl('dashboardSummaryContent');
+      if (!title || !hint || !content) return;
+
+      if (type === 'manpower') {
+        var counts = { Regular: 0, Contractual: 0, Consultant: 0 };
+        assigned.forEach(function(person) {
+          if (counts[person.status] === undefined) counts[person.status] = 0;
+          counts[person.status] += 1;
+        });
+        title.textContent = 'Assigned Manpower Summary - ' + project.projectName;
+        hint.textContent = 'Summary by employment status for the manpower assigned to this project.';
+        content.innerHTML = '<table class="summary-popup-table"><thead><tr><th>Employment Status</th><th>Total</th></tr></thead><tbody>' +
+          ['Regular', 'Contractual', 'Consultant'].map(function(status) {
+            return '<tr><td>' + escapeHtml(status) + '</td><td>' + (counts[status] || 0) + '</td></tr>';
+          }).join('') +
+          '<tr class="summary-popup-total-row"><td>Total Assigned Manpower</td><td>' + assigned.length + '</td></tr>' +
+          '</tbody></table>';
+      } else if (type === 'skills') {
+        var skillSummary = buildSkillSummary(assigned);
+        title.textContent = 'Skills Available Summary - ' + project.projectName;
+        hint.textContent = 'Summary count of available skills among the manpower assigned to this project.';
+        content.innerHTML = skillSummary.length ? '<table class="summary-popup-table"><thead><tr><th>Skill</th><th>Total Manpower</th></tr></thead><tbody>' +
+          skillSummary.map(function(item) {
+            return '<tr><td>' + escapeHtml(item.skill) + '</td><td>' + item.count + '</td></tr>';
+          }).join('') +
+          '<tr class="summary-popup-total-row"><td>Total Skills Available</td><td>' + skillSummary.reduce(function(sum, item) { return sum + item.count; }, 0) + '</td></tr>' +
+          '</tbody></table>' : '<p class="hint">No skills available because no manpower is assigned to this project yet.</p>';
+      }
+      getEl('dashboardSummaryModal').classList.remove('hidden');
+    }
+
+    function closeDashboardSummaryModal() {
+      var modal = getEl('dashboardSummaryModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
     function renderDashboard() {
       getEl('statTotal').textContent = state.manpower.length;
       getEl('statRegular').textContent = state.manpower.filter(function(p) { return p.status === 'Regular'; }).length;
@@ -1097,23 +1216,18 @@
       if (!state.projects.length) { body.innerHTML = '<tr class="dashboard-empty-row"><td colspan="8">No projects added yet.</td></tr>'; return; }
       body.innerHTML = state.projects.map(function(project) {
         var assigned = getAssignedPeople(project);
-        var skills = [];
-        assigned.forEach(function(person) {
-          String(person.skills || '').split(',').forEach(function(skill) {
-            skill = skill.trim();
-            if (skill && skills.indexOf(skill) < 0) skills.push(skill);
-          });
-        });
+        var skillSummary = buildSkillSummary(assigned);
         var projectMonthlySalary = assigned.reduce(function(sum, person) { return sum + salaryMonthlyEquivalent(person); }, 0);
         var assignedNames = assigned.map(function(p) { return p.fullName; }).join(', ');
-        var skillNames = skills.join(', ');
+        var skillNames = skillSummary.map(function(item) { return item.skill + ' (' + item.count + ')'; }).join(', ');
+        var totalSkillCount = skillSummary.reduce(function(sum, item) { return sum + item.count; }, 0);
         return '<tr>' +
           '<td title="' + escapeHtml(project.projectName) + '"><strong>' + escapeHtml(project.projectName) + '</strong></td>' +
           '<td title="' + escapeHtml(project.projectLocation) + '">' + escapeHtml(project.projectLocation || 'N/A') + '</td>' +
           '<td>' + escapeHtml(project.startDate || 'N/A') + '</td>' +
           '<td>' + escapeHtml(project.targetEndDate || 'N/A') + '</td>' +
-          '<td class="dashboard-assigned-list" title="' + escapeHtml(assignedNames) + '">' + (escapeHtml(assignedNames) || 'No assigned manpower') + '</td>' +
-          '<td class="dashboard-skill-list" title="' + escapeHtml(skillNames) + '">' + (escapeHtml(skillNames) || 'N/A') + '</td>' +
+          '<td class="dashboard-assigned-list dashboard-clickable-summary" title="Double-click to show employment status summary. ' + escapeHtml(assignedNames || 'No assigned manpower') + '" ondblclick="showDashboardSummary(\'' + project.id + '\', \'manpower\')">' + assigned.length + '</td>' +
+          '<td class="dashboard-skill-list dashboard-clickable-summary" title="Double-click to show skills summary. ' + escapeHtml(skillNames || 'No skills available') + '" ondblclick="showDashboardSummary(\'' + project.id + '\', \'skills\')">' + totalSkillCount + '</td>' +
           '<td><span class="dashboard-status-pill">' + escapeHtml(project.projectStatus || 'N/A') + '</span></td>' +
           '<td><strong>' + peso.format(projectMonthlySalary) + '</strong></td>' +
         '</tr>';
